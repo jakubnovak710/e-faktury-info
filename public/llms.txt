@@ -1,0 +1,31 @@
+# Universal Web
+
+> Modern web framework for production websites with enterprise security, AI self-healing, and multiple design presets.
+
+## Overview
+
+Universal Web is a copy-paste framework built with Next.js 15, TypeScript, and Tailwind CSS v4. It provides enterprise-level security, automated error recovery via AI, and a design token system with switchable presets.
+
+## Key Features
+
+- Design Token System: All visual tokens in a single config file, switchable presets (Glass UI, Clean Modern, Corporate)
+- Enterprise Security: CSP with nonce support, CORS, rate limiting, CSRF protection, input sanitization
+- AI Self-Healing: Sentry error detection → Claude Code analysis → automated fix PRs → auto-deploy
+- SEO + GEO: JSON-LD structured data, dynamic sitemap, OG images, llms.txt for AI crawlers
+- Modular Architecture: Feature flags for auth, database, i18n, analytics, email
+- Email Notifications: Admin and client email templates for error detection and resolution
+
+## Tech Stack
+
+- Next.js 15 App Router
+- TypeScript (strict mode)
+- Tailwind CSS v4 + shadcn/ui
+- Motion for React (animations)
+- Drizzle ORM + Neon Postgres (optional)
+- Auth.js v5 (optional)
+- Sentry (monitoring)
+- Umami (analytics)
+
+## Documentation
+
+- llms-full.txt: Detailed technical documentation

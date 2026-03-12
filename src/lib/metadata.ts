@@ -8,6 +8,12 @@ interface PageMetadataOptions {
   image?: string;
   noIndex?: boolean;
   canonical?: string;
+  keywords?: string[];
+  type?: 'website' | 'article';
+  publishedTime?: string;
+  modifiedTime?: string;
+  authors?: string[];
+  section?: string;
 }
 
 export function createMetadata(options: PageMetadataOptions = {}): Metadata {
@@ -17,6 +23,12 @@ export function createMetadata(options: PageMetadataOptions = {}): Metadata {
     image = seoConfig.defaultOgImage,
     noIndex = false,
     canonical,
+    keywords,
+    type = 'website',
+    publishedTime,
+    modifiedTime,
+    authors,
+    section,
   } = options;
 
   const fullTitle = title
@@ -25,20 +37,34 @@ export function createMetadata(options: PageMetadataOptions = {}): Metadata {
 
   const imageUrl = image.startsWith('http') ? image : `${siteConfig.url}${image}`;
 
+  const ogBase = {
+    title: fullTitle,
+    description,
+    url: siteConfig.url,
+    siteName: siteConfig.name,
+    images: [{ url: imageUrl, width: 1200, height: 630 }],
+    locale: siteConfig.locale,
+  };
+
+  const openGraph =
+    type === 'article'
+      ? {
+          ...ogBase,
+          type: 'article' as const,
+          ...(publishedTime && { publishedTime }),
+          ...(modifiedTime && { modifiedTime }),
+          ...(authors && { authors }),
+          ...(section && { section }),
+        }
+      : { ...ogBase, type: 'website' as const };
+
   return {
     title: fullTitle,
     description,
+    ...(keywords && { keywords }),
     metadataBase: new URL(siteConfig.url),
     ...(canonical && { alternates: { canonical } }),
-    openGraph: {
-      title: fullTitle,
-      description,
-      url: siteConfig.url,
-      siteName: siteConfig.name,
-      images: [{ url: imageUrl, width: 1200, height: 630 }],
-      locale: siteConfig.locale,
-      type: 'website',
-    },
+    openGraph,
     twitter: {
       card: 'summary_large_image',
       title: fullTitle,

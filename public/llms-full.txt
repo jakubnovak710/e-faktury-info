@@ -1,0 +1,88 @@
+# Universal Web — Full Documentation
+
+> Modern web framework for production websites with enterprise security, AI self-healing, and multiple design presets.
+
+## Architecture
+
+Universal Web follows a "single source of truth" principle. All visual design tokens live in `config/design.config.ts` and are generated into CSS custom properties via a build script. Feature modules (auth, database, i18n, analytics) are controlled by feature flags in `config/features.config.ts` with zero runtime overhead when disabled.
+
+### Project Structure
+
+- `config/` — All configuration files (design, features, site, navigation, SEO, security)
+- `presets/` — Design preset definitions (Glass UI, Clean Modern, Corporate)
+- `src/app/` — Next.js App Router pages and API routes
+- `src/components/` — UI primitives, design system, layout, SEO, forms, providers
+- `src/lib/` — Utilities, auth, database, email, monitoring, security
+- `src/hooks/` — Custom React hooks
+- `src/styles/` — Global CSS, generated design tokens, effects
+
+## Design System
+
+### Design Tokens
+
+All colors, typography, spacing, and effects are defined as CSS custom properties generated from the active preset:
+
+- `--bg-base`, `--bg-elevated`, `--bg-overlay` — Background hierarchy
+- `--text-primary`, `--text-secondary`, `--text-muted`, `--text-faint` — Text hierarchy
+- `--accent`, `--accent-secondary`, `--accent-glow` — Brand colors
+- `--border-default`, `--border-subtle` — Borders
+- `--glass-bg`, `--glass-border`, `--glass-shadow` — Glass morphism effects
+- `--success`, `--warning`, `--error` — Semantic colors
+
+### Presets
+
+1. **Glass UI** (default): Dark-first glassmorphism with ambient glows, scanlines, pointer-tracking cards
+2. **Clean Modern**: Light-first, clean shadows, minimal decoration
+3. **Corporate**: Professional navy/slate palette, serif headings, minimal motion
+
+Switching presets: Change the import in `config/design.config.ts`, run `pnpm generate:tokens`.
+
+### Components
+
+Cards: InteractiveCard (pointer-tracking gradient), GlassCard (backdrop blur), FeaturedCard (accent glow), ElevatedCard, CompactCard
+Typography: MonoLabel (uppercase monospace), GradientHeading, SectionDivider
+Indicators: IconContainer (sized icon with tinted bg), ProgressBar (animated)
+Decorative: DecorativeGlow, Scanlines, GradientBar
+Layout: GlassNav, Footer, ScrollToTop
+
+## Security
+
+Enterprise-level security includes:
+- Content Security Policy (CSP) with nonce support
+- CORS configuration
+- Rate limiting (sliding window)
+- CSRF protection
+- Input sanitization (XSS prevention)
+- Security headers (HSTS, X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy)
+
+## Self-Healing Pipeline
+
+1. Sentry captures runtime errors
+2. Webhook triggers GitHub Action
+3. Claude Code API analyzes error context
+4. Automated fix PR is created
+5. CI validates the fix
+6. Auto-merge and deploy on success, rollback on failure
+7. Email notifications to admin and client at each stage
+
+## SEO & GEO
+
+- Dynamic metadata generation with per-page overrides
+- JSON-LD structured data (Organization, WebSite, Article, FAQ, BreadcrumbList)
+- Dynamic XML sitemap and robots.txt
+- Open Graph image generation via next/og
+- GEO optimization: llms.txt for AI crawler discoverability
+- Core Web Vitals optimization: self-hosted fonts, optimized images, dynamic imports
+
+## Optional Modules
+
+All behind feature flags (`config/features.config.ts`):
+- **Auth**: Auth.js v5 with login/register pages
+- **Database**: Drizzle ORM + Neon serverless Postgres
+- **i18n**: Multi-language with locale detection
+- **Analytics**: Umami self-hosted tracking
+- **Email**: Nodemailer + React Email templates
+
+## Contact
+
+Built by Jakub Novak. Deploy on Vercel (primary) or Hetzner VPS (secondary).
