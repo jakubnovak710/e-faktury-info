@@ -5,7 +5,7 @@ export function Scanlines({ opacity = 0.02 }: { opacity?: number }) {
       style={{
         opacity,
         background:
-          'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.04) 2px, rgba(255,255,255,0.04) 4px)',
+          'repeating-linear-gradient(0deg, transparent, transparent 2px, var(--fill-subtle) 2px, var(--fill-subtle) 4px)',
       }}
     />
   );
