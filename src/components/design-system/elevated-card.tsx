@@ -1,6 +1,6 @@
 import { cn } from '@/lib/utils';
 
-interface ElevatedCardProps extends React.HTMLAttributes<HTMLDivElement> {}
+type ElevatedCardProps = React.HTMLAttributes<HTMLDivElement>;
 
 export function ElevatedCard({ children, className, style, ...props }: ElevatedCardProps) {
   return (

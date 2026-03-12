@@ -18,7 +18,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const stored = localStorage.getItem('theme') as Theme | null;
     if (stored === 'light' || stored === 'dark') {
-      setThemeState(stored);
+      // Schedule state update for next tick to avoid cascading renders
+      queueMicrotask(() => setThemeState(stored));
       document.documentElement.setAttribute('data-theme', stored);
     }
   }, []);

@@ -14,7 +14,7 @@
  */
 
 import { createInterface } from 'readline';
-import { writeFileSync, existsSync, readFileSync } from 'fs';
+import { writeFileSync, existsSync } from 'fs';
 import { execSync } from 'child_process';
 import { resolve } from 'path';
 
