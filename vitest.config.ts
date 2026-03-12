@@ -5,6 +5,7 @@ import path from 'path';
 export default defineConfig({
   plugins: [react()],
   test: {
+    exclude: ['tests/e2e/**', 'node_modules/**'],
     environment: 'node',
     globals: true,
     coverage: {

@@ -12,10 +12,14 @@
     "test": "vitest",
     "test:e2e": "playwright test",
     "verify:tokens": "node scripts/verify-design-tokens.mjs",
-    "setup": "node scripts/setup-project.mjs"
+    "setup": "node scripts/setup-project.mjs",
+    "lighthouse": "lhci autorun"
   },
   "dependencies": {
+    "@fontsource-variable/inter": "^5.2.8",
     "@fontsource-variable/jetbrains-mono": "^5.2.8",
+    "@fontsource-variable/playfair-display": "^5.2.8",
+    "@fontsource-variable/source-sans-3": "^5.2.9",
     "@fontsource-variable/space-grotesk": "^5.2.10",
     "@radix-ui/react-slot": "^1.2.4",
     "class-variance-authority": "^0.7.1",
@@ -30,6 +34,8 @@
   },
   "devDependencies": {
     "@anthropic-ai/claude-agent-sdk": "^0.2.74",
+    "@lhci/cli": "^0.15.1",
+    "@playwright/test": "^1.58.2",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/nodemailer": "^7.0.11",
