@@ -1,0 +1,82 @@
+/* ============================================================================
+ * GENERATED FILE — DO NOT EDIT MANUALLY
+ * Generated from: config/design.config.ts
+ * Regenerate with: pnpm generate:tokens
+ * ============================================================================ */
+
+:root {
+  /* Colors (Dark Theme — Default) */
+  --bg-base: #020202;
+  --bg-deeper: #050505;
+  --bg-surface: #0a0a0a;
+  --bg-elevated: #0f0f0f;
+  --bg-overlay: #1a1a1a;
+  --text-primary: #ffffff;
+  --text-secondary: #a1a1a1;
+  --text-muted: #6f6f6f;
+  --text-faint: #4a4a4a;
+  --border-subtle: rgba(255, 255, 255, 0.06);
+  --border-default: rgba(255, 255, 255, 0.10);
+  --border-strong: rgba(255, 255, 255, 0.20);
+  --accent: #6366f1;
+  --accent-glow: rgba(99, 102, 241, 0.30);
+  --accent-secondary: #f59e0b;
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --error: #ef4444;
+  --glass-bg: rgba(5, 5, 5, 0.60);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-shadow: rgba(0, 0, 0, 0.40);
+  --fill-subtle: rgba(255, 255, 255, 0.05);
+  --fill-light: rgba(255, 255, 255, 0.10);
+  --fill-medium: rgba(255, 255, 255, 0.20);
+  --card-shadow: none;
+
+  /* Typography */
+  --font-display: 'Space Grotesk', system-ui, sans-serif;
+  --font-body: 'Space Grotesk', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  /* Spacing */
+  --padding-compact: 12px;
+  --padding-standard: 20px;
+  --padding-spacious: 32px;
+  --content-max-width: 900px;
+  --sidebar-width: 280px;
+
+  /* Border Radius */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+  --radius-2xl: 16px;
+  --radius-full: 9999px;
+}
+
+[data-theme="light"] {
+  --bg-base: #fefefc;
+  --bg-deeper: #f5f3f0;
+  --bg-surface: #ffffff;
+  --bg-elevated: #ffffff;
+  --bg-overlay: #e2e2e2;
+  --text-primary: #1a1a1a;
+  --text-secondary: #4a4a4a;
+  --text-muted: #6f6f6f;
+  --text-faint: #a1a1a1;
+  --border-subtle: rgba(0, 0, 0, 0.10);
+  --border-default: rgba(0, 0, 0, 0.14);
+  --border-strong: rgba(0, 0, 0, 0.25);
+  --accent: #4f46e5;
+  --accent-glow: rgba(79, 70, 229, 0.15);
+  --accent-secondary: #d97706;
+  --success: #16a34a;
+  --warning: #d97706;
+  --error: #dc2626;
+  --glass-bg: rgba(255, 255, 255, 0.85);
+  --glass-border: rgba(0, 0, 0, 0.12);
+  --glass-shadow: rgba(0, 0, 0, 0.08);
+  --fill-subtle: rgba(0, 0, 0, 0.05);
+  --fill-light: rgba(0, 0, 0, 0.08);
+  --fill-medium: rgba(0, 0, 0, 0.12);
+  --card-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 6px 16px rgba(0,0,0,0.04);
+}
