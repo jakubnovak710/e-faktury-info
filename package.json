@@ -11,7 +11,8 @@
     "generate:tokens": "tsx scripts/generate-design-tokens.ts",
     "test": "vitest",
     "test:e2e": "playwright test",
-    "verify:tokens": "node scripts/verify-design-tokens.mjs"
+    "verify:tokens": "node scripts/verify-design-tokens.mjs",
+    "setup": "node scripts/setup-project.mjs"
   },
   "dependencies": {
     "@fontsource-variable/jetbrains-mono": "^5.2.8",
