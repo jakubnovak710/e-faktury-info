@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { siteConfig } from '@config/site.config';
 import { seoConfig } from '@config/seo.config';
+import { formatDate } from '@/lib/format-date';
 
 interface PageMetadataOptions {
   title?: string;
@@ -51,8 +52,8 @@ export function createMetadata(options: PageMetadataOptions = {}): Metadata {
       ? {
           ...ogBase,
           type: 'article' as const,
-          ...(publishedTime && { publishedTime }),
-          ...(modifiedTime && { modifiedTime }),
+          ...(publishedTime && { publishedTime: formatDate(publishedTime) }),
+          ...(modifiedTime && { modifiedTime: formatDate(modifiedTime) }),
           ...(authors && { authors }),
           ...(section && { section }),
         }
