@@ -24,8 +24,8 @@ importers:
         specifier: ^5.2.10
         version: 5.2.10
       '@jakubnovak710/universal-web-core':
-        specifier: ^0.1.6
-        version: 0.1.6(@types/react@19.2.14)(next@16.1.6(@babel/core@7.29.0)(@playwright/test@1.58.2)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(tailwindcss@4.2.1)
+        specifier: ^0.1.7
+        version: 0.1.7(@types/react@19.2.14)(next@16.1.6(@babel/core@7.29.0)(@playwright/test@1.58.2)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(tailwindcss@4.2.1)
       lucide-react:
         specifier: ^0.577.0
         version: 0.577.0(react@19.2.3)
@@ -569,8 +569,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@jakubnovak710/universal-web-core@0.1.6':
-    resolution: {integrity: sha512-8B79KbEHKiL1rrHOsw/ezCvqrRAwfiS0W8dqWnLbXXcuMby+p2jp1LgSr+AW1ToKpnX8F0CfPreSFzJMydp1lQ==, tarball: https://npm.pkg.github.com/download/@jakubnovak710/universal-web-core/0.1.6/b108be399d8239289360a75e2a8d707bf860e55a}
+  '@jakubnovak710/universal-web-core@0.1.7':
+    resolution: {integrity: sha512-wRRJH5X/IaiYUkcwqlLCRC3h4G6uzcAHc0tf3wDZ3LdO3UPNaVCebobAtUqv9B0ypLHAzrwtYb2aQLsdemSfiQ==, tarball: https://npm.pkg.github.com/download/@jakubnovak710/universal-web-core/0.1.7/b64735205dda2a2f45e9a309b76e08d1e12f0e5e}
     peerDependencies:
       next: '>=15'
       react: '>=19'
@@ -4032,7 +4032,7 @@ snapshots:
   '@img/sharp-win32-x64@0.34.5':
     optional: true
 
-  '@jakubnovak710/universal-web-core@0.1.6(@types/react@19.2.14)(next@16.1.6(@babel/core@7.29.0)(@playwright/test@1.58.2)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(tailwindcss@4.2.1)':
+  '@jakubnovak710/universal-web-core@0.1.7(@types/react@19.2.14)(next@16.1.6(@babel/core@7.29.0)(@playwright/test@1.58.2)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(tailwindcss@4.2.1)':
     dependencies:
       '@radix-ui/react-slot': 1.2.4(@types/react@19.2.14)(react@19.2.3)
       class-variance-authority: 0.7.1

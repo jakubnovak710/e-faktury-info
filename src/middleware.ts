@@ -1,6 +1,7 @@
 import { createMiddleware } from '@jakubnovak710/universal-web-core/middleware';
+import { securityConfig } from '@config/security.config';
 
-export const middleware = createMiddleware();
+export const middleware = createMiddleware({ security: securityConfig });
 
 export const config = {
   matcher: [
