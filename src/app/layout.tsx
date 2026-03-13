@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { headers } from 'next/headers';
 import Script from 'next/script';
+import '@/lib/init-config';
 import { ThemeProvider } from '@jakubnovak710/universal-web-core/components/providers/theme-provider';
 import { OrganizationJsonLd, WebSiteJsonLd } from '@jakubnovak710/universal-web-core/components/seo';
 import { createMetadata } from '@jakubnovak710/universal-web-core/lib/metadata';
