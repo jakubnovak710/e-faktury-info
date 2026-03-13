@@ -7,9 +7,11 @@ interface GlowCardProps {
   children: React.ReactNode;
   /** Glow color — CSS variable or color value. Default: var(--accent-glow) */
   glowColor?: string;
-  /** Glow blur radius in px. Default: 40 */
+  /** Glow blob size in px. Default: 300 */
+  glowSize?: number;
+  /** Glow blur radius in px. Default: 60 */
   glowBlur?: number;
-  /** Glow opacity on hover (0-1). Default: 0.15 */
+  /** Glow opacity on hover (0-1). Default: 0.2 */
   glowOpacity?: number;
   className?: string;
 }
@@ -17,11 +19,22 @@ interface GlowCardProps {
 export function GlowCard({
   children,
   glowColor = 'var(--accent-glow)',
-  glowBlur = 40,
-  glowOpacity = 0.15,
+  glowSize = 300,
+  glowBlur = 60,
+  glowOpacity = 0.2,
   className,
 }: GlowCardProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
   const glowRef = useRef<HTMLDivElement>(null);
+
+  const handleMove = useCallback((e: React.PointerEvent) => {
+    if (!glowRef.current || !containerRef.current) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    glowRef.current.style.left = `${x}px`;
+    glowRef.current.style.top = `${y}px`;
+  }, []);
 
   const handleEnter = useCallback(() => {
     if (glowRef.current) glowRef.current.style.opacity = String(glowOpacity);
@@ -33,16 +46,20 @@ export function GlowCard({
 
   return (
     <div
-      className={cn('relative', className)}
-      onMouseEnter={handleEnter}
-      onMouseLeave={handleLeave}
+      ref={containerRef}
+      className={cn('relative overflow-visible', className)}
+      onPointerMove={handleMove}
+      onPointerEnter={handleEnter}
+      onPointerLeave={handleLeave}
     >
-      {/* Glow layer — behind card, visible on hover */}
+      {/* Glow blob — follows cursor, sits behind card */}
       <div
         ref={glowRef}
-        className="pointer-events-none absolute -inset-2 rounded-3xl transition-opacity duration-500 ease-out"
+        className="pointer-events-none absolute -translate-x-1/2 -translate-y-1/2 rounded-full transition-opacity duration-400 ease-out"
         style={{
-          background: `radial-gradient(ellipse at center, ${glowColor}, transparent 70%)`,
+          width: glowSize,
+          height: glowSize,
+          background: `radial-gradient(circle, ${glowColor}, transparent 70%)`,
           filter: `blur(${glowBlur}px)`,
           opacity: 0,
           zIndex: -1,

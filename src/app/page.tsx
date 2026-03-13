@@ -20,7 +20,6 @@ import {
 } from 'lucide-react';
 
 import {
-  InteractiveCard,
   GlassCard,
   FeaturedCard,
   CompactCard,
@@ -307,8 +306,8 @@ export default function Home() {
         >
           {features.map((feature) => (
             <motion.div key={feature.title} variants={staggerItem}>
-              <GlowCard glowColor={feature.glowColor} glowOpacity={0.12}>
-                <InteractiveCard className="h-full p-6">
+              <GlowCard glowColor={feature.glowColor} glowOpacity={0.18} glowSize={350}>
+                <GlassCard className="relative h-full overflow-hidden p-6">
                   <GradientBar from={feature.color} className="absolute left-0 right-0 top-0" />
                   <IconContainer
                     icon={feature.icon}
@@ -323,7 +322,7 @@ export default function Home() {
                   <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
                     {feature.description}
                   </p>
-                </InteractiveCard>
+                </GlassCard>
               </GlowCard>
             </motion.div>
           ))}
