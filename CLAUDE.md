@@ -104,22 +104,29 @@ Keď user chce vytvoriť nový klientsky projekt z tejto šablóny:
 
 ### Fáza 2: Deployment
 4. Vercel: user pripojí repo cez Vercel dashboard, nastaví env vars z `.env.local`
-5. Doména: user pridá custom doménu vo Vercel → aktualizuj `NEXT_PUBLIC_SITE_URL` v `.env.local` a Vercel env vars
-6. Over: `pnpm build` musí prejsť lokálne
+5. **`NPM_TOKEN` na Vercel** — **POVINNÝ** — GitHub PAT s `read:packages` scope. Bez neho Vercel build zlyhá na `ERR_PNPM_FETCH_401` pri sťahovaní `@jakubnovak710/universal-web-core` z GitHub Packages.
+   ```bash
+   # Nastav cez Vercel dashboard: Settings → Environment Variables
+   # Alebo cez CLI (pre každý environment):
+   echo "ghp_..." | npx vercel env add NPM_TOKEN production
+   echo "ghp_..." | npx vercel env add NPM_TOKEN preview
+   ```
+6. Doména: user pridá custom doménu vo Vercel → aktualizuj `NEXT_PUBLIC_SITE_URL` v `.env.local` a Vercel env vars
+7. Over: `pnpm build` musí prejsť lokálne
 
 ### Fáza 3: Obsah & Navigácia
-7. `config/navigation.config.ts` — uprav navigáciu podľa klientových stránok
-8. `config/site.config.ts` — over/uprav socials, creator info
-9. Logo: vlož SVG do `public/` a aktualizuj referencie
-10. Favicon: `public/favicon.ico` + `public/apple-touch-icon.png`
+8. `config/navigation.config.ts` — uprav navigáciu podľa klientových stránok
+9. `config/site.config.ts` — over/uprav socials, creator info
+10. Logo: vlož SVG do `public/` a aktualizuj referencie
+11. Favicon: `public/favicon.ico` + `public/apple-touch-icon.png`
 
 ### Fáza 4: Programovanie
-11. Vytvor stránky v `src/app/` podľa navigácie
-12. Dodržiavaj ABSOLUTE RULES vyššie
-13. Po každej stránke: `pnpm build && pnpm lint`
+12. Vytvor stránky v `src/app/` podľa navigácie
+13. Dodržiavaj ABSOLUTE RULES vyššie
+14. Po každej stránke: `pnpm build && pnpm lint`
 
 ### Fáza 5: Self-Healing Pipeline (POVINNÉ)
-14. Nastav GitHub repository secrets pre self-healing:
+15. Nastav GitHub repository secrets pre self-healing:
     - `ANTHROPIC_API_KEY` — **POVINNÝ** — Claude API kľúč z [console.anthropic.com](https://console.anthropic.com). Bez neho self-healing agent nefunguje a ticho zlyhá.
     - `GH_PAT` — **POVINNÝ** — GitHub Personal Access Token s `repo` + `workflow` scope. Bez neho agent nemôže vytvoriť PR s fixom.
     - `SITE_URL` — voliteľný — URL nasadeného webu (pre notifikácie)
@@ -136,8 +143,8 @@ Keď user chce vytvoriť nový klientsky projekt z tejto šablóny:
     gh secret set NOTIFY_SECRET --body "your-webhook-secret"
     ```
 
-15. Over funkčnosť: spusti test dispatch `gh workflow run self-heal.yml` alebo počkaj na prvý Sentry trigger
-16. **POZOR:** Ak `ANTHROPIC_API_KEY` nie je nastavený, workflow skončí ticho s `has_fix=false` — žiadna chybová hláška v PR, žiadny fix. Over cez `gh secret list`.
+16. Over funkčnosť: spusti test dispatch `gh workflow run self-heal.yml` alebo počkaj na prvý Sentry trigger
+17. **POZOR:** Ak `ANTHROPIC_API_KEY` nie je nastavený, workflow skončí ticho s `has_fix=false` — žiadna chybová hláška v PR, žiadny fix. Over cez `gh secret list`.
 
 ### Checklist pred launch
 - [ ] `pnpm build` OK
@@ -146,5 +153,6 @@ Keď user chce vytvoriť nový klientsky projekt z tejto šablóny:
 - [ ] Favicon + apple-touch-icon
 - [ ] robots.txt + sitemap (auto-generované Next.js)
 - [ ] HTTPS funguje na custom doméne
+- [ ] `NPM_TOKEN` nastavený na Vercel (GitHub PAT s `read:packages` pre @jakubnovak710/universal-web-core)
 - [ ] `ANTHROPIC_API_KEY` nastavený v GitHub Secrets (self-healing)
 - [ ] `GH_PAT` nastavený v GitHub Secrets (self-healing PR creation)
