@@ -30,7 +30,6 @@ import {
   IconContainer,
   ProgressBar,
   Scanlines,
-  DecorativeGlow,
   GradientBar,
 } from '@jakubnovak710/universal-web-core/components/design-system';
 import { Footer } from '@jakubnovak710/universal-web-core/components/layout/footer';
@@ -41,6 +40,42 @@ import { Navigation } from '@/components/navigation';
 import { MagneticButton } from '@/components/magnetic-button';
 import { ShimmerButton } from '@/components/shimmer-button';
 import { CountUp } from '@/components/count-up';
+import { GlowCard } from '@/components/glow-card';
+import { AmbientBackground } from '@/components/ambient-background';
+
+// ---------------------------------------------------------------------------
+// Cursor glow — follows mouse, subtle accent radial
+// ---------------------------------------------------------------------------
+
+function CursorGlow() {
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function onMove(e: PointerEvent) {
+      if (ref.current) {
+        ref.current.style.left = `${e.clientX}px`;
+        ref.current.style.top = `${e.clientY}px`;
+      }
+    }
+    window.addEventListener('pointermove', onMove, { passive: true });
+    return () => window.removeEventListener('pointermove', onMove);
+  }, []);
+
+  return (
+    <div
+      ref={ref}
+      className="pointer-events-none fixed z-0 -translate-x-1/2 -translate-y-1/2"
+      style={{
+        width: 400,
+        height: 400,
+        background: 'radial-gradient(circle, var(--accent-glow), transparent 70%)',
+        opacity: 0.05,
+        mixBlendMode: 'screen',
+      }}
+      aria-hidden="true"
+    />
+  );
+}
 
 // ---------------------------------------------------------------------------
 // Typewriter terminal
@@ -74,7 +109,7 @@ function TypewriterTerminal() {
   return (
     <div
       ref={ref}
-      className="rounded-xl p-4 font-mono text-[11px] leading-relaxed"
+      className="relative rounded-xl p-4 font-mono text-[11px] leading-relaxed"
       style={{
         backgroundColor: 'var(--fill-subtle)',
         border: '1px solid var(--border-subtle)',
@@ -82,6 +117,7 @@ function TypewriterTerminal() {
         minHeight: 200,
       }}
     >
+      <Scanlines opacity={0.03} />
       {terminalLines.slice(0, visibleCount).map((line, i) => (
         <motion.div
           key={i}
@@ -115,6 +151,7 @@ const features = [
     title: 'Globálny design systém',
     description: 'Všetky farby, fonty a spacing z jedného config súboru. Zmena presetu mení celý vizuál.',
     color: 'var(--accent)',
+    glowColor: 'var(--accent-glow)',
   },
   {
     icon: <Shield className="h-6 w-6" />,
@@ -122,6 +159,7 @@ const features = [
     title: 'CSP, CORS, Rate Limiting',
     description: 'Security headers, input sanitizácia, CSRF ochrana. A+ rating out of the box.',
     color: 'var(--success)',
+    glowColor: 'var(--success)',
   },
   {
     icon: <Zap className="h-6 w-6" />,
@@ -129,6 +167,7 @@ const features = [
     title: 'AI automatické opravy',
     description: 'CI zlyhá → 3-agent pipeline (triage/fix/verify) → auto-deploy. Email notifikácie.',
     color: 'var(--accent-secondary)',
+    glowColor: 'var(--accent-secondary)',
   },
   {
     icon: <Globe className="h-6 w-6" />,
@@ -136,6 +175,7 @@ const features = [
     title: 'Optimalizácia pre AI aj vyhľadávače',
     description: 'JSON-LD, sitemap, OG images, llms.txt. Chatboti budú odkazovať na vaše stránky.',
     color: 'var(--accent)',
+    glowColor: 'var(--accent-glow)',
   },
 ];
 
@@ -157,11 +197,12 @@ export default function Home() {
       className="relative min-h-screen overflow-hidden"
       style={{ backgroundColor: 'var(--bg-base)', color: 'var(--text-primary)' }}
     >
-      <Scanlines />
-      <DecorativeGlow position="top-right" color="var(--accent-glow)" size={280} />
-      <DecorativeGlow position="bottom-left" color="var(--accent-glow)" size={320} style={{ opacity: 0.4 }} />
+      {/* Ambient layers */}
+      <AmbientBackground />
+      <CursorGlow />
+      <Scanlines opacity={0.02} />
 
-      {/* Floating island nav */}
+      {/* Navigation */}
       <Navigation />
 
       {/* Hero */}
@@ -172,13 +213,16 @@ export default function Home() {
         {/* Animated badge */}
         <div className="mb-5 inline-flex items-center gap-2 rounded-full px-4 py-1.5" style={{ backgroundColor: 'var(--fill-subtle)', border: '1px solid var(--border-subtle)' }}>
           <span className="relative flex h-2 w-2">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full opacity-75" style={{ backgroundColor: 'var(--accent)' }} />
+            <span
+              className="absolute inline-flex h-full w-full animate-ping rounded-full opacity-75"
+              style={{ backgroundColor: 'var(--accent)', animation: 'glowPulse 2s ease-in-out infinite, ping 1s cubic-bezier(0, 0, 0.2, 1) infinite' }}
+            />
             <span className="relative inline-flex h-2 w-2 rounded-full" style={{ backgroundColor: 'var(--accent)' }} />
           </span>
           <MonoLabel className="text-[10px]">Production-ready boilerplate</MonoLabel>
         </div>
 
-        <GradientHeading as="h1" className="mb-6 text-4xl sm:text-5xl lg:text-6xl">
+        <GradientHeading as="h1" className="mb-6 text-4xl sm:text-5xl lg:text-6xl" style={{ textShadow: '0 0 60px var(--accent-glow)' }}>
           Produkčný boilerplate pre moderné weby
         </GradientHeading>
 
@@ -201,7 +245,7 @@ export default function Home() {
           <MagneticButton strength={0.15} maxDistance={6}>
             <a
               href="#modules"
-              className="inline-flex items-center gap-2 rounded-full px-8 py-3.5 text-sm font-bold transition-all hover:scale-[1.02] active:scale-95"
+              className="inline-flex items-center gap-2 rounded-full px-8 py-3.5 text-sm font-bold transition-all hover:scale-[1.02] active:scale-[0.98]"
               style={{
                 backgroundColor: 'var(--glass-bg)',
                 backdropFilter: 'blur(8px)',
@@ -231,15 +275,20 @@ export default function Home() {
             { icon: <Shield className="h-4 w-4" />, value: 0, suffix: '', label: 'Security Rating', static: 'A+' },
           ].map((metric) => (
             <motion.div key={metric.label} variants={staggerItem}>
-              <GlassCard className="flex flex-col items-center p-4 text-center">
-                <div className="mb-2" style={{ color: 'var(--accent)' }}>{metric.icon}</div>
-                <span className="text-2xl font-black" style={{ color: 'var(--text-primary)' }}>
-                  {metric.static ?? <CountUp end={metric.value} suffix={metric.suffix} />}
-                </span>
-                <span className="mt-1 text-[10px] font-mono uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>
-                  {metric.label}
-                </span>
-              </GlassCard>
+              <GlowCard glowColor="var(--accent-glow)" glowOpacity={0.1}>
+                <GlassCard className="flex flex-col items-center p-4 text-center">
+                  <div className="mb-2" style={{ color: 'var(--accent)', filter: 'drop-shadow(0 0 4px var(--accent-glow))' }}>{metric.icon}</div>
+                  <span
+                    className="text-2xl font-black"
+                    style={{ color: 'var(--text-primary)', textShadow: '0 0 15px var(--accent-glow)' }}
+                  >
+                    {metric.static ?? <CountUp end={metric.value} suffix={metric.suffix} />}
+                  </span>
+                  <span className="mt-1 text-[10px] font-mono uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>
+                    {metric.label}
+                  </span>
+                </GlassCard>
+              </GlowCard>
             </motion.div>
           ))}
         </div>
@@ -258,10 +307,15 @@ export default function Home() {
         >
           {features.map((feature) => (
             <motion.div key={feature.title} variants={staggerItem}>
-              <MagneticButton strength={0.12} maxDistance={4}>
+              <GlowCard glowColor={feature.glowColor} glowOpacity={0.12}>
                 <InteractiveCard className="h-full p-6">
                   <GradientBar from={feature.color} className="absolute left-0 right-0 top-0" />
-                  <IconContainer icon={feature.icon} color={feature.color} className="mb-4" />
+                  <IconContainer
+                    icon={feature.icon}
+                    color={feature.color}
+                    className="mb-4"
+                    style={{ boxShadow: `0 0 15px color-mix(in srgb, ${feature.color} 30%, transparent)` }}
+                  />
                   <MonoLabel color={feature.color} className="mb-1">{feature.label}</MonoLabel>
                   <h3 className="mb-2 text-lg font-black" style={{ color: 'var(--text-primary)' }}>
                     {feature.title}
@@ -270,7 +324,7 @@ export default function Home() {
                     {feature.description}
                   </p>
                 </InteractiveCard>
-              </MagneticButton>
+              </GlowCard>
             </motion.div>
           ))}
         </motion.div>
@@ -286,39 +340,51 @@ export default function Home() {
           viewport={{ once: true, margin: '-80px' }}
           transition={{ duration: 0.5 }}
         >
-          <FeaturedCard accentColor="var(--accent-secondary)" className="p-8">
-            <div className="grid items-center gap-8 sm:grid-cols-2">
-              <div>
-                <MonoLabel color="var(--accent-secondary)" className="mb-2">Multi-Agent Pipeline</MonoLabel>
-                <h3 className="mb-3 text-2xl font-black" style={{ color: 'var(--text-primary)' }}>
-                  3 agenti, 1 fix
-                </h3>
-                <p className="mb-6 text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-                  Triage (haiku) klasifikuje chybu → Fix (sonnet) opraví kód → Verify (haiku) skontroluje diff.
-                  Ak verify zlyhá, druhý pokus s iným prístupom. Výsledok: PR s fixom.
-                </p>
-                <div className="space-y-3">
-                  {[
-                    { label: 'Detekcia chyby', value: 100 },
-                    { label: 'AI analýza', value: 85 },
-                    { label: 'Auto-fix deploy', value: 62 },
-                  ].map((bar) => (
-                    <div key={bar.label}>
-                      <div className="mb-1 flex items-center justify-between">
-                        <span className="text-xs" style={{ color: 'var(--text-muted)' }}>{bar.label}</span>
-                        <span className="font-mono text-[10px]" style={{ color: 'var(--accent-secondary)' }}>
-                          {bar.value}%
-                        </span>
-                      </div>
-                      <ProgressBar value={bar.value} from="var(--accent)" to="var(--accent-secondary)" />
-                    </div>
-                  ))}
-                </div>
-              </div>
+          <GlowCard glowColor="var(--accent-secondary)" glowOpacity={0.1} glowBlur={60}>
+            <FeaturedCard accentColor="var(--accent-secondary)" className="relative overflow-hidden p-8">
+              {/* Corner glow */}
+              <div
+                className="pointer-events-none absolute -right-10 -top-10 h-32 w-32 rounded-full blur-2xl"
+                style={{ backgroundColor: 'var(--accent-secondary)', opacity: 0.15 }}
+                aria-hidden="true"
+              />
 
-              <TypewriterTerminal />
-            </div>
-          </FeaturedCard>
+              <div className="relative z-10 grid items-center gap-8 sm:grid-cols-2">
+                <div>
+                  <MonoLabel color="var(--accent-secondary)" className="mb-2">Multi-Agent Pipeline</MonoLabel>
+                  <h3 className="mb-3 text-2xl font-black" style={{ color: 'var(--text-primary)' }}>
+                    3 agenti, 1 fix
+                  </h3>
+                  <p className="mb-6 text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+                    Triage (haiku) klasifikuje chybu → Fix (sonnet) opraví kód → Verify (haiku) skontroluje diff.
+                    Ak verify zlyhá, druhý pokus s iným prístupom. Výsledok: PR s fixom.
+                  </p>
+                  <div className="space-y-3">
+                    {[
+                      { label: 'Detekcia chyby', value: 100 },
+                      { label: 'AI analýza', value: 85 },
+                      { label: 'Auto-fix deploy', value: 62 },
+                    ].map((bar) => (
+                      <div key={bar.label}>
+                        <div className="mb-1 flex items-center justify-between">
+                          <span className="text-xs" style={{ color: 'var(--text-muted)' }}>{bar.label}</span>
+                          <span
+                            className="font-mono text-[10px]"
+                            style={{ color: 'var(--accent-secondary)', textShadow: '0 0 10px var(--accent-secondary)' }}
+                          >
+                            {bar.value}%
+                          </span>
+                        </div>
+                        <ProgressBar value={bar.value} from="var(--accent)" to="var(--accent-secondary)" />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <TypewriterTerminal />
+              </div>
+            </FeaturedCard>
+          </GlowCard>
         </motion.div>
       </section>
 
@@ -335,14 +401,14 @@ export default function Home() {
         >
           {modules.map((mod) => (
             <motion.div key={mod.title} variants={staggerItem}>
-              <MagneticButton strength={0.08} maxDistance={3}>
+              <GlowCard glowColor={mod.color} glowOpacity={0.08} glowBlur={30}>
                 <CompactCard
                   icon={mod.icon}
                   title={mod.title}
                   subtitle={mod.subtitle}
                   accentColor={mod.color}
                 />
-              </MagneticButton>
+              </GlowCard>
             </motion.div>
           ))}
         </motion.div>
@@ -363,44 +429,47 @@ export default function Home() {
           viewport={{ once: true, margin: '-80px' }}
           transition={{ duration: 0.5 }}
         >
-          <GlassCard className="p-8">
-            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-              {[
-                { label: '--bg-base', desc: 'Pozadie' },
-                { label: '--bg-elevated', desc: 'Karty' },
-                { label: '--accent', desc: 'Akcentová' },
-                { label: '--glass-bg', desc: 'Glass efekt' },
-              ].map((token) => (
-                <MagneticButton key={token.label} strength={0.1} maxDistance={3}>
-                  <div
-                    className="flex items-center gap-3 rounded-xl p-3 transition-all"
-                    style={{ backgroundColor: 'var(--fill-subtle)' }}
-                  >
+          <GlowCard glowColor="var(--accent-glow)" glowOpacity={0.08}>
+            <GlassCard className="p-8">
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                {[
+                  { label: '--bg-base', desc: 'Pozadie' },
+                  { label: '--bg-elevated', desc: 'Karty' },
+                  { label: '--accent', desc: 'Akcentová' },
+                  { label: '--glass-bg', desc: 'Glass efekt' },
+                ].map((token) => (
+                  <MagneticButton key={token.label} strength={0.1} maxDistance={3}>
                     <div
-                      className="h-8 w-8 shrink-0 rounded-lg"
-                      style={{
-                        backgroundColor: `var(${token.label})`,
-                        border: '1px solid var(--border-default)',
-                      }}
-                    />
-                    <div>
-                      <p className="font-mono text-[9px] font-bold uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>
-                        {token.label}
-                      </p>
-                      <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>
-                        {token.desc}
-                      </p>
+                      className="flex items-center gap-3 rounded-xl p-3 transition-all"
+                      style={{ backgroundColor: 'var(--fill-subtle)' }}
+                    >
+                      <div
+                        className="h-8 w-8 shrink-0 rounded-lg"
+                        style={{
+                          backgroundColor: `var(${token.label})`,
+                          border: '1px solid var(--border-default)',
+                          boxShadow: token.label === '--accent' ? '0 0 12px var(--accent-glow)' : undefined,
+                        }}
+                      />
+                      <div>
+                        <p className="font-mono text-[9px] font-bold uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>
+                          {token.label}
+                        </p>
+                        <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>
+                          {token.desc}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                </MagneticButton>
-              ))}
-            </div>
+                  </MagneticButton>
+                ))}
+              </div>
 
-            <p className="mt-6 text-center text-xs" style={{ color: 'var(--text-faint)' }}>
-              Zmena presetu v <span className="font-mono">config/design.config.ts</span> →{' '}
-              <span className="font-mono">pnpm generate:tokens</span> → celý vizuál sa zmení
-            </p>
-          </GlassCard>
+              <p className="mt-6 text-center text-xs" style={{ color: 'var(--text-faint)' }}>
+                Zmena presetu v <span className="font-mono">config/design.config.ts</span> →{' '}
+                <span className="font-mono">pnpm generate:tokens</span> → celý vizuál sa zmení
+              </p>
+            </GlassCard>
+          </GlowCard>
         </motion.div>
       </section>
 
