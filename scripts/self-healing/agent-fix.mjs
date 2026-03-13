@@ -140,10 +140,14 @@ ${errorSnippet}
 
 ## Task
 1. Read the error output carefully.
-2. Classify: is this auto-fixable by an AI agent?
+2. Find the ACTUAL ERROR that caused CI to fail (exit code != 0).
+3. IGNORE warnings — only focus on errors that break the build.
+   - ESLint warnings (yellow "warning" lines) are NOT errors if ESLint exits with code 0.
+   - TypeScript hints or unused variable warnings are NOT errors unless they cause a build failure.
+4. Classify: is the actual error auto-fixable by an AI agent?
 
 Reply with EXACTLY one of these lines (nothing else):
-- FIXABLE: <one-line description of what needs fixing>
+- FIXABLE: <one-line description of the ACTUAL ERROR that caused failure>
 - NOT_FIXABLE: <reason why a human is needed>
 - CONFIG_ISSUE: <what config/env var is missing>`;
 
@@ -200,9 +204,10 @@ ${truncate(previousError, 80)}
 
 ## Instructions
 1. Read CLAUDE.md first for project rules.
-2. Find the root cause using Glob/Grep/Read.
-3. Apply the MINIMAL fix using Edit. Do NOT refactor.
-4. Verify: run the commands that failed:
+2. Find the root cause of the ACTUAL ERROR described above. Do NOT fix warnings, hints, or unrelated issues.
+3. Your fix MUST directly address the error in the triage assessment. If the error is about hardcoded colors, fix the hardcoded colors. If it's about a type error, fix the type error. Do NOT fix something else.
+4. Apply the MINIMAL fix using Edit. Do NOT refactor or clean up unrelated code.
+5. Verify: run the commands that failed:
 ${(ERROR_TYPE || '').includes('lint') ? '   - pnpm lint\n   - pnpm tsc --noEmit' : ''}
 ${(ERROR_TYPE || '').includes('build') ? '   - pnpm build' : ''}
 ${(ERROR_TYPE || '').includes('test') ? '   - pnpm test -- --run' : ''}
@@ -289,16 +294,18 @@ async function verify() {
 ${diffSnippet}
 \`\`\`
 
-## Check these:
-1. Does the fix address the original error?
-2. Are there any hardcoded colors (must use CSS variables)?
+## Check these (IN ORDER — stop at first rejection):
+1. Does the diff DIRECTLY fix the original error "${ERROR_TYPE || 'unknown'}"? If the diff changes unrelated files or fixes warnings instead of the actual error, REJECT immediately.
+2. Are there any hardcoded colors introduced (must use CSS variables)?
 3. Are there any \`any\` types introduced?
 4. Is the change minimal and safe?
 5. Could this break something else?
 
+IMPORTANT: If the fix addresses something OTHER than the original error (e.g. fixes unused variables when the error was about hardcoded colors), you MUST reject it.
+
 Reply with EXACTLY one line:
-- APPROVED: <reason>
-- REJECTED: <what's wrong>`;
+- APPROVED: <reason why this fixes the original error>
+- REJECTED: <what's wrong — be specific>`;
 
   const result = await runAgent(
     prompt,
