@@ -323,6 +323,26 @@ const MAX_FIX_ATTEMPTS = 2;
 try {
   timeline('🚀', 'PIPELINE', `Starting — error type: ${ERROR_TYPE || 'unknown'}, log: ${errorLog.length} chars`);
 
+  // ── Pre-check: verify the error still reproduces ──
+  // If all checks pass now, skip the pipeline (avoids wasting tokens on stale failures)
+  timeline('🔎', 'PRECHECK', 'Verifying error still reproduces...');
+  let stillFailing = false;
+  try {
+    const et = (ERROR_TYPE || '').toLowerCase();
+    if (et.includes('lint')) { shell('pnpm tsc --noEmit'); shell('pnpm lint'); shell('node scripts/verify-design-tokens.mjs'); }
+    if (et.includes('typecheck')) shell('pnpm tsc --noEmit');
+    if (et.includes('build')) shell('pnpm build');
+    if (et.includes('test')) shell('pnpm test -- --run');
+    timeline('✅', 'PRECHECK', 'All checks pass — no fix needed. Skipping pipeline.');
+    writeSummary();
+    setOutput('has_fix', 'false');
+    setOutput('analysis', 'Pre-check passed: error no longer reproduces on fresh checkout.');
+    process.exit(0);
+  } catch {
+    stillFailing = true;
+    timeline('❌', 'PRECHECK', 'Error confirmed — proceeding with fix.');
+  }
+
   // ── Phase 1: Triage ──
   const triageResult = await triage();
   setOutput('triage_result', triageResult.action);
