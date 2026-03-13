@@ -7,7 +7,7 @@ export const securityConfig: SecurityConfig = {
     defaultSrc: ["'self'"],
     scriptSrc: isDev
       ? ["'self'", "'unsafe-eval'", "'unsafe-inline'"]
-      : ["'self'"],
+      : ["'self'", "'unsafe-inline'"],
     styleSrc: ["'self'", "'unsafe-inline'"],
     imgSrc: ["'self'", 'data:', 'blob:', 'https:'],
     connectSrc: ["'self'", 'https:'],

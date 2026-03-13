@@ -8,7 +8,9 @@ export function buildCsp(nonce?: string): string {
   const { csp } = securityConfig;
 
   const scriptSrc = nonce
-    ? csp.scriptSrc.filter((s) => s !== "'unsafe-inline'").concat(`'nonce-${nonce}'`)
+    ? csp.scriptSrc
+        .filter((s) => s !== "'unsafe-inline'")
+        .concat(`'nonce-${nonce}'`, "'strict-dynamic'")
     : csp.scriptSrc;
 
   const directives: Record<string, string[]> = {

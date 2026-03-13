@@ -92,3 +92,36 @@
 - Tailwind CSS v4 + shadcn/ui
 - pnpm package manager
 - Design presets: Glass UI (default), Clean Modern, Corporate
+
+## NEW PROJECT SETUP
+
+Keď user chce vytvoriť nový klientsky projekt z tejto šablóny:
+
+### Fáza 1: Repo & Základy
+1. Vytvor nové GitHub repo (user poskytne názov)
+2. Push šablónu: `git remote set-url origin <new-repo-url> && git push -u origin main`
+3. Spusti `pnpm setup` — interaktívny wizard nastaví: názov, popis, URL, locale, preset, features, SMTP, .env.local
+
+### Fáza 2: Deployment
+4. Vercel: user pripojí repo cez Vercel dashboard, nastaví env vars z `.env.local`
+5. Doména: user pridá custom doménu vo Vercel → aktualizuj `NEXT_PUBLIC_SITE_URL` v `.env.local` a Vercel env vars
+6. Over: `pnpm build` musí prejsť lokálne
+
+### Fáza 3: Obsah & Navigácia
+7. `config/navigation.config.ts` — uprav navigáciu podľa klientových stránok
+8. `config/site.config.ts` — over/uprav socials, creator info
+9. Logo: vlož SVG do `public/` a aktualizuj referencie
+10. Favicon: `public/favicon.ico` + `public/apple-touch-icon.png`
+
+### Fáza 4: Programovanie
+11. Vytvor stránky v `src/app/` podľa navigácie
+12. Dodržiavaj ABSOLUTE RULES vyššie
+13. Po každej stránke: `pnpm build && pnpm lint`
+
+### Checklist pred launch
+- [ ] `pnpm build` OK
+- [ ] Všetky env vars nastavené vo Vercel
+- [ ] Meta tagy + OG images na každej stránke
+- [ ] Favicon + apple-touch-icon
+- [ ] robots.txt + sitemap (auto-generované Next.js)
+- [ ] HTTPS funguje na custom doméne

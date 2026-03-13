@@ -24,10 +24,15 @@ export function middleware(request: NextRequest) {
     }
   }
 
-  // --- Security headers on all responses ---
-  const response = NextResponse.next();
+  // --- Nonce-based CSP ---
+  const nonce = Buffer.from(crypto.randomUUID()).toString('base64');
 
-  const securityHeaders = getSecurityHeaders();
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set('x-nonce', nonce);
+
+  const response = NextResponse.next({ request: { headers: requestHeaders } });
+
+  const securityHeaders = getSecurityHeaders(nonce);
   for (const [key, value] of Object.entries(securityHeaders)) {
     response.headers.set(key, value);
   }
