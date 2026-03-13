@@ -83,8 +83,16 @@ if (!ANTHROPIC_API_KEY) {
 let _query;
 async function getQuery() {
   if (!_query) {
-    const sdk = await import('@anthropic-ai/claude-agent-sdk');
-    _query = sdk.query;
+    try {
+      const sdk = await import('@anthropic-ai/claude-agent-sdk');
+      _query = sdk.query;
+    } catch (e) {
+      timeline('💥', 'SDK', `Failed to import Claude Agent SDK: ${e.message}`);
+      writeSummary();
+      setOutput('has_fix', 'false');
+      setOutput('analysis', `SDK import failed: ${e.message}`);
+      process.exit(0);
+    }
   }
   return _query;
 }
@@ -254,9 +262,9 @@ async function verify() {
     if (!checks.includes('node scripts/verify-design-tokens.mjs')) checks.push('node scripts/verify-design-tokens.mjs');
 
     for (const cmd of [...new Set(checks)]) {
-      log('VERIFY', `  ${cmd}`);
+      timeline('✅', 'VERIFY', `Running: ${cmd}`);
       shell(cmd);
-      log('VERIFY', `  PASSED`);
+      timeline('✅', 'VERIFY', `PASSED: ${cmd}`);
     }
   } catch (e) {
     const stderr = e.stderr?.toString().slice(-1000) || '';
