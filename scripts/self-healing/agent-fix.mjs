@@ -79,8 +79,6 @@ After fixing, print a one-paragraph summary of:
       cwd: process.cwd(),
       model: 'claude-sonnet-4-6',
       allowedTools: ['Read', 'Edit', 'Glob', 'Grep', 'Bash'],
-      permissionMode: 'bypassPermissions',
-      allowDangerouslySkipPermissions: true,
       maxTurns: 30,
       systemPrompt: {
         type: 'preset',

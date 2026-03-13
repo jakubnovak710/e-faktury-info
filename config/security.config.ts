@@ -1,9 +1,13 @@
 import type { SecurityConfig } from '@/types/site';
 
+const isDev = process.env.NODE_ENV === 'development';
+
 export const securityConfig: SecurityConfig = {
   csp: {
     defaultSrc: ["'self'"],
-    scriptSrc: ["'self'", "'unsafe-eval'", "'unsafe-inline'"],
+    scriptSrc: isDev
+      ? ["'self'", "'unsafe-eval'", "'unsafe-inline'"]
+      : ["'self'"],
     styleSrc: ["'self'", "'unsafe-inline'"],
     imgSrc: ["'self'", 'data:', 'blob:', 'https:'],
     connectSrc: ["'self'", 'https:'],
@@ -15,6 +19,6 @@ export const securityConfig: SecurityConfig = {
   },
   rateLimit: {
     windowMs: 60 * 1000,
-    max: 100,
+    max: 20,
   },
 };

@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { getSecurityHeaders } from '@/lib/security/headers';
 import { checkRateLimit, getRateLimitHeaders } from '@/lib/security/rate-limit';
+import { CSRF_COOKIE, ensureCsrfCookie } from '@/lib/security/csrf';
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -39,6 +40,11 @@ export function middleware(request: NextRequest) {
     for (const [key, value] of Object.entries(rlHeaders)) {
       response.headers.set(key, value);
     }
+  }
+
+  // --- CSRF: ensure token cookie exists for page requests ---
+  if (!pathname.startsWith('/api/')) {
+    ensureCsrfCookie(response, request.cookies.get(CSRF_COOKIE)?.value);
   }
 
   return response;

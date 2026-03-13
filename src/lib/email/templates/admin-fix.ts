@@ -1,4 +1,5 @@
 import { baseLayout } from './base-layout';
+import { escapeHtml } from '@/lib/security/sanitize';
 
 interface AdminFixData {
   errorMessage: string;
@@ -16,6 +17,9 @@ const statusConfig = {
 
 export function adminFixTemplate(data: AdminFixData): string {
   const cfg = statusConfig[data.status];
+  const msg = escapeHtml(data.errorMessage);
+  const analysis = data.analysis ? escapeHtml(data.analysis) : '';
+  const prUrl = data.prUrl ? escapeHtml(data.prUrl) : '';
 
   return baseLayout(
     `
@@ -23,13 +27,13 @@ export function adminFixTemplate(data: AdminFixData): string {
     <span class="badge ${cfg.badge}">${cfg.label}</span>
     <div class="card">
       <p><strong>Original error:</strong></p>
-      <p class="mono" style="color: #ef4444;">${data.errorMessage}</p>
+      <p class="mono" style="color: #ef4444;">${msg}</p>
     </div>
-    ${data.analysis ? `<div class="card"><p><strong>AI Analysis:</strong></p><p>${data.analysis}</p></div>` : ''}
-    ${data.prUrl ? `<p><a href="${data.prUrl}" class="btn">View Pull Request</a></p>` : ''}
-    <p><strong>Timestamp:</strong> <span class="mono">${data.timestamp}</span></p>
+    ${analysis ? `<div class="card"><p><strong>AI Analysis:</strong></p><p>${analysis}</p></div>` : ''}
+    ${prUrl ? `<p><a href="${prUrl}" class="btn">View Pull Request</a></p>` : ''}
+    <p><strong>Timestamp:</strong> <span class="mono">${escapeHtml(data.timestamp)}</span></p>
     ${data.status === 'failed' ? '<p style="color: #ef4444; font-weight: 700;">Manual intervention required. Rollback has been initiated.</p>' : ''}
     `,
-    `Self-healing ${data.status}: ${data.errorMessage}`
+    `Self-healing ${data.status}: ${msg}`
   );
 }

@@ -7,7 +7,7 @@
  */
 
 import { readFileSync, appendFileSync } from 'fs';
-import { execSync } from 'child_process';
+import { execSync, execFileSync } from 'child_process';
 
 const { ERROR_MESSAGE, SENTRY_URL, ERROR_URL, ANTHROPIC_API_KEY, GITHUB_OUTPUT } = process.env;
 
@@ -32,10 +32,12 @@ function getProjectContext() {
   // Try to find relevant files based on error message
   let relevantCode = '';
   try {
-    const grepResult = execSync(
-      `grep -rl "${ERROR_MESSAGE.slice(0, 40).replace(/['"]/g, '')}" src/ --include="*.ts" --include="*.tsx" 2>/dev/null | head -3`,
-      { encoding: 'utf-8' }
-    ).trim();
+    const searchTerm = ERROR_MESSAGE.slice(0, 40);
+    const grepResult = execFileSync(
+      'grep',
+      ['-rl', searchTerm, 'src/', '--include=*.ts', '--include=*.tsx'],
+      { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'pipe'] }
+    ).trim().split('\n').slice(0, 3).join('\n');
 
     if (grepResult) {
       for (const file of grepResult.split('\n')) {

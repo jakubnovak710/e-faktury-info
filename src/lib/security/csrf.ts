@@ -1,7 +1,8 @@
 import { cookies } from 'next/headers';
+import type { NextResponse } from 'next/server';
 
-const CSRF_COOKIE = '__csrf';
-const CSRF_HEADER = 'x-csrf-token';
+export const CSRF_COOKIE = '__csrf';
+export const CSRF_HEADER = 'x-csrf-token';
 
 /**
  * Generate a random CSRF token.
@@ -13,22 +14,23 @@ function generateToken(): string {
 }
 
 /**
- * Get or create a CSRF token. Sets it as an httpOnly cookie.
- * Call this in server components or API routes that render forms.
+ * Set CSRF cookie on response if not already present.
+ * Uses double-submit cookie pattern: cookie is readable by JS so client
+ * can send it back in the x-csrf-token header.
  */
-export async function getCsrfToken(): Promise<string> {
-  const cookieStore = await cookies();
-  const existing = cookieStore.get(CSRF_COOKIE)?.value;
-  if (existing) return existing;
+export function ensureCsrfCookie(
+  response: NextResponse,
+  existingToken: string | undefined,
+): void {
+  if (existingToken) return;
 
   const token = generateToken();
-  cookieStore.set(CSRF_COOKIE, token, {
-    httpOnly: true,
+  response.cookies.set(CSRF_COOKIE, token, {
+    httpOnly: false, // Must be readable by client JS for double-submit pattern
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'strict',
     path: '/',
   });
-  return token;
 }
 
 /**

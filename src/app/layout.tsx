@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Script from 'next/script';
 import { ThemeProvider } from '@/components/providers/theme-provider';
 import { OrganizationJsonLd, WebSiteJsonLd } from '@/components/seo';
 import { createMetadata } from '@/lib/metadata';
@@ -15,18 +16,7 @@ export default function RootLayout({
   return (
     <html lang={siteConfig.locale} data-theme="dark" suppressHydrationWarning>
       <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              (function() {
-                var t = localStorage.getItem('theme');
-                if (t === 'light' || t === 'dark') {
-                  document.documentElement.setAttribute('data-theme', t);
-                }
-              })();
-            `,
-          }}
-        />
+        <Script src="/theme-init.js" strategy="beforeInteractive" />
         <link rel="alternate" type="text/plain" href="/llms.txt" title="LLM-friendly content" />
         <OrganizationJsonLd />
         <WebSiteJsonLd />
