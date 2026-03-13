@@ -73,21 +73,21 @@ interface DropdownChild {
 
 function NavDropdown({
   label,
-  children,
+  items,
   isOpen,
   onToggle,
   onMouseEnter,
   onMouseLeave,
 }: {
   label: string;
-  children: DropdownChild[];
+  items: DropdownChild[];
   isOpen: boolean;
   onToggle: () => void;
   onMouseEnter: () => void;
   onMouseLeave: () => void;
 }) {
   const pathname = usePathname();
-  const isChildActive = children.some((child) => pathname === child.href);
+  const isChildActive = items.some((child) => pathname === child.href);
 
   return (
     <div className="relative" onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
@@ -135,7 +135,7 @@ function NavDropdown({
                 boxShadow: '0 8px 32px var(--glass-shadow)',
               }}
             >
-              {children.map((child) => {
+              {items.map((child) => {
                 const isActive = pathname === child.href;
                 return (
                   <Link
@@ -401,7 +401,7 @@ export function Navigation({ logo, subtitle, className }: NavigationProps) {
                   <NavDropdown
                     key={navItem.label}
                     label={navItem.label}
-                    children={navItem.children}
+                    items={navItem.children}
                     isOpen={activeDropdown === navItem.label}
                     onToggle={() =>
                       setActiveDropdown(activeDropdown === navItem.label ? null : navItem.label)
