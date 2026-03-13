@@ -1,12 +1,18 @@
 import type { NavigationConfig } from '@jakubnovak710/universal-web-core/types';
 
-export const navigationConfig: NavigationConfig = {
+export const navigationConfig: NavigationConfig & {
+  phone?: string;
+  ctaLabel?: string;
+  ctaTarget?: string;
+} = {
   header: [
     { label: 'Domov', href: '/' },
     { label: 'O nás', href: '/about' },
     { label: 'Služby', href: '/services' },
-    { label: 'Kontakt', href: '/contact' },
   ],
+  phone: '+421 XXX XXX XXX',
+  ctaLabel: 'Konzultácia',
+  ctaTarget: '/contact',
   footer: {
     columns: [
       {

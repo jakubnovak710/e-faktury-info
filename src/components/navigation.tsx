@@ -4,15 +4,31 @@ import { useState, useCallback, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'motion/react';
-import { Menu, X, Sun, Moon, ArrowRight, Code } from 'lucide-react';
+import { Menu, X, ArrowRight, ChevronDown, Sun, Moon, Code, Phone } from 'lucide-react';
 import { useTheme } from '@jakubnovak710/universal-web-core/components/providers/theme-provider';
 import { cn } from '@jakubnovak710/universal-web-core/lib/utils';
 import { navigationConfig } from '@config/navigation.config';
-import { MagneticButton } from '@/components/magnetic-button';
-import { ShimmerButton } from '@/components/shimmer-button';
 
 // ---------------------------------------------------------------------------
-// Nav link with animated underline
+// Scroll state hook — simple isScrolled (always visible, no hide/show)
+// ---------------------------------------------------------------------------
+
+function useScrollState() {
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    function onScroll() {
+      setIsScrolled(window.scrollY > 20);
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  return isScrolled;
+}
+
+// ---------------------------------------------------------------------------
+// Desktop nav link with active pill + dot indicator
 // ---------------------------------------------------------------------------
 
 function NavLink({ href, label }: { href: string; label: string }) {
@@ -23,59 +39,139 @@ function NavLink({ href, label }: { href: string; label: string }) {
     <Link
       href={href}
       className={cn(
-        'group relative px-1 py-2 text-sm font-medium transition-colors duration-200',
-        isActive ? 'font-bold' : '',
+        'relative flex items-center gap-1.5 rounded-lg border px-4 py-2 text-sm font-semibold transition-all duration-200',
+        isActive ? 'font-bold' : 'border-transparent',
       )}
-      style={{ color: isActive ? 'var(--accent)' : 'var(--text-secondary)' }}
+      style={{
+        color: isActive ? 'var(--text-primary)' : 'var(--text-secondary)',
+        backgroundColor: isActive ? 'var(--fill-subtle)' : 'transparent',
+        borderColor: isActive ? 'var(--accent)' : undefined,
+        boxShadow: isActive ? '0 1px 3px var(--glass-shadow)' : undefined,
+      }}
     >
       {label}
-      <span
-        className={cn(
-          'absolute bottom-0 left-0 h-[2px] transition-all duration-300 ease-out',
-          isActive ? 'w-full' : 'w-0 group-hover:w-full',
-        )}
-        style={{ backgroundColor: 'var(--accent)' }}
-        aria-hidden="true"
-      />
+      {isActive && (
+        <span
+          className="absolute -bottom-1 -right-1 z-20 h-1.5 w-1.5 rounded-full"
+          style={{ backgroundColor: 'var(--accent)' }}
+          aria-hidden="true"
+        />
+      )}
     </Link>
   );
 }
 
 // ---------------------------------------------------------------------------
-// Scroll hide/show hook
+// Dropdown nav item
 // ---------------------------------------------------------------------------
 
-function useScrollDirection() {
-  const [hidden, setHidden] = useState(false);
-  const [atTop, setAtTop] = useState(true);
-  const lastY = useRef(0);
-  const ticking = useRef(false);
+interface DropdownChild {
+  label: string;
+  href: string;
+  icon?: React.ReactNode;
+}
 
-  useEffect(() => {
-    function onScroll() {
-      if (ticking.current) return;
-      ticking.current = true;
-      requestAnimationFrame(() => {
-        const y = window.scrollY;
-        setAtTop(y < 20);
-        if (y > 100) {
-          setHidden(y > lastY.current);
-        } else {
-          setHidden(false);
-        }
-        lastY.current = y;
-        ticking.current = false;
-      });
-    }
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
+function NavDropdown({
+  label,
+  children,
+  isOpen,
+  onToggle,
+  onMouseEnter,
+  onMouseLeave,
+}: {
+  label: string;
+  children: DropdownChild[];
+  isOpen: boolean;
+  onToggle: () => void;
+  onMouseEnter: () => void;
+  onMouseLeave: () => void;
+}) {
+  const pathname = usePathname();
+  const isChildActive = children.some((child) => pathname === child.href);
 
-  return { hidden, atTop };
+  return (
+    <div className="relative" onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+      <button
+        onClick={onToggle}
+        className={cn(
+          'flex cursor-pointer items-center gap-1.5 rounded-lg border px-4 py-2 text-sm font-semibold transition-all duration-200',
+          isChildActive ? 'font-bold' : 'border-transparent',
+        )}
+        style={{
+          color: isChildActive ? 'var(--text-primary)' : 'var(--text-secondary)',
+          backgroundColor: isChildActive ? 'var(--fill-subtle)' : 'transparent',
+          borderColor: isChildActive ? 'var(--accent)' : undefined,
+        }}
+      >
+        {label}
+        <ChevronDown
+          size={14}
+          className={cn('transition-transform duration-200', isOpen && 'rotate-180')}
+        />
+        {isChildActive && (
+          <span
+            className="absolute -bottom-1 -right-1 z-20 h-1.5 w-1.5 rounded-full"
+            style={{ backgroundColor: 'var(--accent)' }}
+            aria-hidden="true"
+          />
+        )}
+      </button>
+
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            className="absolute left-0 top-full z-50 w-64 pt-2"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            transition={{ duration: 0.2 }}
+            style={{ transformOrigin: 'top left' }}
+          >
+            <div
+              className="overflow-hidden rounded-xl p-2"
+              style={{
+                backgroundColor: 'var(--bg-elevated)',
+                border: '1px solid var(--border-default)',
+                boxShadow: '0 8px 32px var(--glass-shadow)',
+              }}
+            >
+              {children.map((child) => {
+                const isActive = pathname === child.href;
+                return (
+                  <Link
+                    key={child.href}
+                    href={child.href}
+                    className="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-left text-sm font-medium transition-colors"
+                    style={{
+                      color: isActive ? 'var(--accent)' : 'var(--text-secondary)',
+                      backgroundColor: isActive ? 'var(--fill-subtle)' : 'transparent',
+                    }}
+                  >
+                    {child.icon && (
+                      <span
+                        className="rounded-md p-1.5"
+                        style={{
+                          backgroundColor: isActive ? 'var(--bg-surface)' : 'var(--fill-subtle)',
+                          color: isActive ? 'var(--accent)' : 'var(--text-muted)',
+                        }}
+                      >
+                        {child.icon}
+                      </span>
+                    )}
+                    {child.label}
+                  </Link>
+                );
+              })}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
 }
 
 // ---------------------------------------------------------------------------
-// Mobile menu overlay
+// Mobile overlay menu (full-screen, slide-down)
 // ---------------------------------------------------------------------------
 
 function MobileMenu({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
@@ -88,62 +184,54 @@ function MobileMenu({ isOpen, onClose }: { isOpen: boolean; onClose: () => void 
     return () => { document.body.style.overflow = ''; };
   }, [isOpen]);
 
+  const phone = navigationConfig.phone;
+  const ctaLabel = navigationConfig.ctaLabel ?? 'Kontakt';
+  const ctaTarget = navigationConfig.ctaTarget ?? '/contact';
+
   return (
     <AnimatePresence>
       {isOpen && (
-        <>
-          {/* Backdrop */}
-          <motion.div
-            className="fixed inset-0 z-40" // design-tokens-ignore
-            style={{ backgroundColor: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)' }} // design-tokens-ignore
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            onClick={onClose}
-            aria-hidden="true"
-          />
-
-          {/* Panel */}
-          <motion.div
-            className="fixed right-0 top-0 z-50 flex h-full w-80 max-w-[85vw] flex-col px-8 py-6"
-            style={{
-              backgroundColor: 'var(--bg-surface)',
-              borderLeft: '1px solid var(--border-subtle)',
-            }}
-            initial={{ x: '100%' }}
-            animate={{ x: 0 }}
-            exit={{ x: '100%' }}
-            transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-          >
+        <motion.div
+          className="fixed inset-0 z-[60] overflow-y-auto md:hidden"
+          style={{
+            backgroundColor: 'var(--bg-surface)',
+            backdropFilter: 'blur(24px)',
+            WebkitBackdropFilter: 'blur(24px)',
+          }}
+          initial={{ opacity: 0, y: '-100%' }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: '-100%' }}
+          transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
+        >
+          <div className="flex min-h-full flex-col px-6 pb-12 pt-32">
+            {/* Close button */}
             <button
               onClick={onClose}
-              className="mb-10 flex h-10 w-10 cursor-pointer items-center justify-center self-end rounded-xl transition-all hover:scale-110 active:scale-95"
+              className="absolute right-6 top-6 flex h-12 w-12 cursor-pointer items-center justify-center rounded-full transition-all active:scale-95"
               style={{ backgroundColor: 'var(--fill-subtle)', color: 'var(--text-muted)' }}
               aria-label="Zavrieť menu"
             >
-              <X className="h-5 w-5" />
+              <X size={24} />
             </button>
 
-            <nav className="flex flex-col gap-2">
+            {/* Nav items — staggered cards */}
+            <nav className="flex flex-col gap-3">
               {navigationConfig.header.map((item, i) => {
                 const isActive = pathname === item.href;
                 return (
                   <motion.div
                     key={item.href}
-                    initial={{ opacity: 0, x: 24 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.05 + i * 0.06, duration: 0.3 }}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.1 + i * 0.05, duration: 0.4 }}
                   >
                     <Link
                       href={item.href}
-                      className={cn(
-                        'flex items-center rounded-xl px-4 py-3 text-base font-medium transition-all duration-200',
-                        isActive ? 'font-bold' : '',
-                      )}
+                      className="flex items-center rounded-xl p-4 text-xl font-bold transition-all"
                       style={{
                         color: isActive ? 'var(--accent)' : 'var(--text-primary)',
-                        backgroundColor: isActive ? 'var(--fill-subtle)' : 'transparent',
+                        backgroundColor: 'var(--fill-subtle)',
+                        borderLeft: isActive ? '3px solid var(--accent)' : '3px solid transparent',
                       }}
                       onClick={onClose}
                     >
@@ -161,44 +249,77 @@ function MobileMenu({ isOpen, onClose }: { isOpen: boolean; onClose: () => void 
               })}
             </nav>
 
+            {/* Bottom CTA block */}
             <motion.div
-              className="mt-auto pb-6"
-              initial={{ opacity: 0, y: 16 }}
+              className="mt-auto rounded-2xl p-6"
+              style={{ backgroundColor: 'var(--bg-overlay)' }}
+              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.35, duration: 0.3 }}
+              transition={{ delay: 0.4, duration: 0.4 }}
             >
-              <ShimmerButton href="/kontakt" className="w-full justify-center" onClick={onClose}>
-                Kontakt
-                <ArrowRight className="h-4 w-4" />
-              </ShimmerButton>
+              {phone && (
+                <a
+                  href={`tel:${phone.replace(/\s/g, '')}`}
+                  className="mb-4 flex items-center gap-2 font-mono text-2xl font-bold"
+                  style={{ color: 'var(--text-primary)' }}
+                >
+                  <Phone size={20} style={{ color: 'var(--accent)' }} />
+                  {phone}
+                </a>
+              )}
+              <Link
+                href={ctaTarget}
+                className="flex w-full items-center justify-center gap-2 rounded-lg px-6 py-3 text-sm font-bold transition-all active:scale-95"
+                style={{
+                  backgroundColor: 'var(--accent)',
+                  color: 'var(--bg-base)',
+                }}
+                onClick={onClose}
+              >
+                {ctaLabel}
+                <ArrowRight size={16} />
+              </Link>
             </motion.div>
-          </motion.div>
-        </>
+          </div>
+        </motion.div>
       )}
     </AnimatePresence>
   );
 }
 
 // ---------------------------------------------------------------------------
-// Default logo
+// Default logo with optional subtitle
 // ---------------------------------------------------------------------------
 
-function DefaultLogo() {
+function DefaultLogo({ subtitle }: { subtitle?: string }) {
   const pathname = usePathname();
   const content = (
-    <div className="flex items-center gap-2.5">
-      <div
-        className="flex h-7 w-7 items-center justify-center rounded-lg"
-        style={{
-          backgroundColor: 'var(--accent)',
-          boxShadow: '0 0 12px var(--accent-glow)',
-        }}
-      >
-        <Code className="h-3.5 w-3.5" style={{ color: 'var(--bg-base)' }} />
+    <div className="group flex flex-col leading-none">
+      <div className="flex items-center gap-2.5">
+        <div
+          className="flex h-7 w-7 items-center justify-center rounded-lg"
+          style={{
+            backgroundColor: 'var(--accent)',
+            boxShadow: '0 0 12px var(--accent-glow)',
+          }}
+        >
+          <Code className="h-3.5 w-3.5" style={{ color: 'var(--bg-base)' }} />
+        </div>
+        <span
+          className="text-lg font-black tracking-tight transition-colors"
+          style={{ color: 'var(--text-primary)' }}
+        >
+          Universal Web
+        </span>
       </div>
-      <span className="text-sm font-black" style={{ color: 'var(--text-primary)' }}>
-        Universal Web
-      </span>
+      {subtitle && (
+        <span
+          className="pl-[38px] text-[10px] font-bold uppercase tracking-[0.2em] transition-colors"
+          style={{ color: 'var(--text-muted)' }}
+        >
+          {subtitle}
+        </span>
+      )}
     </div>
   );
 
@@ -207,111 +328,162 @@ function DefaultLogo() {
 }
 
 // ---------------------------------------------------------------------------
-// Floating Island Navigation
+// Navigation — 8888.sk floating bar style
 // ---------------------------------------------------------------------------
 
 interface NavigationProps {
   logo?: React.ReactNode;
+  subtitle?: string;
   className?: string;
 }
 
-export function Navigation({ logo, className }: NavigationProps) {
+export function Navigation({ logo, subtitle, className }: NavigationProps) {
   const { theme, toggleTheme } = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const { hidden, atTop } = useScrollDirection();
+  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const isScrolled = useScrollState();
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const closeMobile = useCallback(() => setMobileOpen(false), []);
 
-  // Filter last nav item as CTA
-  const allLinks = navigationConfig.header;
-  const navLinks = allLinks.slice(0, -1);
-  const ctaLink = allLinks[allLinks.length - 1]!;
+  // Close dropdown on outside click
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setActiveDropdown(null);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const navLinks = navigationConfig.header;
+  const phone = navigationConfig.phone;
+  const ctaLabel = navigationConfig.ctaLabel ?? 'Kontakt';
+  const ctaTarget = navigationConfig.ctaTarget ?? '/contact';
 
   return (
     <>
-      <motion.nav
+      <header
         className={cn(
-          'fixed left-1/2 z-40 flex items-center gap-1 px-2 py-2 md:gap-2 md:px-4',
+          'fixed left-0 right-0 z-50 px-4 transition-all duration-500 ease-in-out',
+          isScrolled ? 'top-4' : 'top-6',
           className,
         )}
-        style={{
-          backgroundColor: 'var(--glass-bg)',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-          border: '1px solid var(--glass-border)',
-          borderRadius: '9999px',
-          boxShadow: atTop
-            ? '0 4px 30px var(--glass-shadow)'
-            : '0 8px 40px var(--glass-shadow)',
-        }}
-        initial={{ x: '-50%', y: 0 }}
-        animate={{
-          x: '-50%',
-          y: hidden ? -80 : 16,
-        }}
-        transition={{ type: 'spring', damping: 30, stiffness: 300 }}
       >
-        {/* Logo */}
-        <div className="pl-2 pr-2 md:pr-4">
-          {logo ?? <DefaultLogo />}
-        </div>
+        <nav
+          className="mx-auto flex max-w-6xl items-center justify-between rounded-xl py-2 pl-4 pr-2 transition-all duration-300"
+          style={{
+            backgroundColor: 'var(--glass-bg)',
+            backdropFilter: isScrolled ? 'blur(20px)' : 'blur(8px)',
+            WebkitBackdropFilter: isScrolled ? 'blur(20px)' : 'blur(8px)',
+            border: `1px solid ${isScrolled ? 'var(--border-default)' : 'var(--glass-border)'}`,
+            boxShadow: isScrolled
+              ? '0 8px 40px var(--glass-shadow)'
+              : '0 4px 20px var(--glass-shadow)',
+          }}
+        >
+          {/* Logo */}
+          <div className="z-50 flex-shrink-0">
+            {logo ?? <DefaultLogo subtitle={subtitle} />}
+          </div>
 
-        {/* Desktop links */}
-        <div className="hidden items-center gap-1 md:flex">
-          {navLinks.map((item) => (
-            <MagneticButton key={item.href} strength={0.2} maxDistance={6}>
-              <NavLink href={item.href} label={item.label} />
-            </MagneticButton>
-          ))}
+          {/* Desktop nav */}
+          <div className="hidden items-center gap-1 md:flex" ref={dropdownRef}>
+            {navLinks.map((item) => {
+              const navItem = item as typeof item & {
+                type?: 'link' | 'dropdown';
+                children?: DropdownChild[];
+              };
 
-          {/* Separator */}
-          <div
-            className="mx-2 h-5 w-px"
-            style={{ backgroundColor: 'var(--border-default)' }}
-            aria-hidden="true"
-          />
+              if (navItem.type === 'dropdown' && navItem.children) {
+                return (
+                  <NavDropdown
+                    key={navItem.label}
+                    label={navItem.label}
+                    children={navItem.children}
+                    isOpen={activeDropdown === navItem.label}
+                    onToggle={() =>
+                      setActiveDropdown(activeDropdown === navItem.label ? null : navItem.label)
+                    }
+                    onMouseEnter={() => setActiveDropdown(navItem.label)}
+                    onMouseLeave={() => setActiveDropdown(null)}
+                  />
+                );
+              }
 
-          {/* CTA */}
-          <MagneticButton strength={0.25} maxDistance={8}>
-            <ShimmerButton href={ctaLink.href} className="rounded-full px-5 py-2 text-xs">
-              {ctaLink.label}
-              <ArrowRight className="h-3.5 w-3.5" />
-            </ShimmerButton>
-          </MagneticButton>
+              return <NavLink key={item.href} href={item.href} label={item.label} />;
+            })}
+          </div>
 
-          {/* Theme toggle */}
-          <MagneticButton
-            onClick={toggleTheme}
-            className="ml-1 flex h-8 w-8 items-center justify-center rounded-full transition-all hover:scale-110 active:scale-95"
-            style={{ backgroundColor: 'var(--fill-subtle)', color: 'var(--text-muted)' }}
-            aria-label={theme === 'dark' ? 'Svetlý režim' : 'Tmavý režim'}
-            strength={0.3}
-            maxDistance={6}
-          >
-            {theme === 'dark' ? <Sun className="h-3.5 w-3.5" /> : <Moon className="h-3.5 w-3.5" />}
-          </MagneticButton>
-        </div>
+          {/* Right side: phone + CTA + theme + hamburger */}
+          <div className="flex items-center gap-3">
+            {/* Phone (lg+) */}
+            {phone && (
+              <a
+                href={`tel:${phone.replace(/\s/g, '')}`}
+                className="hidden items-center gap-1.5 rounded-md border px-3 py-2 font-mono text-xs font-bold transition-colors lg:flex"
+                style={{
+                  color: 'var(--text-muted)',
+                  backgroundColor: 'var(--fill-subtle)',
+                  borderColor: 'var(--border-subtle)',
+                }}
+              >
+                <Phone size={12} />
+                {phone}
+              </a>
+            )}
 
-        {/* Mobile: theme + hamburger */}
-        <div className="flex items-center gap-2 md:hidden">
-          <button
-            onClick={toggleTheme}
-            className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full transition-all active:scale-95"
-            style={{ backgroundColor: 'var(--fill-subtle)', color: 'var(--text-muted)' }}
-            aria-label={theme === 'dark' ? 'Svetlý režim' : 'Tmavý režim'}
-          >
-            {theme === 'dark' ? <Sun className="h-3.5 w-3.5" /> : <Moon className="h-3.5 w-3.5" />}
-          </button>
-          <button
-            onClick={() => setMobileOpen(true)}
-            className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full transition-all active:scale-95"
-            style={{ backgroundColor: 'var(--fill-subtle)', color: 'var(--text-muted)' }}
-            aria-label="Menu"
-          >
-            <Menu className="h-4 w-4" />
-          </button>
-        </div>
-      </motion.nav>
+            {/* CTA button (md+) */}
+            <Link
+              href={ctaTarget}
+              className="hidden items-center gap-2 rounded-lg border-b-2 px-5 py-2.5 text-sm font-bold shadow-lg transition-all hover:shadow-xl active:translate-y-0.5 md:flex"
+              style={{
+                backgroundColor: 'var(--bg-overlay)',
+                color: 'var(--text-primary)',
+                borderBottomColor: 'var(--border-strong)',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = 'var(--accent)';
+                e.currentTarget.style.color = 'var(--bg-base)';
+                e.currentTarget.style.boxShadow = '0 4px 20px var(--accent-glow)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'var(--bg-overlay)';
+                e.currentTarget.style.color = 'var(--text-primary)';
+                e.currentTarget.style.boxShadow = '';
+              }}
+            >
+              {ctaLabel}
+              <ArrowRight size={16} style={{ color: 'var(--accent-secondary)' }} />
+            </Link>
+
+            {/* Theme toggle */}
+            <button
+              onClick={toggleTheme}
+              className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg transition-all hover:scale-110 active:scale-95"
+              style={{ backgroundColor: 'var(--fill-subtle)', color: 'var(--text-muted)' }}
+              aria-label={theme === 'dark' ? 'Svetlý režim' : 'Tmavý režim'}
+            >
+              {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+            </button>
+
+            {/* Mobile hamburger */}
+            <button
+              className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border-b-2 transition-all active:translate-y-[2px] active:border-b-0 md:hidden"
+              style={{
+                backgroundColor: 'var(--fill-subtle)',
+                color: 'var(--text-secondary)',
+                borderBottomColor: 'var(--border-default)',
+              }}
+              onClick={() => setMobileOpen(true)}
+              aria-label="Menu"
+            >
+              <Menu size={18} />
+            </button>
+          </div>
+        </nav>
+      </header>
 
       <MobileMenu isOpen={mobileOpen} onClose={closeMobile} />
     </>
