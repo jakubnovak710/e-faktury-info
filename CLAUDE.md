@@ -118,6 +118,27 @@ Keď user chce vytvoriť nový klientsky projekt z tejto šablóny:
 12. Dodržiavaj ABSOLUTE RULES vyššie
 13. Po každej stránke: `pnpm build && pnpm lint`
 
+### Fáza 5: Self-Healing Pipeline (POVINNÉ)
+14. Nastav GitHub repository secrets pre self-healing:
+    - `ANTHROPIC_API_KEY` — **POVINNÝ** — Claude API kľúč z [console.anthropic.com](https://console.anthropic.com). Bez neho self-healing agent nefunguje a ticho zlyhá.
+    - `GH_PAT` — **POVINNÝ** — GitHub Personal Access Token s `repo` + `workflow` scope. Bez neho agent nemôže vytvoriť PR s fixom.
+    - `SITE_URL` — voliteľný — URL nasadeného webu (pre notifikácie)
+    - `NOTIFY_SECRET` — voliteľný — Bearer token pre webhook notifikácie
+
+    **Príkazy na nastavenie (spusti v root-e projektu):**
+    ```bash
+    # Povinné — bez týchto self-healing nefunguje
+    gh secret set ANTHROPIC_API_KEY --body "sk-ant-..."
+    gh secret set GH_PAT --body "ghp_..."
+
+    # Voliteľné — pre notifikácie
+    gh secret set SITE_URL --body "https://example.com"
+    gh secret set NOTIFY_SECRET --body "your-webhook-secret"
+    ```
+
+15. Over funkčnosť: spusti test dispatch `gh workflow run self-heal.yml` alebo počkaj na prvý Sentry trigger
+16. **POZOR:** Ak `ANTHROPIC_API_KEY` nie je nastavený, workflow skončí ticho s `has_fix=false` — žiadna chybová hláška v PR, žiadny fix. Over cez `gh secret list`.
+
 ### Checklist pred launch
 - [ ] `pnpm build` OK
 - [ ] Všetky env vars nastavené vo Vercel
@@ -125,3 +146,5 @@ Keď user chce vytvoriť nový klientsky projekt z tejto šablóny:
 - [ ] Favicon + apple-touch-icon
 - [ ] robots.txt + sitemap (auto-generované Next.js)
 - [ ] HTTPS funguje na custom doméne
+- [ ] `ANTHROPIC_API_KEY` nastavený v GitHub Secrets (self-healing)
+- [ ] `GH_PAT` nastavený v GitHub Secrets (self-healing PR creation)
