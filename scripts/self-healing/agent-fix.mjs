@@ -1,32 +1,38 @@
 #!/usr/bin/env node
 
 /**
- * Self-healing Agent v2 — Claude Agent SDK
+ * Self-healing Pipeline v3 — Multi-Agent (Triage → Fix → Verify)
  *
- * Robust self-healing pipeline with:
- * - Full error log context (not just "build failure")
- * - Built-in verify + retry loop (max 2 attempts)
- * - Structured output for CI integration
+ * Cost-optimized: haiku for triage+verify, sonnet only for fixing.
+ * Estimated cost per run: ~$0.16-0.31
+ *
+ * Flow:
+ *   1. Triage (haiku)  — classify error, decide if auto-fixable
+ *   2. Fix (sonnet)    — find root cause, apply minimal fix, retry up to 2x
+ *   3. Verify (haiku)  — independent review of the diff
+ *   4. Fallback        — revert if verify rejects
  *
  * Inputs (env vars):
- *   ERROR_LOG       — full error output from failed CI step
- *   ERROR_TYPE      — what failed: "lint", "typecheck", "build", "test", or combo
- *   SENTRY_URL      — (optional) link to Sentry issue
- *   ERROR_URL       — (optional) URL where error occurred
- *   ANTHROPIC_API_KEY — Claude API key
- *   GITHUB_OUTPUT   — GitHub Actions output file
+ *   ERROR_LOG_FILE     — path to file with full CI error output
+ *   ERROR_TYPE         — what failed: "lint", "typecheck", "build", "test"
+ *   SENTRY_URL         — (optional) Sentry issue link
+ *   ERROR_URL          — (optional) URL where error occurred
+ *   ANTHROPIC_API_KEY  — Claude API key
+ *   GITHUB_OUTPUT      — GitHub Actions output file
  *
  * Outputs (GitHub Actions):
- *   has_fix    — "true" if agent successfully fixed and verified
- *   analysis   — summary of what was done (max 500 chars)
- *   attempt    — which attempt succeeded (1 or 2)
+ *   has_fix       — "true" if pipeline succeeded end-to-end
+ *   analysis      — summary (max 500 chars)
+ *   triage_result — "fixable", "not-fixable", or "needs-human"
+ *   attempt       — which fix attempt succeeded (1 or 2)
  */
 
 import { appendFileSync, readFileSync } from 'fs';
+import { execSync } from 'child_process';
 
 const {
-  ERROR_LOG,
   ERROR_LOG_FILE,
+  ERROR_LOG,
   ERROR_TYPE,
   SENTRY_URL,
   ERROR_URL,
@@ -34,27 +40,14 @@ const {
   GITHUB_OUTPUT,
 } = process.env;
 
-// Read error log from file if provided (avoids env var size limits)
-const errorLog = ERROR_LOG_FILE
-  ? safeRead(ERROR_LOG_FILE)
-  : (ERROR_LOG || 'No error log provided');
+const errorLog = ERROR_LOG_FILE ? safeRead(ERROR_LOG_FILE) : (ERROR_LOG || 'No error log');
 
-function safeRead(path) {
-  try {
-    return readFileSync(path, 'utf8');
-  } catch {
-    return `Could not read error log file: ${path}`;
-  }
-}
-
-function setOutput(name, value) {
-  if (GITHUB_OUTPUT) {
-    appendFileSync(GITHUB_OUTPUT, `${name}=${value}\n`);
-  }
-}
-
-function log(msg) {
-  console.log(`[self-heal] ${msg}`);
+function safeRead(p) { try { return readFileSync(p, 'utf8'); } catch { return ''; } }
+function setOutput(k, v) { if (GITHUB_OUTPUT) appendFileSync(GITHUB_OUTPUT, `${k}=${v}\n`); }
+function log(phase, msg) { console.log(`[${phase}] ${msg}`); }
+function truncate(text, n = 150) {
+  const lines = text.split('\n');
+  return lines.length <= n ? text : `...(${lines.length - n} lines cut)\n${lines.slice(-n).join('\n')}`;
 }
 
 if (!ANTHROPIC_API_KEY) {
@@ -64,199 +57,309 @@ if (!ANTHROPIC_API_KEY) {
   process.exit(0);
 }
 
-// Truncate error log to last 200 lines to stay within prompt limits
-function truncateLog(text, maxLines = 200) {
-  const lines = text.split('\n');
-  if (lines.length <= maxLines) return text;
-  return `... (${lines.length - maxLines} lines truncated)\n` + lines.slice(-maxLines).join('\n');
-}
+// ── Shared agent runner ───────────────────────────────────────────────────────
 
-function buildPrompt(attempt, previousError) {
-  const errorContext = truncateLog(errorLog);
-
-  let prompt = `You are a senior developer fixing a CI failure in a Next.js 15 TypeScript project.
-
-## CI Failure Details
-- **What failed:** ${ERROR_TYPE || 'unknown'}
-${SENTRY_URL ? `- **Sentry:** ${SENTRY_URL}` : ''}
-${ERROR_URL ? `- **URL:** ${ERROR_URL}` : ''}
-
-## Full Error Output
-\`\`\`
-${errorContext}
-\`\`\`
-`;
-
-  if (attempt > 1 && previousError) {
-    prompt += `
-## IMPORTANT: Previous Fix Attempt Failed
-Your previous fix did not work. The verification step produced this error:
-\`\`\`
-${truncateLog(previousError, 100)}
-\`\`\`
-Analyze WHY your previous fix was wrong and try a different approach.
-`;
+let _query;
+async function getQuery() {
+  if (!_query) {
+    const sdk = await import('@anthropic-ai/claude-agent-sdk');
+    _query = sdk.query;
   }
-
-  prompt += `
-## Your Task
-1. **Read CLAUDE.md first** — understand project conventions before touching code.
-2. **Analyze the error.** The full error output is above. Identify the root cause.
-3. **Find relevant files.** Use Glob and Grep to locate the problematic code.
-4. **Apply the minimal fix.** Use Edit — do NOT refactor unrelated code.
-5. **Verify your fix.** Run the appropriate commands via Bash:
-   - If lint failed: \`pnpm lint\`
-   - If typecheck failed: \`pnpm tsc --noEmit\`
-   - If build failed: \`pnpm build\`
-   - If test failed: \`pnpm test -- --run\`
-   - Always finish with: \`pnpm build\` (must pass before done)
-6. **If verification fails**, analyze the new error and fix again (max 3 iterations within this run).
-
-## Rules
-- NEVER use hardcoded colors — use CSS variables (var(--token-name))
-- NEVER introduce \`any\` types
-- Keep changes minimal — fix only what's broken
-- Do NOT add comments explaining your fix
-- Do NOT refactor surrounding code
-
-## Output Format
-When done, print EXACTLY this format:
----RESULT---
-STATUS: SUCCESS or FAILURE
-FILES: comma-separated list of modified files
-SUMMARY: one-paragraph description of root cause and fix
----END---`;
-
-  return prompt;
+  return _query;
 }
 
-async function runAgent(attempt, previousError) {
-  const { query } = await import('@anthropic-ai/claude-agent-sdk');
-
-  const prompt = buildPrompt(attempt, previousError);
-
-  log(`Attempt ${attempt} — sending to agent...`);
-
+async function runAgent(prompt, model, maxTurns, tools, appendSystem = '') {
+  const query = await getQuery();
   let result = '';
-  let hasResult = false;
-
-  for await (const message of query({
+  for await (const msg of query({
     prompt,
     options: {
       cwd: process.cwd(),
-      model: 'claude-sonnet-4-6',
-      allowedTools: ['Read', 'Edit', 'Glob', 'Grep', 'Bash'],
-      maxTurns: 40,
+      model,
+      allowedTools: tools,
+      maxTurns,
       systemPrompt: {
         type: 'preset',
         preset: 'claude_code',
-        append: `\nYou are running in CI as a self-healing agent (attempt ${attempt}/2). Fix the error autonomously. No human is watching — do your best. Always verify your fix by running the build.`,
+        append: `\nYou are in CI. No human is watching. ${appendSystem}`,
       },
     },
   })) {
-    if ('result' in message) {
-      result = message.result;
-      hasResult = true;
-    }
+    if ('result' in msg) result = msg.result;
+  }
+  return result;
+}
+
+function shell(cmd, timeout = 300_000) {
+  return execSync(cmd, { stdio: 'pipe', timeout }).toString();
+}
+
+// ── Phase 1: Triage (haiku — fast & cheap) ────────────────────────────────────
+
+async function triage() {
+  log('TRIAGE', 'Classifying error with haiku...');
+
+  const errorSnippet = truncate(errorLog, 80);
+  const prompt = `You are a CI triage bot. Analyze this error and classify it.
+
+## Error Type: ${ERROR_TYPE || 'unknown'}
+
+## Error Output (last 80 lines)
+\`\`\`
+${errorSnippet}
+\`\`\`
+
+## Task
+1. Read the error output carefully.
+2. Classify: is this auto-fixable by an AI agent?
+
+Reply with EXACTLY one of these lines (nothing else):
+- FIXABLE: <one-line description of what needs fixing>
+- NOT_FIXABLE: <reason why a human is needed>
+- CONFIG_ISSUE: <what config/env var is missing>`;
+
+  const result = await runAgent(
+    prompt,
+    'claude-haiku-4-5-20251001',
+    5,
+    ['Read', 'Glob', 'Grep'],
+    'You are the TRIAGE agent. Only classify — do NOT fix anything.'
+  );
+
+  log('TRIAGE', `Result: ${result.trim()}`);
+
+  if (result.includes('FIXABLE:')) {
+    const desc = result.match(/FIXABLE:\s*(.+)/)?.[1] || '';
+    return { action: 'fixable', description: desc.trim() };
+  }
+  if (result.includes('CONFIG_ISSUE:')) {
+    const desc = result.match(/CONFIG_ISSUE:\s*(.+)/)?.[1] || '';
+    return { action: 'config', description: desc.trim() };
+  }
+  return { action: 'not-fixable', description: result.trim() };
+}
+
+// ── Phase 2: Fix (sonnet — capable, with retry) ──────────────────────────────
+
+async function fix(triageDescription, attempt, previousError) {
+  log('FIX', `Attempt ${attempt}/2 — sonnet...`);
+
+  const errorSnippet = truncate(errorLog, 200);
+
+  let prompt = `You are fixing a CI failure in a Next.js 15 TypeScript project.
+
+## Triage Assessment
+${triageDescription}
+
+## Error Type: ${ERROR_TYPE || 'unknown'}
+
+## Full Error Output
+\`\`\`
+${errorSnippet}
+\`\`\``;
+
+  if (attempt > 1 && previousError) {
+    prompt += `
+
+## PREVIOUS FIX FAILED — try a different approach
+\`\`\`
+${truncate(previousError, 80)}
+\`\`\``;
   }
 
-  return { hasResult, result };
+  prompt += `
+
+## Instructions
+1. Read CLAUDE.md first for project rules.
+2. Find the root cause using Glob/Grep/Read.
+3. Apply the MINIMAL fix using Edit. Do NOT refactor.
+4. Verify: run the commands that failed:
+${(ERROR_TYPE || '').includes('lint') ? '   - pnpm lint\n   - pnpm tsc --noEmit' : ''}
+${(ERROR_TYPE || '').includes('build') ? '   - pnpm build' : ''}
+${(ERROR_TYPE || '').includes('test') ? '   - pnpm test -- --run' : ''}
+   - Always end with: pnpm build
+5. If verify fails, fix again (max 3 internal iterations).
+
+## Rules
+- NEVER hardcoded colors — use CSS variables or Tailwind token classes
+- NEVER introduce \`any\` types
+- Minimal changes only
+
+## Output
+When done, print:
+FIXED: <one-line summary of what you changed>
+FILES: <comma-separated list>`;
+
+  const result = await runAgent(
+    prompt,
+    'claude-sonnet-4-6',
+    40,
+    ['Read', 'Edit', 'Glob', 'Grep', 'Bash'],
+    `You are the FIX agent (attempt ${attempt}/2). Fix autonomously.`
+  );
+
+  log('FIX', `Agent output: ${result.slice(0, 200)}`);
+  return result;
 }
 
-function parseResult(result) {
-  const statusMatch = result.match(/STATUS:\s*(SUCCESS|FAILURE)/i);
-  const filesMatch = result.match(/FILES:\s*(.+)/i);
-  const summaryMatch = result.match(/SUMMARY:\s*(.+)/i);
+// ── Phase 3: Verify (haiku — independent review) ─────────────────────────────
 
-  return {
-    success: statusMatch ? statusMatch[1].toUpperCase() === 'SUCCESS' : false,
-    files: filesMatch ? filesMatch[1].trim() : '',
-    summary: summaryMatch ? summaryMatch[1].trim() : result.slice(-500),
-  };
+async function verify() {
+  log('VERIFY', 'Independent verification with haiku...');
+
+  // Get the diff
+  let diff;
+  try {
+    diff = shell('git diff');
+  } catch {
+    return { ok: false, reason: 'Could not get git diff' };
+  }
+
+  if (!diff.trim()) {
+    return { ok: false, reason: 'No changes were made by the fix agent' };
+  }
+
+  // Run build check independently
+  log('VERIFY', 'Running pnpm build...');
+  try {
+    const checks = [];
+    const et = (ERROR_TYPE || '').toLowerCase();
+    if (et.includes('lint')) checks.push('pnpm lint', 'pnpm tsc --noEmit');
+    if (et.includes('typecheck')) checks.push('pnpm tsc --noEmit');
+    if (et.includes('build')) checks.push('pnpm build');
+    if (et.includes('test')) checks.push('pnpm test -- --run');
+    if (!checks.includes('pnpm build')) checks.push('pnpm build');
+
+    for (const cmd of [...new Set(checks)]) {
+      log('VERIFY', `  ${cmd}`);
+      shell(cmd);
+      log('VERIFY', `  PASSED`);
+    }
+  } catch (e) {
+    const stderr = e.stderr?.toString().slice(-1000) || '';
+    const stdout = e.stdout?.toString().slice(-1000) || '';
+    return { ok: false, reason: `Build failed:\n${stdout}\n${stderr}` };
+  }
+
+  // Haiku reviews the diff for quality/safety
+  log('VERIFY', 'Haiku reviewing diff quality...');
+  const diffSnippet = truncate(diff, 100);
+
+  const prompt = `You are a code review bot. Review this diff from an automated fix.
+
+## Original Error: ${ERROR_TYPE || 'unknown'}
+
+## Diff
+\`\`\`diff
+${diffSnippet}
+\`\`\`
+
+## Check these:
+1. Does the fix address the original error?
+2. Are there any hardcoded colors (must use CSS variables)?
+3. Are there any \`any\` types introduced?
+4. Is the change minimal and safe?
+5. Could this break something else?
+
+Reply with EXACTLY one line:
+- APPROVED: <reason>
+- REJECTED: <what's wrong>`;
+
+  const result = await runAgent(
+    prompt,
+    'claude-haiku-4-5-20251001',
+    3,
+    ['Read'],
+    'You are the VERIFY agent. Review only — do NOT modify files.'
+  );
+
+  log('VERIFY', `Review: ${result.trim()}`);
+
+  if (result.includes('APPROVED:')) {
+    return { ok: true, reason: result.trim() };
+  }
+  return { ok: false, reason: result.trim() };
 }
 
-// ── Main ──────────────────────────────────────────────────────────────────────
+// ── Main Pipeline ─────────────────────────────────────────────────────────────
 
-const MAX_ATTEMPTS = 2;
+const MAX_FIX_ATTEMPTS = 2;
 
 try {
-  log('Self-healing agent v2 starting...');
-  log(`Error type: ${ERROR_TYPE || 'unknown'}`);
-  log(`Error log length: ${errorLog.length} chars`);
+  log('PIPELINE', 'Self-healing v3 (multi-agent) starting...');
+  log('PIPELINE', `Error type: ${ERROR_TYPE || 'unknown'}`);
+  log('PIPELINE', `Error log: ${errorLog.length} chars`);
 
-  let lastVerifyError = null;
-  let finalResult = null;
+  // ── Phase 1: Triage ──
+  const triageResult = await triage();
+  setOutput('triage_result', triageResult.action);
+  log('PIPELINE', `Triage: ${triageResult.action} — ${triageResult.description}`);
 
-  for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
-    log(`\n${'='.repeat(60)}`);
-    log(`ATTEMPT ${attempt}/${MAX_ATTEMPTS}`);
-    log('='.repeat(60));
-
-    const { hasResult, result } = await runAgent(attempt, lastVerifyError);
-
-    if (!hasResult || !result) {
-      log(`Attempt ${attempt}: Agent did not produce a result`);
-      continue;
-    }
-
-    const parsed = parseResult(result);
-    log(`Agent reports: ${parsed.success ? 'SUCCESS' : 'FAILURE'}`);
-    log(`Files: ${parsed.files}`);
-    log(`Summary: ${parsed.summary}`);
-
-    // Even if agent says SUCCESS, do our own verify
-    log('Running independent verification...');
-    const { execSync } = await import('child_process');
-
-    try {
-      // Run all checks sequentially
-      const checks = [];
-      const errorType = (ERROR_TYPE || '').toLowerCase();
-
-      if (errorType.includes('lint')) checks.push('pnpm lint');
-      if (errorType.includes('typecheck')) checks.push('pnpm tsc --noEmit');
-      if (errorType.includes('build')) checks.push('pnpm build');
-      if (errorType.includes('test')) checks.push('pnpm test -- --run');
-
-      // Always run build as final check
-      if (!checks.includes('pnpm build')) checks.push('pnpm build');
-
-      for (const cmd of checks) {
-        log(`  Running: ${cmd}`);
-        execSync(cmd, { stdio: 'pipe', timeout: 300_000 });
-        log(`  PASSED: ${cmd}`);
-      }
-
-      log(`\nAttempt ${attempt}: ALL CHECKS PASSED`);
-      finalResult = { ...parsed, attempt };
-      break;
-    } catch (verifyError) {
-      const stderr = verifyError.stderr?.toString() || '';
-      const stdout = verifyError.stdout?.toString() || '';
-      lastVerifyError = `Command failed: ${verifyError.message}\n\nSTDOUT:\n${stdout.slice(-2000)}\n\nSTDERR:\n${stderr.slice(-2000)}`;
-      log(`Attempt ${attempt}: Verification FAILED`);
-      log(`Verify error: ${lastVerifyError.slice(0, 200)}...`);
-
-      if (attempt < MAX_ATTEMPTS) {
-        log('Will retry with error context...');
-      }
-    }
-  }
-
-  if (finalResult) {
-    log(`\nSelf-healing SUCCEEDED on attempt ${finalResult.attempt}`);
-    setOutput('has_fix', 'true');
-    setOutput('attempt', String(finalResult.attempt));
-    setOutput('analysis', finalResult.summary.replace(/\n/g, ' ').slice(0, 500));
-  } else {
-    log('\nSelf-healing FAILED after all attempts');
+  if (triageResult.action === 'not-fixable') {
+    log('PIPELINE', 'Triage says not auto-fixable. Stopping.');
     setOutput('has_fix', 'false');
-    setOutput('analysis', lastVerifyError
-      ? `Agent could not fix: ${lastVerifyError.slice(0, 400)}`
-      : 'Agent could not determine a fix');
+    setOutput('analysis', `Not auto-fixable: ${triageResult.description}`.slice(0, 500));
+    process.exit(0);
   }
+
+  if (triageResult.action === 'config') {
+    log('PIPELINE', 'Triage says config/env issue. Stopping.');
+    setOutput('has_fix', 'false');
+    setOutput('analysis', `Config issue (needs human): ${triageResult.description}`.slice(0, 500));
+    process.exit(0);
+  }
+
+  // ── Phase 2: Fix (with retry) ──
+  let fixSucceeded = false;
+  let lastVerifyError = null;
+  let successAttempt = 0;
+
+  for (let attempt = 1; attempt <= MAX_FIX_ATTEMPTS; attempt++) {
+    log('PIPELINE', `\n${'─'.repeat(50)}`);
+    log('PIPELINE', `FIX ATTEMPT ${attempt}/${MAX_FIX_ATTEMPTS}`);
+
+    // Reset changes if retry
+    if (attempt > 1) {
+      log('PIPELINE', 'Resetting changes for fresh attempt...');
+      try { shell('git checkout -- .'); } catch { /* ignore */ }
+    }
+
+    const fixResult = await fix(triageResult.description, attempt, lastVerifyError);
+
+    if (!fixResult || (!fixResult.includes('FIXED:') && !fixResult.includes('FILES:'))) {
+      log('PIPELINE', 'Fix agent did not report success. Trying verify anyway...');
+    }
+
+    // ── Phase 3: Verify ──
+    const verifyResult = await verify();
+
+    if (verifyResult.ok) {
+      log('PIPELINE', `VERIFIED on attempt ${attempt}!`);
+      fixSucceeded = true;
+      successAttempt = attempt;
+
+      const summary = fixResult.match(/FIXED:\s*(.+)/)?.[1] || fixResult.slice(-300);
+      setOutput('has_fix', 'true');
+      setOutput('attempt', String(attempt));
+      setOutput('analysis', summary.replace(/\n/g, ' ').slice(0, 500));
+      break;
+    } else {
+      log('PIPELINE', `Verify REJECTED: ${verifyResult.reason.slice(0, 200)}`);
+      lastVerifyError = verifyResult.reason;
+    }
+  }
+
+  if (!fixSucceeded) {
+    log('PIPELINE', 'All attempts failed. Reverting changes...');
+    try { shell('git checkout -- .'); } catch { /* ignore */ }
+    setOutput('has_fix', 'false');
+    setOutput('analysis', `Failed after ${MAX_FIX_ATTEMPTS} attempts. Last: ${(lastVerifyError || '').slice(0, 400)}`);
+  }
+
+  log('PIPELINE', `\nPipeline ${fixSucceeded ? 'SUCCEEDED' : 'FAILED'}`);
 } catch (error) {
-  console.error('Agent crashed:', error);
+  console.error('Pipeline crashed:', error);
+  try { shell('git checkout -- .'); } catch { /* ignore */ }
   setOutput('has_fix', 'false');
-  setOutput('analysis', `Agent crash: ${error.message}`);
+  setOutput('analysis', `Pipeline crash: ${error.message}`);
 }

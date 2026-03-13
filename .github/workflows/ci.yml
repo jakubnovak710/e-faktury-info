@@ -88,12 +88,16 @@ jobs:
       - run: pnpm test -- --run
 
   # ────────────────────────────────────────────────────────────────────────
-  # Self-heal v2: captures real error logs, retry loop, robust pipeline
-  # Runs ONLY on main push when lint/typecheck/build/test fails.
-  # Won't trigger on self-healing commits (prevents infinite loops).
+  # Self-heal v3: Multi-agent pipeline (Triage → Fix → Verify)
+  # - Triage (haiku): classify error, decide if auto-fixable
+  # - Fix (sonnet): apply minimal fix with retry
+  # - Verify (haiku): independent review of diff + build check
+  #
+  # Guard: only blocks commits from self-healing PRs (prefix "fix(ci): self-healing")
+  # NOT general commits that mention "self-healing" in other contexts.
   # ────────────────────────────────────────────────────────────────────────
   self-heal:
-    name: Self-Heal v2 (Agent SDK)
+    name: Self-Heal v3 (Multi-Agent)
     permissions:
       contents: write
       pull-requests: write
@@ -105,7 +109,7 @@ jobs:
       github.event_name == 'push' &&
       github.ref == 'refs/heads/main' &&
       (needs.lint-and-typecheck.result == 'failure' || needs.build.result == 'failure' || needs.test.result == 'failure') &&
-      !contains(github.event.head_commit.message, 'self-healing')
+      !startsWith(github.event.head_commit.message, 'fix(ci): self-healing')
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
@@ -147,32 +151,38 @@ jobs:
         id: logs
         run: |
           ERROR_LOG_FILE="/tmp/ci-error-log.txt"
-          echo "=== Reproducing CI failures to capture error output ===" | tee "$ERROR_LOG_FILE"
+          echo "=== CI Error Logs ===" > "$ERROR_LOG_FILE"
+          echo "Commit: ${{ github.sha }}" >> "$ERROR_LOG_FILE"
+          echo "Failures: ${{ steps.failure.outputs.errors }}" >> "$ERROR_LOG_FILE"
           echo "" >> "$ERROR_LOG_FILE"
 
-          # Re-run each failed check and capture output
           if echo "${{ steps.failure.outputs.errors }}" | grep -q "lint"; then
-            echo "--- LINT/TYPECHECK OUTPUT ---" >> "$ERROR_LOG_FILE"
+            echo "--- TYPECHECK ---" >> "$ERROR_LOG_FILE"
             pnpm tsc --noEmit 2>&1 | tail -100 >> "$ERROR_LOG_FILE" || true
             echo "" >> "$ERROR_LOG_FILE"
+            echo "--- LINT ---" >> "$ERROR_LOG_FILE"
             pnpm lint 2>&1 | tail -100 >> "$ERROR_LOG_FILE" || true
+            echo "" >> "$ERROR_LOG_FILE"
+            echo "--- DESIGN TOKENS ---" >> "$ERROR_LOG_FILE"
+            node scripts/verify-design-tokens.mjs 2>&1 | tail -50 >> "$ERROR_LOG_FILE" || true
             echo "" >> "$ERROR_LOG_FILE"
           fi
 
           if echo "${{ steps.failure.outputs.errors }}" | grep -q "build"; then
-            echo "--- BUILD OUTPUT ---" >> "$ERROR_LOG_FILE"
+            echo "--- BUILD ---" >> "$ERROR_LOG_FILE"
             pnpm build 2>&1 | tail -150 >> "$ERROR_LOG_FILE" || true
             echo "" >> "$ERROR_LOG_FILE"
           fi
 
           if echo "${{ steps.failure.outputs.errors }}" | grep -q "test"; then
-            echo "--- TEST OUTPUT ---" >> "$ERROR_LOG_FILE"
+            echo "--- TESTS ---" >> "$ERROR_LOG_FILE"
             pnpm test -- --run 2>&1 | tail -100 >> "$ERROR_LOG_FILE" || true
             echo "" >> "$ERROR_LOG_FILE"
           fi
 
           echo "error_log_file=$ERROR_LOG_FILE" >> $GITHUB_OUTPUT
-          echo "Captured $(wc -l < "$ERROR_LOG_FILE") lines of error output"
+          LINES=$(wc -l < "$ERROR_LOG_FILE")
+          echo "Captured $LINES lines of error output"
 
       - name: Create fix branch
         run: |
@@ -182,7 +192,7 @@ jobs:
           git checkout -b "$BRANCH"
           echo "BRANCH=$BRANCH" >> $GITHUB_ENV
 
-      - name: Run self-healing agent
+      - name: Run multi-agent pipeline
         id: agent
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
@@ -196,10 +206,9 @@ jobs:
         run: |
           if git diff --quiet; then
             echo "has_changes=false" >> $GITHUB_OUTPUT
-            echo "No file changes detected despite agent reporting fix"
           else
             echo "has_changes=true" >> $GITHUB_OUTPUT
-            echo "Changes detected:"
+            echo "Changes:"
             git diff --stat
           fi
 
@@ -210,7 +219,8 @@ jobs:
           git commit -m "$(cat <<'EOF'
           fix(ci): self-healing — ${{ steps.failure.outputs.errors }}
 
-          Auto-fixed by self-healing pipeline v2 (attempt ${{ steps.agent.outputs.attempt || '1' }}).
+          Triage: ${{ steps.agent.outputs.triage_result || 'fixable' }}
+          Fixed on attempt ${{ steps.agent.outputs.attempt || '1' }}/2.
 
           Co-Authored-By: Claude Agent SDK <noreply@anthropic.com>
           EOF
@@ -226,31 +236,28 @@ jobs:
           gh pr create \
             --title "fix(ci): self-healing — ${{ steps.failure.outputs.errors }}" \
             --body "$(cat <<'PREOF'
-          ## CI Self-Healing Fix (v2)
+          ## CI Self-Healing Fix (v3 Multi-Agent)
 
           **Failed jobs:** ${{ steps.failure.outputs.errors }}
           **Commit:** ${{ github.sha }}
+          **Triage:** ${{ steps.agent.outputs.triage_result || 'fixable' }}
           **Fix attempt:** ${{ steps.agent.outputs.attempt || '1' }}/2
 
           ### Agent Analysis
           ${{ steps.agent.outputs.analysis }}
 
-          ### Verification
-          - [x] Agent ran internal verify loop
-          - [x] Independent verification passed before commit
-
-          ### What's different in v2
-          - Agent received **full error logs** (not just "build failure")
-          - Agent had **retry with feedback** (up to 2 attempts)
-          - Independent verification ran **inside agent process**
+          ### Pipeline
+          1. **Triage** (haiku) — classified error as auto-fixable
+          2. **Fix** (sonnet) — applied minimal code fix
+          3. **Verify** (haiku) — independent diff review + build check passed
 
           ---
-          Auto-generated by CI self-healing pipeline v2 (Claude Agent SDK)
+          Auto-generated by self-healing pipeline v3 (Claude Agent SDK)
           PREOF
           )" \
             --label "self-healing"
 
-      - name: Notify admin (email via SMTP)
+      - name: Notify admin
         if: always()
         env:
           SMTP_HOST: ${{ secrets.SMTP_HOST }}
@@ -263,25 +270,23 @@ jobs:
           EMAIL_FROM_NAME: ${{ secrets.EMAIL_FROM_NAME }}
         run: |
           if [ "${{ steps.changes.outputs.has_changes }}" = "true" ] && [ "${{ job.status }}" = "success" ]; then
-            STATUS="fix-success"
-            SUBJECT="[Universal Web] CI Self-Heal SUCCESS"
-            BODY="CI self-healing pipeline v2 fixed: ${{ steps.failure.outputs.errors }}\n\nAttempt: ${{ steps.agent.outputs.attempt || '1' }}/2\nCommit: ${{ github.sha }}\nBranch: $BRANCH\n\nA PR has been created for review."
+            SUBJECT="[Self-Heal] SUCCESS — ${{ steps.failure.outputs.errors }}"
+            BODY="Pipeline v3 fixed: ${{ steps.failure.outputs.errors }}\nTriage: ${{ steps.agent.outputs.triage_result }}\nAttempt: ${{ steps.agent.outputs.attempt || '1' }}/2\nBranch: $BRANCH\n\nPR created for review."
           else
-            STATUS="fix-failed"
-            SUBJECT="[Universal Web] CI Self-Heal FAILED"
-            BODY="CI self-healing pipeline v2 could not fix: ${{ steps.failure.outputs.errors }}\n\nCommit: ${{ github.sha }}\nAgent output: ${{ steps.agent.outputs.analysis }}\n\nManual intervention required."
+            SUBJECT="[Self-Heal] FAILED — ${{ steps.failure.outputs.errors }}"
+            BODY="Pipeline v3 could not fix: ${{ steps.failure.outputs.errors }}\nTriage: ${{ steps.agent.outputs.triage_result || 'unknown' }}\nOutput: ${{ steps.agent.outputs.analysis }}\n\nManual intervention needed."
           fi
           if [ -n "$SMTP_HOST" ] && [ -n "$ADMIN_EMAIL" ]; then
             node -e "
               const nodemailer = require('nodemailer');
-              const transport = nodemailer.createTransport({
+              const t = nodemailer.createTransport({
                 host: process.env.SMTP_HOST,
                 port: Number(process.env.SMTP_PORT || 465),
                 secure: process.env.SMTP_SECURE === 'true',
                 auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS }
               });
-              transport.sendMail({
-                from: (process.env.EMAIL_FROM_NAME || 'Universal Web Bot') + ' <' + process.env.EMAIL_FROM + '>',
+              t.sendMail({
+                from: (process.env.EMAIL_FROM_NAME || 'Bot') + ' <' + process.env.EMAIL_FROM + '>',
                 to: process.env.ADMIN_EMAIL,
                 subject: '$SUBJECT',
                 text: '$BODY'.replace(/\\\\n/g, '\n')
