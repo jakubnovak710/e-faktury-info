@@ -1,4 +1,4 @@
-import { initConfig } from '@/lib/config-registry';
+import { initConfig } from '@jakubnovak710/universal-web-core/config';
 import { siteConfig } from '@config/site.config';
 import { seoConfig } from '@config/seo.config';
 import { securityConfig } from '@config/security.config';

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { escapeHtml, stripTags, sanitizeInput, sanitizeObject } from '@/lib/security/sanitize';
+import { escapeHtml, stripTags, sanitizeInput, sanitizeObject } from '@jakubnovak710/universal-web-core/lib/security/sanitize';
 
 describe('escapeHtml', () => {
   it('escapes HTML special characters', () => {

@@ -1,4 +1,4 @@
-import type { EmailConfig } from '@/types/site';
+import type { EmailConfig } from '@jakubnovak710/universal-web-core/types';
 
 export const emailConfig: EmailConfig = {
   smtp: {

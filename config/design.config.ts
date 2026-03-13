@@ -1,5 +1,5 @@
-import glassUi from '@presets/glass-ui';
-import type { DesignPreset } from '@/types/design';
+import glassUi from '@jakubnovak710/universal-web-core/presets/glass-ui';
+import type { DesignPreset } from '@jakubnovak710/universal-web-core/types';
 
 // ============================================================================
 // DESIGN CONFIG — Single Source of Truth

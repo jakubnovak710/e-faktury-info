@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod/v4';
-import { validateCsrf } from '@/lib/security/csrf';
+import { validateCsrf } from '@jakubnovak710/universal-web-core/lib/security/csrf';
 
 const newsletterSchema = z.object({
   email: z.email().max(320),

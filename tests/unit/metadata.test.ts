@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { createMetadata } from '@/lib/metadata';
+import { createMetadata } from '@jakubnovak710/universal-web-core/lib/metadata';
 
 describe('createMetadata', () => {
   it('returns default metadata when no options provided', () => {

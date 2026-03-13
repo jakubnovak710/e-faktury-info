@@ -1,6 +1,6 @@
 import { writeFileSync } from 'fs';
 import { resolve } from 'path';
-import type { ThemeColors } from '../src/types/design';
+import type { ThemeColors } from '@jakubnovak710/universal-web-core/types';
 
 // Dynamic import workaround for tsx
 async function main() {

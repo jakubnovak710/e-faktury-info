@@ -1,4 +1,4 @@
-import type { SecurityConfig } from '@/types/site';
+import type { SecurityConfig } from '@jakubnovak710/universal-web-core/types';
 
 const isDev = process.env.NODE_ENV === 'development';
 

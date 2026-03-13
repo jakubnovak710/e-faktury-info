@@ -1,4 +1,4 @@
-import type { FeatureFlags } from '@/types/features';
+import type { FeatureFlags } from '@jakubnovak710/universal-web-core/types';
 
 export const features: FeatureFlags = {
   auth: false,

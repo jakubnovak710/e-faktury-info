@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod/v4';
-import { sendAdminEmail } from '@/lib/email';
-import { escapeHtml } from '@/lib/security/sanitize';
-import { validateCsrf } from '@/lib/security/csrf';
-import { isEnabled } from '@/lib/features';
+import { sendAdminEmail } from '@jakubnovak710/universal-web-core/lib/email';
+import { escapeHtml } from '@jakubnovak710/universal-web-core/lib/security/sanitize';
+import { validateCsrf } from '@jakubnovak710/universal-web-core/lib/security/csrf';
+import { isEnabled } from '@jakubnovak710/universal-web-core/lib/features';
 import { siteConfig } from '@config/site.config';
 
 const contactSchema = z.object({

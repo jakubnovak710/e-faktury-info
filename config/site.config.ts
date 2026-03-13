@@ -1,4 +1,4 @@
-import type { SiteConfig } from '@/types/site';
+import type { SiteConfig } from '@jakubnovak710/universal-web-core/types';
 
 export const siteConfig: SiteConfig = {
   name: 'Universal Web',

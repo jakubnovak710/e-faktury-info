@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod/v4';
-import { notify } from '@/lib/email';
+import { notify } from '@jakubnovak710/universal-web-core/lib/email';
 
 const GITHUB_REPO_REGEX = /^[a-zA-Z0-9_-]+\/[a-zA-Z0-9_.-]+$/;
 

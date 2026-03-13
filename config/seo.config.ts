@@ -1,4 +1,4 @@
-import type { SeoConfig } from '@/types/site';
+import type { SeoConfig } from '@jakubnovak710/universal-web-core/types';
 import { siteConfig } from './site.config';
 
 export const seoConfig: SeoConfig = {

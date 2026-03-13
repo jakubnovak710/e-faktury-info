@@ -1,10 +1,10 @@
 import type { Metadata } from 'next';
 import { headers } from 'next/headers';
 import Script from 'next/script';
-import { ThemeProvider } from '@/components/providers/theme-provider';
-import { OrganizationJsonLd, WebSiteJsonLd } from '@/components/seo';
-import { createMetadata } from '@/lib/metadata';
-import { getSiteConfig } from '@/lib/config-registry';
+import { ThemeProvider } from '@jakubnovak710/universal-web-core/components/providers/theme-provider';
+import { OrganizationJsonLd, WebSiteJsonLd } from '@jakubnovak710/universal-web-core/components/seo';
+import { createMetadata } from '@jakubnovak710/universal-web-core/lib/metadata';
+import { getSiteConfig } from '@jakubnovak710/universal-web-core/config';
 import '@/styles/globals.css';
 
 export function generateMetadata(): Metadata {

@@ -5,5 +5,5 @@
 @import "@fontsource-variable/space-grotesk";
 @import "@fontsource-variable/jetbrains-mono";
 @import "./design-tokens.css";
-@import "./theme.css";
-@import "./effects.css";
+@import "@jakubnovak710/universal-web-core/styles/theme.css";
+@import "@jakubnovak710/universal-web-core/styles/effects.css";

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { sanitizeInput } from '@/lib/security/sanitize';
+import { sanitizeInput } from '@jakubnovak710/universal-web-core/lib/security/sanitize';
 
 interface ContactFormState {
   status: 'idle' | 'loading' | 'success' | 'error';

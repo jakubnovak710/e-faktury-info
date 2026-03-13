@@ -14,7 +14,7 @@ export default defineConfig({
   projects: [
     {
       name: 'Mobile',
-      use: { ...devices['iPhone 14'] },
+      use: { ...devices['Pixel 7'] },
     },
     {
       name: 'Desktop',

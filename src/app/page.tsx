@@ -29,11 +29,11 @@ import {
   Scanlines,
   DecorativeGlow,
   GradientBar,
-} from '@/components/design-system';
-import { GlassNav } from '@/components/layout/glass-nav';
-import { Footer } from '@/components/layout/footer';
-import { ScrollToTop } from '@/components/layout/scroll-to-top';
-import { fadeInUp, staggerContainer, staggerItem } from '@/lib/motion';
+} from '@jakubnovak710/universal-web-core/components/design-system';
+import { GlassNav } from '@jakubnovak710/universal-web-core/components/layout/glass-nav';
+import { Footer } from '@jakubnovak710/universal-web-core/components/layout/footer';
+import { ScrollToTop } from '@jakubnovak710/universal-web-core/components/layout/scroll-to-top';
+import { fadeInUp, staggerContainer, staggerItem } from '@jakubnovak710/universal-web-core/lib/motion';
 
 const features = [
   {

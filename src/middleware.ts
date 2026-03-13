@@ -1,4 +1,4 @@
-import { createMiddleware } from '@/lib/middleware-factory';
+import { createMiddleware } from '@jakubnovak710/universal-web-core/middleware';
 
 export const middleware = createMiddleware();
 

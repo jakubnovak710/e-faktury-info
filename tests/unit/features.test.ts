@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { isEnabled, withFeature } from '@/lib/features';
+import { isEnabled, withFeature } from '@jakubnovak710/universal-web-core/lib/features';
 
 describe('isEnabled', () => {
   it('returns true for enabled features', () => {

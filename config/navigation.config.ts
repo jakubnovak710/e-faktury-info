@@ -1,4 +1,4 @@
-import type { NavigationConfig } from '@/types/site';
+import type { NavigationConfig } from '@jakubnovak710/universal-web-core/types';
 
 export const navigationConfig: NavigationConfig = {
   header: [

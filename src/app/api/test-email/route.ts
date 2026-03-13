@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { notify } from '@/lib/email';
+import { notify } from '@jakubnovak710/universal-web-core/lib/email';
 
 /**
  * DEV ONLY — Test email notifications.
