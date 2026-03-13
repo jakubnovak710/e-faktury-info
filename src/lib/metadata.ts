@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
-import { siteConfig } from '@config/site.config';
-import { seoConfig } from '@config/seo.config';
+import { getSiteConfig, getSeoConfig } from '@/lib/config-registry';
 import { formatDate } from '@/lib/format-date';
 
 interface PageMetadataOptions {
@@ -18,6 +17,9 @@ interface PageMetadataOptions {
 }
 
 export function createMetadata(options: PageMetadataOptions = {}): Metadata {
+  const siteConfig = getSiteConfig();
+  const seoConfig = getSeoConfig();
+
   const {
     title,
     description = seoConfig.defaultDescription,

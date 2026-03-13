@@ -2,7 +2,7 @@ import { sendAdminEmail, sendClientEmail } from './send';
 import { adminErrorTemplate } from './templates/admin-error';
 import { adminFixTemplate } from './templates/admin-fix';
 import { clientIssueTemplate } from './templates/client-issue';
-import { siteConfig } from '@config/site.config';
+import { getSiteConfig } from '@/lib/config-registry';
 
 /**
  * Notification orchestrator — maps events to the correct emails
@@ -24,11 +24,11 @@ export const notify = {
 
     await Promise.all([
       sendAdminEmail(
-        `[${siteConfig.name}] Error: ${data.errorMessage.slice(0, 60)}`,
+        `[${getSiteConfig().name}] Error: ${data.errorMessage.slice(0, 60)}`,
         adminErrorTemplate({ ...data, timestamp })
       ),
       sendClientEmail(
-        `[${siteConfig.name}] Zachytili sme problém`,
+        `[${getSiteConfig().name}] Zachytili sme problém`,
         clientIssueTemplate({ status: 'detected', timestamp })
       ),
     ]);
@@ -45,7 +45,7 @@ export const notify = {
     analysis?: string;
   }) {
     await sendAdminEmail(
-      `[${siteConfig.name}] Fix started: ${data.errorMessage.slice(0, 60)}`,
+      `[${getSiteConfig().name}] Fix started: ${data.errorMessage.slice(0, 60)}`,
       adminFixTemplate({
         ...data,
         status: 'started',
@@ -67,7 +67,7 @@ export const notify = {
 
     await Promise.all([
       sendAdminEmail(
-        `[${siteConfig.name}] Fix deployed: ${data.errorMessage.slice(0, 60)}`,
+        `[${getSiteConfig().name}] Fix deployed: ${data.errorMessage.slice(0, 60)}`,
         adminFixTemplate({
           ...data,
           status: 'success',
@@ -75,7 +75,7 @@ export const notify = {
         })
       ),
       sendClientEmail(
-        `[${siteConfig.name}] Problém vyriešený`,
+        `[${getSiteConfig().name}] Problém vyriešený`,
         clientIssueTemplate({ status: 'resolved', timestamp })
       ),
     ]);
@@ -95,7 +95,7 @@ export const notify = {
 
     await Promise.all([
       sendAdminEmail(
-        `[${siteConfig.name}] Fix FAILED: ${data.errorMessage.slice(0, 60)}`,
+        `[${getSiteConfig().name}] Fix FAILED: ${data.errorMessage.slice(0, 60)}`,
         adminFixTemplate({
           ...data,
           status: 'failed',
@@ -103,7 +103,7 @@ export const notify = {
         })
       ),
       sendClientEmail(
-        `[${siteConfig.name}] Tím bol notifikovaný`,
+        `[${getSiteConfig().name}] Tím bol notifikovaný`,
         clientIssueTemplate({ status: 'team-notified', timestamp })
       ),
     ]);

@@ -1,4 +1,4 @@
-import { securityConfig } from '@config/security.config';
+import { getSecurityConfig } from '@/lib/config-registry';
 
 interface RateLimitEntry {
   count: number;
@@ -30,7 +30,7 @@ export interface RateLimitResult {
  * For production with multiple instances, replace with Redis-based store.
  */
 export function checkRateLimit(identifier: string): RateLimitResult {
-  const { windowMs, max } = securityConfig.rateLimit;
+  const { windowMs, max } = getSecurityConfig().rateLimit;
   const now = Date.now();
 
   const entry = store.get(identifier);
@@ -54,7 +54,7 @@ export function checkRateLimit(identifier: string): RateLimitResult {
  */
 export function getRateLimitHeaders(result: RateLimitResult): Record<string, string> {
   return {
-    'X-RateLimit-Limit': String(securityConfig.rateLimit.max),
+    'X-RateLimit-Limit': String(getSecurityConfig().rateLimit.max),
     'X-RateLimit-Remaining': String(Math.max(0, result.remaining)),
     'X-RateLimit-Reset': String(Math.ceil(result.resetAt / 1000)),
   };

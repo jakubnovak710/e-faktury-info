@@ -1,10 +1,11 @@
-import { siteConfig } from '@config/site.config';
+import { getSiteConfig } from '@/lib/config-registry';
 
 interface FooterProps {
   className?: string;
 }
 
 export function Footer({ className }: FooterProps) {
+  const siteConfig = getSiteConfig();
   return (
     <footer
       className={`px-6 py-6 text-center ${className ?? ''}`}

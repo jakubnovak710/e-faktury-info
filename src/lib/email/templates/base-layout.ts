@@ -1,10 +1,11 @@
-import { siteConfig } from '@config/site.config';
+import { getSiteConfig } from '@/lib/config-registry';
 
 /**
  * Base HTML email layout with Glass UI inspired styling.
  * All templates wrap their content with this layout.
  */
 export function baseLayout(content: string, preheader?: string): string {
+  const siteConfig = getSiteConfig();
   return `<!DOCTYPE html>
 <html lang="${siteConfig.locale}">
 <head>

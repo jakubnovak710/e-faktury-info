@@ -1,5 +1,5 @@
 import { baseLayout } from './base-layout';
-import { siteConfig } from '@config/site.config';
+import { getSiteConfig } from '@/lib/config-registry';
 
 interface ClientIssueData {
   status: 'detected' | 'resolved' | 'team-notified';
@@ -38,7 +38,7 @@ export function clientIssueTemplate(data: ClientIssueData): string {
       <p>${msg.body}</p>
     </div>
     <p class="mono" style="font-size: 11px; color: #606080;">
-      ${data.timestamp} &middot; ${siteConfig.name}
+      ${data.timestamp} &middot; ${getSiteConfig().name}
     </p>
     `,
     msg.heading

@@ -1,5 +1,5 @@
 import { getTransporter } from './transport';
-import { emailConfig } from '@config/email.config';
+import { getEmailConfig } from '@/lib/config-registry';
 
 interface SendEmailOptions {
   to: string | string[];
@@ -20,6 +20,7 @@ function delay(ms: number): Promise<void> {
  */
 export async function sendEmail(options: SendEmailOptions): Promise<boolean> {
   const transporter = getTransporter();
+  const emailConfig = getEmailConfig();
   const recipients = Array.isArray(options.to) ? options.to.join(', ') : options.to;
 
   for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
@@ -48,13 +49,14 @@ export async function sendEmail(options: SendEmailOptions): Promise<boolean> {
  * Send email to admin.
  */
 export async function sendAdminEmail(subject: string, html: string): Promise<boolean> {
-  return sendEmail({ to: emailConfig.adminEmail, subject, html });
+  return sendEmail({ to: getEmailConfig().adminEmail, subject, html });
 }
 
 /**
  * Send email to all configured client emails.
  */
 export async function sendClientEmail(subject: string, html: string): Promise<boolean> {
-  if (emailConfig.clientEmails.length === 0) return true;
-  return sendEmail({ to: emailConfig.clientEmails, subject, html });
+  const { clientEmails } = getEmailConfig();
+  if (clientEmails.length === 0) return true;
+  return sendEmail({ to: clientEmails, subject, html });
 }

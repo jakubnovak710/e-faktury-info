@@ -1,11 +1,11 @@
-import { securityConfig } from '@config/security.config';
+import { getSecurityConfig } from '@/lib/config-registry';
 
 /**
  * Build Content-Security-Policy header value.
  * Supports optional nonce for inline scripts.
  */
 export function buildCsp(nonce?: string): string {
-  const { csp } = securityConfig;
+  const { csp } = getSecurityConfig();
 
   const scriptSrc = nonce
     ? csp.scriptSrc

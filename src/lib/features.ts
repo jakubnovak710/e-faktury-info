@@ -1,4 +1,4 @@
-import { features } from '@config/features.config';
+import { getFeatures } from '@/lib/config-registry';
 import type { FeatureFlags } from '@/types/features';
 
 /**
@@ -6,7 +6,7 @@ import type { FeatureFlags } from '@/types/features';
  * Usage: if (isEnabled('auth')) { ... }
  */
 export function isEnabled(feature: keyof FeatureFlags): boolean {
-  return features[feature];
+  return getFeatures()[feature];
 }
 
 /**
@@ -14,10 +14,5 @@ export function isEnabled(feature: keyof FeatureFlags): boolean {
  * Usage: const AuthProvider = withFeature('auth', () => import('./auth-provider'));
  */
 export function withFeature<T>(feature: keyof FeatureFlags, value: T): T | null {
-  return features[feature] ? value : null;
+  return getFeatures()[feature] ? value : null;
 }
-
-/**
- * Re-export for convenience.
- */
-export { features };

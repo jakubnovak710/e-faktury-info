@@ -1,5 +1,4 @@
-import { siteConfig } from '@config/site.config';
-import { seoConfig } from '@config/seo.config';
+import { getSiteConfig, getSeoConfig } from '@/lib/config-registry';
 
 interface JsonLdProps {
   data: Record<string, unknown>;
@@ -15,7 +14,7 @@ function JsonLdScript({ data }: JsonLdProps) {
 }
 
 export function OrganizationJsonLd() {
-  const { organization } = seoConfig.jsonLd;
+  const { organization } = getSeoConfig().jsonLd;
   return (
     <JsonLdScript
       data={{
@@ -31,6 +30,7 @@ export function OrganizationJsonLd() {
 }
 
 export function WebSiteJsonLd() {
+  const siteConfig = getSiteConfig();
   return (
     <JsonLdScript
       data={{
@@ -63,9 +63,10 @@ export function ArticleJsonLd({
   image,
   publishedTime,
   modifiedTime,
-  author = siteConfig.creator,
+  author,
   section,
 }: ArticleJsonLdProps) {
+  const siteConfig = getSiteConfig();
   return (
     <JsonLdScript
       data={{
@@ -77,7 +78,7 @@ export function ArticleJsonLd({
         ...(image && { image }),
         datePublished: publishedTime,
         ...(modifiedTime && { dateModified: modifiedTime }),
-        author: { '@type': 'Person', name: author },
+        author: { '@type': 'Person', name: author ?? siteConfig.creator },
         publisher: {
           '@type': 'Organization',
           name: siteConfig.name,
@@ -114,6 +115,7 @@ interface BreadcrumbJsonLdProps {
 }
 
 export function BreadcrumbJsonLd({ items }: BreadcrumbJsonLdProps) {
+  const siteConfig = getSiteConfig();
   return (
     <JsonLdScript
       data={{

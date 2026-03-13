@@ -4,10 +4,12 @@ import Script from 'next/script';
 import { ThemeProvider } from '@/components/providers/theme-provider';
 import { OrganizationJsonLd, WebSiteJsonLd } from '@/components/seo';
 import { createMetadata } from '@/lib/metadata';
-import { siteConfig } from '@config/site.config';
+import { getSiteConfig } from '@/lib/config-registry';
 import '@/styles/globals.css';
 
-export const metadata: Metadata = createMetadata();
+export function generateMetadata(): Metadata {
+  return createMetadata();
+}
 
 export default async function RootLayout({
   children,
@@ -17,7 +19,7 @@ export default async function RootLayout({
   const nonce = (await headers()).get('x-nonce') ?? undefined;
 
   return (
-    <html lang={siteConfig.locale} data-theme="dark" suppressHydrationWarning>
+    <html lang={getSiteConfig().locale} data-theme="dark" suppressHydrationWarning>
       <head>
         <Script src="/theme-init.js" strategy="beforeInteractive" nonce={nonce} />
         <link rel="alternate" type="text/plain" href="/llms.txt" title="LLM-friendly content" />
