@@ -38,6 +38,7 @@ const {
   ERROR_URL,
   ANTHROPIC_API_KEY,
   GITHUB_OUTPUT,
+  GITHUB_STEP_SUMMARY,
 } = process.env;
 
 const errorLog = ERROR_LOG_FILE ? safeRead(ERROR_LOG_FILE) : (ERROR_LOG || 'No error log');
@@ -45,13 +46,33 @@ const errorLog = ERROR_LOG_FILE ? safeRead(ERROR_LOG_FILE) : (ERROR_LOG || 'No e
 function safeRead(p) { try { return readFileSync(p, 'utf8'); } catch { return ''; } }
 function setOutput(k, v) { if (GITHUB_OUTPUT) appendFileSync(GITHUB_OUTPUT, `${k}=${v}\n`); }
 function log(phase, msg) { console.log(`[${phase}] ${msg}`); }
+
+// Timeline log — appends to GITHUB_STEP_SUMMARY for easy viewing
+const _timeline = [];
+function timeline(icon, phase, detail) {
+  const ts = new Date().toISOString().slice(11, 19);
+  _timeline.push(`| ${ts} | ${icon} | **${phase}** | ${detail} |`);
+  log(phase, detail);
+}
+function writeSummary() {
+  if (!GITHUB_STEP_SUMMARY) return;
+  const md = [
+    '### Agent Timeline',
+    '| Time | | Phase | Detail |',
+    '|------|---|-------|--------|',
+    ..._timeline,
+    '',
+  ].join('\n');
+  try { appendFileSync(GITHUB_STEP_SUMMARY, md); } catch { /* ignore */ }
+}
 function truncate(text, n = 150) {
   const lines = text.split('\n');
   return lines.length <= n ? text : `...(${lines.length - n} lines cut)\n${lines.slice(-n).join('\n')}`;
 }
 
 if (!ANTHROPIC_API_KEY) {
-  console.error('ANTHROPIC_API_KEY not set');
+  timeline('🚫', 'INIT', 'ANTHROPIC_API_KEY not set — aborting');
+  writeSummary();
   setOutput('has_fix', 'false');
   setOutput('analysis', 'Missing ANTHROPIC_API_KEY');
   process.exit(0);
@@ -97,7 +118,7 @@ function shell(cmd, timeout = 300_000) {
 // ── Phase 1: Triage (haiku — fast & cheap) ────────────────────────────────────
 
 async function triage() {
-  log('TRIAGE', 'Classifying error with haiku...');
+  timeline('🔍', 'TRIAGE', 'Classifying error with haiku...');
 
   const errorSnippet = truncate(errorLog, 80);
   const prompt = `You are a CI triage bot. Analyze this error and classify it.
@@ -126,7 +147,7 @@ Reply with EXACTLY one of these lines (nothing else):
     'You are the TRIAGE agent. Only classify — do NOT fix anything.'
   );
 
-  log('TRIAGE', `Result: ${result.trim()}`);
+  timeline('🔍', 'TRIAGE', `Result: ${result.trim().slice(0, 120)}`);
 
   if (result.includes('FIXABLE:')) {
     const desc = result.match(/FIXABLE:\s*(.+)/)?.[1] || '';
@@ -142,7 +163,7 @@ Reply with EXACTLY one of these lines (nothing else):
 // ── Phase 2: Fix (sonnet — capable, with retry) ──────────────────────────────
 
 async function fix(triageDescription, attempt, previousError) {
-  log('FIX', `Attempt ${attempt}/2 — sonnet...`);
+  timeline('🔧', 'FIX', `Attempt ${attempt}/2 — sonnet...`);
 
   const errorSnippet = truncate(errorLog, 200);
 
@@ -198,14 +219,14 @@ FILES: <comma-separated list>`;
     `You are the FIX agent (attempt ${attempt}/2). Fix autonomously.`
   );
 
-  log('FIX', `Agent output: ${result.slice(0, 200)}`);
+  timeline('🔧', 'FIX', `Done: ${result.slice(0, 120).replace(/\n/g, ' ')}`);
   return result;
 }
 
 // ── Phase 3: Verify (haiku — independent review) ─────────────────────────────
 
 async function verify() {
-  log('VERIFY', 'Independent verification with haiku...');
+  timeline('✅', 'VERIFY', 'Independent verification with haiku...');
 
   // Get the diff
   let diff;
@@ -220,15 +241,17 @@ async function verify() {
   }
 
   // Run build check independently
-  log('VERIFY', 'Running pnpm build...');
+  timeline('✅', 'VERIFY', 'Running build checks...');
   try {
     const checks = [];
     const et = (ERROR_TYPE || '').toLowerCase();
-    if (et.includes('lint')) checks.push('pnpm lint', 'pnpm tsc --noEmit');
+    if (et.includes('lint')) checks.push('pnpm lint', 'pnpm tsc --noEmit', 'node scripts/verify-design-tokens.mjs');
     if (et.includes('typecheck')) checks.push('pnpm tsc --noEmit');
     if (et.includes('build')) checks.push('pnpm build');
     if (et.includes('test')) checks.push('pnpm test -- --run');
+    // Always run full CI check suite
     if (!checks.includes('pnpm build')) checks.push('pnpm build');
+    if (!checks.includes('node scripts/verify-design-tokens.mjs')) checks.push('node scripts/verify-design-tokens.mjs');
 
     for (const cmd of [...new Set(checks)]) {
       log('VERIFY', `  ${cmd}`);
@@ -242,7 +265,7 @@ async function verify() {
   }
 
   // Haiku reviews the diff for quality/safety
-  log('VERIFY', 'Haiku reviewing diff quality...');
+  timeline('✅', 'VERIFY', 'Haiku reviewing diff quality...');
   const diffSnippet = truncate(diff, 100);
 
   const prompt = `You are a code review bot. Review this diff from an automated fix.
@@ -273,7 +296,7 @@ Reply with EXACTLY one line:
     'You are the VERIFY agent. Review only — do NOT modify files.'
   );
 
-  log('VERIFY', `Review: ${result.trim()}`);
+  timeline('✅', 'VERIFY', `Review: ${result.trim().slice(0, 120)}`);
 
   if (result.includes('APPROVED:')) {
     return { ok: true, reason: result.trim() };
@@ -286,24 +309,24 @@ Reply with EXACTLY one line:
 const MAX_FIX_ATTEMPTS = 2;
 
 try {
-  log('PIPELINE', 'Self-healing v3 (multi-agent) starting...');
-  log('PIPELINE', `Error type: ${ERROR_TYPE || 'unknown'}`);
-  log('PIPELINE', `Error log: ${errorLog.length} chars`);
+  timeline('🚀', 'PIPELINE', `Starting — error type: ${ERROR_TYPE || 'unknown'}, log: ${errorLog.length} chars`);
 
   // ── Phase 1: Triage ──
   const triageResult = await triage();
   setOutput('triage_result', triageResult.action);
-  log('PIPELINE', `Triage: ${triageResult.action} — ${triageResult.description}`);
+  timeline('📋', 'TRIAGE', `${triageResult.action} — ${triageResult.description.slice(0, 100)}`);
 
   if (triageResult.action === 'not-fixable') {
-    log('PIPELINE', 'Triage says not auto-fixable. Stopping.');
+    timeline('⛔', 'PIPELINE', 'Not auto-fixable. Stopping.');
+    writeSummary();
     setOutput('has_fix', 'false');
     setOutput('analysis', `Not auto-fixable: ${triageResult.description}`.slice(0, 500));
     process.exit(0);
   }
 
   if (triageResult.action === 'config') {
-    log('PIPELINE', 'Triage says config/env issue. Stopping.');
+    timeline('⚙️', 'PIPELINE', 'Config/env issue — needs human.');
+    writeSummary();
     setOutput('has_fix', 'false');
     setOutput('analysis', `Config issue (needs human): ${triageResult.description}`.slice(0, 500));
     process.exit(0);
@@ -312,31 +335,28 @@ try {
   // ── Phase 2: Fix (with retry) ──
   let fixSucceeded = false;
   let lastVerifyError = null;
-  let successAttempt = 0;
 
   for (let attempt = 1; attempt <= MAX_FIX_ATTEMPTS; attempt++) {
-    log('PIPELINE', `\n${'─'.repeat(50)}`);
-    log('PIPELINE', `FIX ATTEMPT ${attempt}/${MAX_FIX_ATTEMPTS}`);
+    timeline('🔧', 'FIX', `Attempt ${attempt}/${MAX_FIX_ATTEMPTS}`);
 
     // Reset changes if retry
     if (attempt > 1) {
-      log('PIPELINE', 'Resetting changes for fresh attempt...');
+      timeline('↩️', 'RESET', 'Reverting changes for fresh attempt');
       try { shell('git checkout -- .'); } catch { /* ignore */ }
     }
 
     const fixResult = await fix(triageResult.description, attempt, lastVerifyError);
 
     if (!fixResult || (!fixResult.includes('FIXED:') && !fixResult.includes('FILES:'))) {
-      log('PIPELINE', 'Fix agent did not report success. Trying verify anyway...');
+      timeline('⚠️', 'FIX', 'Agent did not report FIXED — trying verify anyway');
     }
 
     // ── Phase 3: Verify ──
     const verifyResult = await verify();
 
     if (verifyResult.ok) {
-      log('PIPELINE', `VERIFIED on attempt ${attempt}!`);
+      timeline('🎉', 'PIPELINE', `VERIFIED on attempt ${attempt}!`);
       fixSucceeded = true;
-      successAttempt = attempt;
 
       const summary = fixResult.match(/FIXED:\s*(.+)/)?.[1] || fixResult.slice(-300);
       setOutput('has_fix', 'true');
@@ -344,20 +364,23 @@ try {
       setOutput('analysis', summary.replace(/\n/g, ' ').slice(0, 500));
       break;
     } else {
-      log('PIPELINE', `Verify REJECTED: ${verifyResult.reason.slice(0, 200)}`);
+      timeline('❌', 'VERIFY', `REJECTED: ${verifyResult.reason.slice(0, 100)}`);
       lastVerifyError = verifyResult.reason;
     }
   }
 
   if (!fixSucceeded) {
-    log('PIPELINE', 'All attempts failed. Reverting changes...');
+    timeline('💀', 'PIPELINE', `All ${MAX_FIX_ATTEMPTS} attempts failed. Reverting.`);
     try { shell('git checkout -- .'); } catch { /* ignore */ }
     setOutput('has_fix', 'false');
     setOutput('analysis', `Failed after ${MAX_FIX_ATTEMPTS} attempts. Last: ${(lastVerifyError || '').slice(0, 400)}`);
   }
 
-  log('PIPELINE', `\nPipeline ${fixSucceeded ? 'SUCCEEDED' : 'FAILED'}`);
+  timeline(fixSucceeded ? '✅' : '❌', 'DONE', fixSucceeded ? 'Pipeline SUCCEEDED' : 'Pipeline FAILED');
+  writeSummary();
 } catch (error) {
+  timeline('💥', 'CRASH', error.message);
+  writeSummary();
   console.error('Pipeline crashed:', error);
   try { shell('git checkout -- .'); } catch { /* ignore */ }
   setOutput('has_fix', 'false');

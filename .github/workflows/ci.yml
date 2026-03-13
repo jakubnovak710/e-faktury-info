@@ -257,6 +257,28 @@ jobs:
           )" \
             --label "self-healing"
 
+      - name: Pipeline summary
+        if: always()
+        run: |
+          cat >> "$GITHUB_STEP_SUMMARY" <<MDEOF
+          ## 🔧 Self-Healing Pipeline v3
+
+          | Phase | Result |
+          |-------|--------|
+          | **Trigger** | \`${{ steps.failure.outputs.errors }}\` failed on \`${{ github.sha }}\` |
+          | **Triage** (haiku) | ${{ steps.agent.outputs.triage_result || '—' }} |
+          | **Fix** (sonnet) | attempt ${{ steps.agent.outputs.attempt || '—' }}/2 |
+          | **Verify** (haiku) | ${{ steps.agent.outputs.has_fix == 'true' && '✅ passed' || '❌ failed' }} |
+          | **Changes** | ${{ steps.changes.outputs.has_changes == 'true' && '✅ committed' || '—' }} |
+          | **PR** | ${{ steps.changes.outputs.has_changes == 'true' && format('Branch: {0}', env.BRANCH) || 'not created' }} |
+
+          ### Analysis
+          ${{ steps.agent.outputs.analysis || 'No output from agent.' }}
+
+          ---
+          <sub>Self-healing pipeline v3 (triage: haiku, fix: sonnet, verify: haiku)</sub>
+          MDEOF
+
       - name: Notify admin
         if: always()
         env:
