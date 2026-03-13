@@ -37,7 +37,9 @@ try {
     .filter((line) => !EXCLUDED.some((ex) => line.includes(ex)))
     // Allow CSS variable definitions and comments
     .filter((line) => !line.includes('var(--') || line.match(/#[0-9a-fA-F]{3,8}/))
-    .filter((line) => !line.trim().startsWith('//') && !line.trim().startsWith('*'));
+    .filter((line) => !line.trim().startsWith('//') && !line.trim().startsWith('*'))
+    // Allow inline ignore: // design-tokens-ignore
+    .filter((line) => !line.includes('design-tokens-ignore'));
 
   if (violations.length > 0) {
     console.error('❌ Hardcoded colors found! Use design tokens (CSS variables) instead:\n');

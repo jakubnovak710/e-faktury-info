@@ -210,7 +210,11 @@ ${(ERROR_TYPE || '').includes('test') ? '   - pnpm test -- --run' : ''}
 5. If verify fails, fix again (max 3 internal iterations).
 
 ## Rules
-- NEVER hardcoded colors — use CSS variables or Tailwind token classes
+- NEVER use hardcoded colors (#hex, rgb(), rgba(), hsl()) — use CSS variables: var(--bg-surface), var(--text-primary), var(--accent)
+- Tailwind token classes are OK: bg-surface, text-primary, text-accent
+- If a color MUST be hardcoded (e.g. overlay backdrop), add \`// design-tokens-ignore\` comment on the same line
+- Check \`scripts/verify-design-tokens.mjs\` EXCLUDED list for allowed files
+- Always run \`node scripts/verify-design-tokens.mjs\` after your fix to verify
 - NEVER introduce \`any\` types
 - Minimal changes only
 
