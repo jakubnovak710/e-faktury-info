@@ -331,7 +331,6 @@ try {
   // ── Pre-check: verify the error still reproduces ──
   // If all checks pass now, skip the pipeline (avoids wasting tokens on stale failures)
   timeline('🔎', 'PRECHECK', 'Verifying error still reproduces...');
-  let stillFailing = false;
   try {
     const et = (ERROR_TYPE || '').toLowerCase();
     if (et.includes('lint')) { shell('pnpm tsc --noEmit'); shell('pnpm lint'); shell('node scripts/verify-design-tokens.mjs'); }
@@ -344,7 +343,6 @@ try {
     setOutput('analysis', 'Pre-check passed: error no longer reproduces on fresh checkout.');
     process.exit(0);
   } catch {
-    stillFailing = true;
     timeline('❌', 'PRECHECK', 'Error confirmed — proceeding with fix.');
   }
 
