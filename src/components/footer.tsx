@@ -4,11 +4,8 @@ import Link from 'next/link';
 import {
   FileText,
   ExternalLink,
-  Building2,
-  Mail,
   ChevronRight,
 } from 'lucide-react';
-import { motion } from 'motion/react';
 import { NewsletterForm } from '@/components/forms/newsletter-form';
 
 /* ── Types ────────────────────────────────────────────── */
@@ -185,55 +182,23 @@ export function Footer() {
         </div>
       </div>
 
-      {/* ── Section 2: Operator Card ───────────────────── */}
-      <div style={{ borderTop: '1px solid var(--border-default)' }}>
-        <div className="mx-auto max-w-6xl px-6 py-8">
-          <p
-            className="mb-3 font-mono text-[10px] font-bold uppercase tracking-[0.2em]"
-            style={{ color: 'var(--text-muted)' }}
-          >
-            Prevádzkuje
-          </p>
-          <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.4 }}
-            className="inline-flex items-start gap-4 rounded-xl px-6 py-4"
-            style={{
-              backgroundColor: 'var(--fill-subtle)',
-              border: '1px solid var(--border-default)',
-            }}
-          >
-            <Building2
-              className="mt-0.5 h-5 w-5 shrink-0"
-              style={{ color: 'var(--text-muted)' }}
-            />
-            <div className="space-y-1">
-              <p className="text-sm font-black" style={{ color: 'var(--text-primary)' }}>
-                8888 Servis s.r.o.
-              </p>
-              <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
-                IČO: 55609830 · Košice
-              </p>
-              <a
-                href="mailto:hello@jakubnovak.dev"
-                className="inline-flex items-center gap-1.5 text-xs transition-colors duration-200"
-                style={{ color: 'var(--accent)' }}
-              >
-                <Mail className="h-3 w-3" />
-                hello@jakubnovak.dev
-              </a>
-            </div>
-          </motion.div>
-        </div>
-      </div>
-
-      {/* ── Section 3: Bottom Bar ──────────────────────── */}
+      {/* ── Section 2: Bottom Bar (inline operator info) ── */}
       <div style={{ borderTop: '1px solid var(--border-default)' }}>
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-3 px-6 py-6 sm:flex-row">
-          <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
-            &copy; {new Date().getFullYear()} e-Faktúry.info (8888 Servis s.r.o.)
+          <p className="flex flex-wrap items-center gap-x-1.5 text-xs" style={{ color: 'var(--text-muted)' }}>
+            <span>&copy; {new Date().getFullYear()} e-Faktúry.info</span>
+            <span style={{ color: 'var(--border-default)' }}>·</span>
+            <span>Prevádzkuje 8888 Servis s.r.o.</span>
+            <span style={{ color: 'var(--border-default)' }}>·</span>
+            <span>IČO: 55609830</span>
+            <span style={{ color: 'var(--border-default)' }}>·</span>
+            <a
+              href="mailto:hello@jakubnovak.dev"
+              className="transition-colors duration-200"
+              style={{ color: 'var(--accent)' }}
+            >
+              hello@jakubnovak.dev
+            </a>
           </p>
           <div className="flex items-center gap-4">
             {legalLinks.map((link) => (
