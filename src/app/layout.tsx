@@ -11,6 +11,8 @@ import { seoConfig } from '@config/seo.config';
 import { securityConfig } from '@config/security.config';
 import { emailConfig } from '@config/email.config';
 import { features } from '@config/features.config';
+import { Navigation } from '@/components/navigation';
+import { Footer } from '@jakubnovak710/universal-web-core/components/layout/footer';
 import { UmamiProvider } from '@/components/analytics/umami-provider';
 import { EngagementTracker } from '@/components/analytics/engagement-tracker';
 import '@/styles/globals.css';
@@ -35,7 +37,9 @@ export default function RootLayout({
       <body className="antialiased">
         <CoreConfigProvider config={{ site: siteConfig, seo: seoConfig, security: securityConfig, email: emailConfig, features }}>
           <ThemeProvider>
+            <Navigation />
             {children}
+            <Footer />
             <UmamiProvider />
             <EngagementTracker />
           </ThemeProvider>

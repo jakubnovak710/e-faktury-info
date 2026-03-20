@@ -45,10 +45,8 @@ import {
   SectionDivider,
   GradientHeading,
 } from '@jakubnovak710/universal-web-core/components/design-system';
-import { Footer } from '@jakubnovak710/universal-web-core/components/layout/footer';
 import { ScrollToTop } from '@jakubnovak710/universal-web-core/components/layout/scroll-to-top';
 import { fadeInUp, staggerContainer, staggerItem } from '@jakubnovak710/universal-web-core/lib/motion';
-import { Navigation } from '@/components/navigation';
 import { CountUp } from '@/components/count-up';
 import { Countdown } from '@/components/countdown';
 import { ShimmerButton } from '@/components/shimmer-button';
@@ -165,7 +163,6 @@ export default function HomePage() {
   return (
     <>
       <AmbientBackground />
-      <Navigation />
 
       {/* ════════════════════════════════════════════════════════
           SEKCIA 1: HERO — Urgency + Loss Aversion + Curiosity Gap
@@ -656,7 +653,6 @@ export default function HomePage() {
         </motion.div>
       </Section>
 
-      <Footer />
       <ScrollToTop />
     </>
   );
