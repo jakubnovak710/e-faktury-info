@@ -1,0 +1,58 @@
+---
+name: "iDoklad"
+vendor: "Solitea"
+descriptionSk: "Najpoužívanejšia online fakturačná aplikácia v strednej Európe s viac ako 300 000 používateľmi. Viac ako 30 funkcií."
+descriptionEn: "The most used online invoicing app in Central Europe with 300,000+ users. More than 30 features."
+peppolStatus: "in-progress"
+peppolStatusNote: "API existuje, Peppol modul v príprave. ISDOC support dlhodobo."
+apiSupport: true
+xmlExport: true
+ublSupport: false
+isdocSupport: true
+targetAudience: ["freelancer", "small-business"]
+website: "https://www.idoklad.sk/"
+pricingFrom: "od 0 EUR (free tier)"
+features: ["Online fakturácia", "Mobilná app", "Automatické upomienky", "Párovanie platieb", "API", "Pokladňa", "QR platby"]
+pros: ["300 000+ používateľov", "Kvalitná mobilná app", "Free tier", "API k dispozícii", "Automatické upomienky"]
+cons: ["Peppol ešte nie je ready", "Len fakturácia", "Niektoré funkcie len v platených plánoch"]
+---
+
+## Ako nastaviť e-fakturáciu v iDoklad
+
+iDoklad od spoločnosti Solitea je najpoužívanejšia online fakturačná aplikácia v strednej Európe. Hoci priamy Peppol modul je ešte v príprave, iDoklad už disponuje robustným API a ISDOC exportom, čo umožňuje elektronickú fakturáciu prostredníctvom externého digitálneho poštára. Tento návod vám ukáže, ako nastaviť e-fakturáciu v iDoklad krok za krokom.
+
+### Krok 1: Registrácia a nastavenie účtu
+
+Ak ešte nemáte účet, zaregistrujte sa na idoklad.sk. iDoklad ponúka free tier, ktorý je vhodný na začiatok, no pre plnohodnotnú e-fakturáciu odporúčame platený plán, ktorý obsahuje neobmedzený počet faktúr a prístup k API. Po registrácii vás systém prevedie úvodným nastavením.
+
+### Krok 2: Vyplnenie firemných údajov
+
+Prejdite do **Nastavenia > Firemné údaje**. Zadajte IČO a iDoklad automaticky doplní údaje z registra (obchodné meno, sídlo, DIČ). Manuálne doplňte IČ DPH (ak ste platca DPH), bankový účet vo formáte IBAN a ďalšie kontaktné údaje. Tieto informácie sú povinné pre každú e-faktúru a automaticky sa prenášajú do exportovaných súborov.
+
+### Krok 3: Vytvorenie a export faktúry vo formáte ISDOC
+
+Vytvorte novú faktúru cez **Faktúry > Nová faktúra**. Po uložení faktúry kliknite na ikonu **Export** a vyberte formát **ISDOC**. iDoklad vygeneruje štruktúrovaný XML súbor, ktorý obsahuje všetky náležitosti faktúry. Tento súbor si stiahnite do počítača. Formát ISDOC je podporovaný väčšinou účtovných systémov na slovenskom a českom trhu.
+
+### Krok 4: Odoslanie cez digitálneho poštára
+
+Keďže iDoklad zatiaľ nemá priamu Peppol integráciu, exportovaný ISDOC súbor nahrajte do rozhrania certifikovaného Peppol Access Pointu. Digitálny poštár skonvertuje ISDOC do UBL 2.1 a doručí faktúru príjemcovi cez Peppol sieť. Uchovajte si potvrdenie o doručení, ktoré poštár vygeneruje.
+
+### Krok 5: Automatizácia cez API
+
+iDoklad disponuje kvalitným REST API, ktoré umožňuje automatizovať celý fakturačný proces. V **Nastavenia > API** vygenerujte prístupový token. Pomocou API môžete programaticky vystavovať faktúry, sťahovať ISDOC exporty a integrovať iDoklad s vaším e-shopom alebo vlastnou aplikáciou. Dokumentácia API je dostupná na api.idoklad.sk. Pre vývojárov je k dispozícii aj Postman kolekcia s príkladmi requestov.
+
+### Krok 6: Mobilná fakturácia
+
+iDoklad má jednu z najlepších mobilných aplikácií medzi fakturačnými systémami. Nainštalujte si iDoklad app z App Store alebo Google Play. V mobilnej aplikácii môžete vystavovať faktúry priamo u zákazníka, skenovať doklady a sledovať stav platieb. Faktúry vytvorené v mobilnej app sa automaticky synchronizujú s webovou verziou, odkiaľ ich môžete exportovať do ISDOC.
+
+### Krok 7: Príjem elektronických faktúr
+
+Pre import prijatých e-faktúr využite funkciu **Výdaje > Import**. Ak prijmete ISDOC súbor od dodávateľa (alebo si ho stiahnete z digitálneho poštára), iDoklad automaticky rozpozná údaje a vytvorí záznam o prijatej faktúre. Skontrolujte správnosť importovaných údajov, najmä sumy, DPH a dátumy splatnosti.
+
+### Krok 8: QR platby a párovanie
+
+Unikátnou funkciou iDokladu je generovanie QR kódov priamo na faktúrach. Zákazník naskenuje QR kód mobilným bankingom a platba sa automaticky spáruje s faktúrou. V kombinácii s napojením na bankový účet (cez **Nastavenia > Bankové spojenie**) získate prehľad o uhradených a neuhradených faktúrach v reálnom čase. Automatické upomienky zabezpečia, že nezabudnete na neuhradené faktúry.
+
+### Čo očakávať v budúcnosti
+
+Solitea aktívne pracuje na Peppol module pre iDoklad. Po jeho nasadení bude možné odosielať a prijímať e-faktúry priamo z rozhrania iDokladu bez potreby externého poštára. Sledujte blog iDokladu pre najnovšie informácie o termíne spustenia.

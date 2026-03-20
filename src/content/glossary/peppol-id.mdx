@@ -1,0 +1,26 @@
+---
+term: "Peppol ID"
+termEn: "Peppol ID"
+shortDefinitionSk: "Unikatny identifikator firmy v Peppol sieti. Pre SK firmy format 0245:XXXXXXXXXX (kde X = DIC). Registracia cez digitalneho postara."
+shortDefinitionEn: "Unique company identifier in the Peppol network. For SK companies: 0245:XXXXXXXXXX (X = tax ID). Registration via digital postman."
+category: "technical"
+relatedSlugs: ["peppol", "digitalny-postar", "dic"]
+---
+
+Peppol ID je unikatny identifikator, ktory jednoznacne identifikuje kazdeho ucastnika v sieti Peppol. Funguje ako "adresa" firmy v digitalnom svete e-fakturacie — bez Peppol ID nie je mozne odosielat ani prijimat e-faktury cez Peppol.
+
+## Format Peppol ID pre Slovensko
+
+Pre slovenske firmy sa Peppol ID sklada z prefixu schemy a samotneho identifikatora. Format je `0245:XXXXXXXXXX`, kde `0245` je kod identifikacnej schemy pre slovenske DIC (dan z pridanej hodnoty identifikacne cislo) a `XXXXXXXXXX` je 10-miestne DIC firmy. Napriklad firma s DIC 2021234567 bude mat Peppol ID `0245:2021234567`.
+
+## Registracia Peppol ID
+
+Peppol ID si firma nemoze zaregistrovat sama — registraciu vykonava poskytovatel Access Pointu (digitalny postar). Pri registracii sa udaje o firme zapisu do registra SMP (Service Metadata Publisher), kde su viditelne pre vsetkych ucastnikov siete. Register obsahuje informacie o tom, ake typy dokumentov firma prijima a cez ktory Access Point.
+
+## Zmena poskytovatela
+
+Ak firma chce zmenit digitalneho postara, jej Peppol ID zostava rovnake — zmeni sa len priradenie k novemu Access Pointu v registri SMP. Tento proces sa nazyva migrácia a mala by byt bezproblemova, ak si ju koordinujete s oboma poskytovatelmi.
+
+## Overenie existencie Peppol ID
+
+Pred odoslanim e-faktury mozete overit, ci ma prijimatel platne Peppol ID. Existuju verejne Peppol Directory a lookup nastroje, kde zadavate identifikator a zistite, ci je firma zaregistrovana. To je uzitocne najmä v prechodnom obdobi, ked este nie vsetky firmy budu mat Peppol ID. Pre slovensky trh bude od roku 2027 Peppol ID povinne pre vsetkych platitelov DPH.

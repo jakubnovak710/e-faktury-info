@@ -1,11 +1,8 @@
 /**
  * ERP Integrations Hub Page
  *
- * Cluster 8 — Commercial intent. Lists all ERP/invoicing systems with Peppol readiness status.
- * Target keywords: "fakturačný softvér slovensko", "porovnanie fakturačných softvérov",
- *                  "e-faktúra softvér", "ERP systém e-faktúra"
- *
- * Data source: src/data/erp-systems.ts (programmatic — all pages generated from data)
+ * Cluster 8 — Commercial intent.
+ * Data source: src/content/erp-systems/ (filesystem-based collection)
  */
 
 import type { Metadata } from 'next';
@@ -13,12 +10,14 @@ import Link from 'next/link';
 import { CheckCircle2, Clock, Calendar, HelpCircle } from 'lucide-react';
 import { createMetadata } from '@jakubnovak710/universal-web-core/lib/metadata';
 import { Breadcrumbs } from '@/components/breadcrumbs';
-import { erpSystems } from '@/data/erp-systems';
+import { getCollection } from '@/lib/collections';
+import { erpSchema } from '@/content/erp-systems/_schema';
 
 export function generateMetadata(): Metadata {
   return createMetadata({
     title: 'Integrácie — Prehľad softvérov pripravených na e-faktúru',
-    description: `Prehľad ${erpSystems.length} účtovných a fakturačných softvérov na Slovensku a ich pripravenosť na Peppol e-fakturáciu. Pohoda, Omega, SuperFaktúra, iDoklad a ďalšie.`,
+    description:
+      'Prehľad účtovných a fakturačných softvérov na Slovensku a ich pripravenosť na Peppol e-fakturáciu. Pohoda, Omega, SuperFaktúra, iDoklad a ďalšie.',
     keywords: ['fakturačný softvér slovensko', 'e-faktúra softvér', 'Peppol integrácia', 'porovnanie fakturačných softvérov'],
   });
 }
@@ -30,9 +29,10 @@ const STATUS_CONFIG = {
   unknown: { label: 'Neznámy stav', icon: HelpCircle, className: 'text-gray-400 bg-gray-500/10 border-gray-500/20' },
 } as const;
 
-export default function IntegracieHubPage() {
-  const readyCount = erpSystems.filter((e) => e.peppolStatus === 'ready').length;
-  const inProgressCount = erpSystems.filter((e) => e.peppolStatus === 'in-progress').length;
+export default async function IntegracieHubPage() {
+  const entries = await getCollection('erp-systems', erpSchema);
+  const readyCount = entries.filter((e) => e.data.peppolStatus === 'ready').length;
+  const inProgressCount = entries.filter((e) => e.data.peppolStatus === 'in-progress').length;
 
   return (
     <main className="mx-auto max-w-5xl px-4 py-16 sm:px-6 lg:px-8">
@@ -40,7 +40,7 @@ export default function IntegracieHubPage() {
 
       <div className="text-center">
         <p className="font-mono text-xs font-bold uppercase tracking-widest text-[var(--accent)]">
-          {erpSystems.length} softvérov
+          {entries.length} softvérov
         </p>
         <h1 className="mt-2 text-3xl font-black text-[var(--text-primary)] sm:text-4xl">
           Je váš softvér pripravený na e-faktúru?
@@ -50,46 +50,36 @@ export default function IntegracieHubPage() {
           pripravenosť na povinnú e-fakturáciu cez Peppol od 1.1.2027.
         </p>
 
-        {/* Stats */}
         <div className="mt-8 flex justify-center gap-6">
           <div className="text-center">
             <p className="text-2xl font-black text-emerald-400">{readyCount}</p>
-            <p className="font-mono text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">
-              Peppol Ready
-            </p>
+            <p className="font-mono text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">Peppol Ready</p>
           </div>
           <div className="text-center">
             <p className="text-2xl font-black text-amber-400">{inProgressCount}</p>
-            <p className="font-mono text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">
-              Pripravuje sa
-            </p>
+            <p className="font-mono text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">Pripravuje sa</p>
           </div>
           <div className="text-center">
-            <p className="text-2xl font-black text-[var(--text-primary)]">{erpSystems.length}</p>
-            <p className="font-mono text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">
-              Celkom
-            </p>
+            <p className="text-2xl font-black text-[var(--text-primary)]">{entries.length}</p>
+            <p className="font-mono text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">Celkom</p>
           </div>
         </div>
       </div>
 
-      {/* ERP Grid */}
       <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {erpSystems.map((erp) => {
+        {entries.map(({ slug, data: erp }) => {
           const status = STATUS_CONFIG[erp.peppolStatus];
           const StatusIcon = status.icon;
 
           return (
             <Link
-              key={erp.slug}
-              href={`/integracie/${erp.slug}`}
+              key={slug}
+              href={`/integracie/${slug}`}
               className="group rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-5 transition-all hover:border-[var(--accent)]/30 hover:shadow-lg hover:shadow-[var(--accent)]/5"
             >
               <div className="flex items-start justify-between">
                 <div>
-                  <h2 className="text-lg font-black text-[var(--text-primary)] group-hover:text-[var(--accent)]">
-                    {erp.name}
-                  </h2>
+                  <h2 className="text-lg font-black text-[var(--text-primary)] group-hover:text-[var(--accent)]">{erp.name}</h2>
                   <p className="text-xs text-[var(--text-muted)]">{erp.vendor}</p>
                 </div>
                 <span className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 font-mono text-[10px] font-bold uppercase tracking-wider ${status.className}`}>
@@ -97,43 +87,24 @@ export default function IntegracieHubPage() {
                   {status.label}
                 </span>
               </div>
-
               <p className="mt-3 text-sm leading-relaxed text-[var(--text-secondary)]">
                 {erp.descriptionSk.slice(0, 120)}...
               </p>
-
               <div className="mt-3 flex flex-wrap gap-1.5">
-                {erp.apiSupport && (
-                  <span className="rounded bg-[var(--bg-elevated)] px-1.5 py-0.5 font-mono text-[9px] font-bold uppercase tracking-wider text-[var(--text-muted)]">API</span>
-                )}
-                {erp.ublSupport && (
-                  <span className="rounded bg-[var(--bg-elevated)] px-1.5 py-0.5 font-mono text-[9px] font-bold uppercase tracking-wider text-[var(--text-muted)]">UBL</span>
-                )}
-                {erp.isdocSupport && (
-                  <span className="rounded bg-[var(--bg-elevated)] px-1.5 py-0.5 font-mono text-[9px] font-bold uppercase tracking-wider text-[var(--text-muted)]">ISDOC</span>
-                )}
+                {erp.apiSupport && <span className="rounded bg-[var(--bg-elevated)] px-1.5 py-0.5 font-mono text-[9px] font-bold uppercase tracking-wider text-[var(--text-muted)]">API</span>}
+                {erp.ublSupport && <span className="rounded bg-[var(--bg-elevated)] px-1.5 py-0.5 font-mono text-[9px] font-bold uppercase tracking-wider text-[var(--text-muted)]">UBL</span>}
+                {erp.isdocSupport && <span className="rounded bg-[var(--bg-elevated)] px-1.5 py-0.5 font-mono text-[9px] font-bold uppercase tracking-wider text-[var(--text-muted)]">ISDOC</span>}
               </div>
-
-              {erp.pricingFrom && (
-                <p className="mt-2 text-xs text-[var(--text-muted)]">{erp.pricingFrom}</p>
-              )}
+              {erp.pricingFrom && <p className="mt-2 text-xs text-[var(--text-muted)]">{erp.pricingFrom}</p>}
             </Link>
           );
         })}
       </div>
 
-      {/* Bottom CTA */}
       <div className="mt-12 text-center">
         <p className="text-sm text-[var(--text-secondary)]">
           Neviete sa rozhodnúť? Prečítajte si{' '}
-          <Link href="/ako-sa-pripravit-na-e-fakturu" className="text-[var(--accent)] hover:underline">
-            ako vybrať správny softvér
-          </Link>{' '}
-          alebo porovnajte na{' '}
-          <Link href="/porovnanie" className="text-[var(--accent)] hover:underline">
-            stránke porovnaní
-          </Link>
-          .
+          <Link href="/ako-sa-pripravit-na-e-fakturu" className="text-[var(--accent)] hover:underline">ako vybrať správny softvér</Link>.
         </p>
       </div>
     </main>

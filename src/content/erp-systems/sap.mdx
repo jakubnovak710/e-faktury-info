@@ -1,0 +1,62 @@
+---
+name: "SAP"
+vendor: "SAP SE"
+descriptionSk: "Globálny líder v enterprise ERP. Na Slovensku používaný veľkými podnikmi a korporáciami."
+descriptionEn: "Global leader in enterprise ERP. Used by large enterprises and corporations in Slovakia."
+peppolStatus: "ready"
+peppolStatusNote: "SAP má globálnu Peppol podporu. Pre SK trh je potrebná konfigurácia lokálnych parametrov."
+apiSupport: true
+xmlExport: true
+ublSupport: true
+isdocSupport: false
+targetAudience: ["enterprise"]
+website: "https://www.sap.com/sk/"
+pricingFrom: "individuálna cenová ponuka"
+features: ["Enterprise ERP", "Financie", "Nákup", "Predaj", "Výroba", "Logistika", "HR", "Analytika"]
+pros: ["Globálna Peppol podpora", "Komplexný enterprise systém", "Silná partner sieť na SK"]
+cons: ["Veľmi vysoká cena", "Dlhá implementácia", "Iba pre veľké firmy", "Komplikovaná konfigurácia"]
+---
+
+## Ako nastaviť e-fakturáciu v SAP
+
+SAP je globálny líder v enterprise ERP systémoch a na Slovensku ho využívajú najväčšie podniky a korporácie. SAP ponúka natívnu Peppol podporu na globálnej úrovni, no pre slovenský trh je potrebná špecifická konfigurácia. Tento návod je určený pre SAP konzultantov a IT administrátorov, ktorí konfigurujú e-fakturáciu v SAP prostredí.
+
+### Krok 1: Identifikácia SAP verzie a modulu
+
+E-fakturácia v SAP sa konfiguruje rôzne v závislosti od verzie. Pre SAP S/4HANA využijete modul **SAP Document and Reporting Compliance (DRC)**, pre staršie SAP ECC verzie modul **Electronic Invoicing**. Overte svoju verziu cez transakciu `SM01` alebo `SE38` a kontaktujte svojho SAP Basis administrátora pre potvrdenie dostupných komponentov. Pre SAP Business One je postup výrazne jednoduchší cez add-on pre elektronickú fakturáciu.
+
+### Krok 2: Aktivácia SAP Document and Reporting Compliance
+
+V SAP S/4HANA prejdite do **SAP Fiori Launchpad > Manage Your Solution > Document and Reporting Compliance**. Aktivujte krajinný balík pre Slovensko. SAP DRC obsahuje predkonfigurované šablóny pre UBL 2.1 a Peppol BIS 3.0, no pre slovenský trh je potrebné nakonfigurovať lokálne parametre: formát DIČ, IČ DPH, štruktúru IBAN a slovenské daňové kódy.
+
+### Krok 3: Konfigurácia Peppol parametrov
+
+V transakcii `SPRO` (SAP Customizing Implementation Guide) prejdite na cestu **Financial Accounting > Accounts Receivable and Accounts Payable > Electronic Invoicing > Peppol Configuration**. Nastavte: Peppol ID vašej organizácie, preferovaný Access Point (SAP má vlastný, alebo môžete použiť tretiu stranu), formát dokumentov (UBL 2.1 BIS Billing 3.0) a komunikačný kanál (AS4 protokol).
+
+### Krok 4: Mapovanie obchodných partnerov
+
+V transakcii `XD02` alebo `BP` (Business Partner) doplňte Peppol identifikátory vašich obchodných partnerov. Pre každého partnera vytvorte záznam v záložke **Electronic Invoicing** s jeho Peppol ID a preferovaným formátom. SAP umožňuje aj automatické vyhľadávanie partnerov v Peppol SMP registri cez integráciu s Peppol Directory.
+
+### Krok 5: Konfigurácia output management
+
+Pre automatické generovanie e-faktúr nastavte Output Management. V transakcii `NACE` alebo v SAP Fiori app **Manage Output Parameters** vytvorte nový output typ pre Peppol. Priraďte ho k typom fakturačných dokladov (invoice, credit note, debit note). Nastavte podmienky — napríklad „odoslať cez Peppol, ak partner má Peppol ID, inak odoslať PDF e-mailom". Tento condition-based routing zabezpečí automatické rozhodovanie o kanáli doručenia.
+
+### Krok 6: Testovanie v sandbox prostredí
+
+Pred nasadením do produkcie dôrazne odporúčame testovanie v QA/sandbox prostredí. Vytvorte testovaciu faktúru a odošlite ju cez Peppol test environment. SAP DRC ponúka testovací režim, kde sa e-faktúry odosielajú do Peppol testovacieho AP namiesto produkčného. Skontrolujte: správnosť UBL XML štruktúry, validitu digitálneho podpisu, kompletnosť povinných polí a úspešnosť doručenia. Použite nástroj **Peppol Document Validator** na overenie súladu s BIS Billing 3.0.
+
+### Krok 7: Príjem e-faktúr (Accounts Payable)
+
+Pre príjem e-faktúr cez Peppol nastavte inbound processing v **SAP DRC > Inbound Configuration**. SAP automaticky prijíma UBL dokumenty cez AS4 protokol, parsuje ich a vytvára predbežné záznamy faktúr v module FI-AP. Nastavte workflow pre trojcestné párovanie (three-way matching): e-faktúra sa automaticky porovná s objednávkou (PO) a príjemkou (GR). Ak sa údaje zhodujú, faktúra sa automaticky zaúčtuje. Ak nie, systém ju zaradí do fronty na manuálnu kontrolu.
+
+### Krok 8: Monitoring a error handling
+
+V SAP Fiori app **Monitor Electronic Documents** sledujte stav odoslaných a prijatých e-faktúr. Dashboard zobrazuje: úspešne odoslané, čakajúce na spracovanie, odmietnuté a chybové doklady. Pre každý chybový doklad je dostupný detailný error log s popisom problému. Nastavte alerting v **SAP Alert Management**, aby systém automaticky notifikoval zodpovedných pracovníkov o chybách v e-fakturácii.
+
+### Krok 9: Integrácia s analytickými nástrojmi
+
+SAP ponúka pokročilú analytiku e-fakturácie cez SAP Analytics Cloud alebo embedded analytics v S/4HANA. Vytvorte dashboardy pre: objem e-faktúr v čase, úspešnosť doručenia, priemerný čas spracovania prijatých e-faktúr, úspory oproti papierovej fakturácii. Tieto metriky sú cenné pre CFO a finančný manažment.
+
+### Dôležité upozornenie
+
+Konfigurácia SAP pre e-fakturáciu je komplexný proces, ktorý vyžaduje skúseného SAP konzultanta. Odporúčame spoluprácu s certifikovaným SAP partnerom na Slovensku, ktorý má skúsenosti s lokálnou legislatívou a Peppol implementáciou. Plánujte minimálne 2-4 týždne na implementáciu a testovanie v závislosti od komplexnosti vášho SAP prostredia.

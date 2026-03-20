@@ -1,9 +1,11 @@
 /**
- * FAQ Data
+ * @deprecated — Server components should use collection loader:
+ *   import { getCollection } from '@/lib/collections';
+ *   import { faqCategorySchema } from '@/content/faq/_schema';
+ *   const entries = await getCollection('faq', faqCategorySchema);
  *
- * Structured FAQ questions grouped by category.
- * Used by: /otazky hub, /otazky/[category], FAQ sections on pillar pages,
- *          FAQPage JSON-LD schema (rich snippets in Google)
+ * This file is kept ONLY for client components (homepage FAQ section)
+ * that cannot use async. All FAQ content lives in src/content/faq/*.mdx
  *
  * Sources: financnasprava.sk FAQ PDF (26 pages), podnikajte.sk, web research
  * Last verified: March 2026

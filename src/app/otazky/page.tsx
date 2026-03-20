@@ -5,20 +5,25 @@
  * Includes FAQPage JSON-LD with ALL FAQ items across all categories for rich snippets.
  *
  * Target keywords: "e-faktúra otázky", "e-faktúra FAQ", "elektronická fakturácia otázky"
- * Data source: src/data/faq.ts
+ * Data source: src/content/faq/*.mdx (filesystem-based collection)
  */
 
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ChevronDown, ChevronRight, HelpCircle } from 'lucide-react';
 import { createMetadata } from '@jakubnovak710/universal-web-core/lib/metadata';
-import { Breadcrumbs } from '@/components/breadcrumbs';
-import { faqCategories } from '@/data/faq';
+import { getCollection } from '@/lib/collections';
+import { faqCategorySchema } from '@/content/faq/_schema';
+import { ContentLayout } from '@/components/layouts/content-layout';
+import { buildFaqJsonLd } from '@/components/seo';
 
-export function generateMetadata(): Metadata {
+export async function generateMetadata(): Promise<Metadata> {
+  const entries = await getCollection('faq', faqCategorySchema);
+  const totalItems = entries.reduce((sum, e) => sum + e.data.items.length, 0);
+
   return createMetadata({
     title: 'Otázky a odpovede o e-faktúre',
-    description: `Najčastejšie otázky o elektronickej fakturácii na Slovensku. ${faqCategories.length} kategórií, ${faqCategories.reduce((sum, c) => sum + c.items.length, 0)} otázok — základy, technické detaily, legislatíva aj príprava.`,
+    description: `Najčastejšie otázky o elektronickej fakturácii na Slovensku. ${entries.length} kategórií, ${totalItems} otázok — základy, technické detaily, legislatíva aj príprava.`,
     keywords: [
       'e-faktúra otázky',
       'e-faktúra FAQ',
@@ -29,37 +34,30 @@ export function generateMetadata(): Metadata {
   });
 }
 
-export default function OtazkyHubPage() {
-  const totalItems = faqCategories.reduce((sum, c) => sum + c.items.length, 0);
+export default async function OtazkyHubPage() {
+  const entries = await getCollection('faq', faqCategorySchema);
+  const totalItems = entries.reduce((sum, e) => sum + e.data.items.length, 0);
 
   // FAQPage JSON-LD with ALL items across all categories
-  const faqJsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'FAQPage',
-    mainEntity: faqCategories.flatMap((category) =>
-      category.items.map((item) => ({
-        '@type': 'Question',
-        name: item.questionSk,
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: item.answerSk,
-        },
+  const faqJsonLd = buildFaqJsonLd(
+    entries.flatMap((entry) =>
+      entry.data.items.map((item) => ({
+        question: item.questionSk,
+        answer: item.answerSk,
       })),
     ),
-  };
+  );
 
   return (
-    <main className="mx-auto max-w-5xl px-4 py-16 sm:px-6 lg:px-8">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
-      />
-
-      <Breadcrumbs locale="sk" items={[{ label: 'Otázky' }]} />
-
+    <ContentLayout
+      locale="sk"
+      breadcrumbs={[{ label: 'Otázky' }]}
+      jsonLd={[faqJsonLd]}
+      maxWidth="xl"
+    >
       <div className="text-center">
         <p className="font-mono text-xs font-bold uppercase tracking-widest text-[var(--accent)]">
-          {totalItems} otázok v {faqCategories.length} kategóriách
+          {totalItems} otázok v {entries.length} kategóriách
         </p>
         <h1 className="mt-2 text-3xl font-black text-[var(--text-primary)] sm:text-4xl">
           Otázky a odpovede o e-faktúre
@@ -72,30 +70,30 @@ export default function OtazkyHubPage() {
 
       {/* Category cards with accordion previews */}
       <div className="mt-12 grid gap-6 sm:grid-cols-2">
-        {faqCategories.map((category) => (
+        {entries.map((entry) => (
           <div
-            key={category.slug}
+            key={entry.slug}
             className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-6 transition-all hover:border-[var(--accent)]/30 hover:shadow-lg hover:shadow-[var(--accent)]/5"
           >
             {/* Category header */}
             <div className="flex items-start justify-between">
               <div>
                 <h2 className="text-lg font-black text-[var(--text-primary)]">
-                  {category.nameSk}
+                  {entry.data.nameSk}
                 </h2>
                 <p className="mt-1 text-sm text-[var(--text-secondary)]">
-                  {category.descriptionSk}
+                  {entry.data.descriptionSk}
                 </p>
               </div>
               <span className="ml-3 inline-flex shrink-0 items-center gap-1 rounded-full border border-[var(--accent)]/20 bg-[var(--accent)]/10 px-2 py-0.5 font-mono text-[10px] font-bold uppercase tracking-wider text-[var(--accent)]">
                 <HelpCircle className="h-3 w-3" />
-                {category.items.length}
+                {entry.data.items.length}
               </span>
             </div>
 
             {/* First 3 FAQ items as accordion preview */}
             <div className="mt-4">
-              {category.items.slice(0, 3).map((item) => (
+              {entry.data.items.slice(0, 3).map((item) => (
                 <details
                   key={item.id}
                   className="group border-b border-[var(--border-default)]"
@@ -112,18 +110,18 @@ export default function OtazkyHubPage() {
             </div>
 
             {/* Link to full category */}
-            {category.items.length > 3 && (
+            {entry.data.items.length > 3 && (
               <Link
-                href={`/otazky/${category.slug}`}
+                href={`/otazky/${entry.slug}`}
                 className="mt-4 inline-flex items-center gap-1 text-sm text-[var(--accent)] transition-colors hover:underline"
               >
-                Zobraziť všetkých {category.items.length} otázok
+                Zobraziť všetkých {entry.data.items.length} otázok
                 <ChevronRight className="h-4 w-4" />
               </Link>
             )}
-            {category.items.length <= 3 && (
+            {entry.data.items.length <= 3 && (
               <Link
-                href={`/otazky/${category.slug}`}
+                href={`/otazky/${entry.slug}`}
                 className="mt-4 inline-flex items-center gap-1 text-sm text-[var(--accent)] transition-colors hover:underline"
               >
                 Zobraziť kategóriu
@@ -154,6 +152,6 @@ export default function OtazkyHubPage() {
           .
         </p>
       </div>
-    </main>
+    </ContentLayout>
   );
 }

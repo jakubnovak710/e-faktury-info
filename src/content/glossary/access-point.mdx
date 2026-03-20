@@ -1,0 +1,26 @@
+---
+term: "Access Point"
+termEn: "Access Point"
+shortDefinitionSk: "Pristupovy bod do Peppol siete — technicky koncovy bod digitalneho postara, cez ktory sa odosielaju a prijimaju e-faktury."
+shortDefinitionEn: "Entry point to the Peppol network — the technical endpoint of a digital postman through which e-invoices are sent and received."
+category: "technical"
+relatedSlugs: ["digitalny-postar", "peppol", "smp"]
+---
+
+Access Point (pristupovy bod) je technicky koncovy bod, ktory zabezpecuje pripojenie firmy do siete Peppol. Je to server prevadzkovany certifikovanym poskytovatelom (digitalnym postarom), ktory odosiela a prijima elektronicke dokumenty v mene svojich klientov.
+
+## Ako Access Point funguje
+
+Ked firma potrebuje odoslat e-fakturu, jej uctovny system odovzda dokument Access Pointu odosielatela. Ten najprv overi format a validitu faktury, potom vyhladal v registri SMP (Service Metadata Publisher) Access Point prijimatela a dorucil mu dokument. Komunikacia medzi Access Pointmi prebieha cez zabezpeceny protokol AS4 so sifrovnanim a digitalnym podpisom.
+
+## Certifikacia a bezpecnost
+
+Kazdy Access Point musi prejst certifikacnym procesom organizacie OpenPeppol. Poskytovatel musi splnit prisne technicke a bezpecnostne poziadavky, podpisat zmluvu s OpenPeppol a pravidelne prechadzat auditmi. Certifikat sa obnovuje kazdorocne. Na Slovensku bude navyse potrebna akreditacia Financnou spravou SR.
+
+## Access Point vs. digitalny postar
+
+Pojmy Access Point a digitalny postar spolu uzko suvisia, ale nie su identicke. Access Point je technicky termin pre serverovu infrastrukturu, zatial co digitalny postar je obchodne oznacenie pre poskytovatela, ktory tento Access Point prevadzkuje a ponuka klientom sluzby dorucovanie e-faktur.
+
+## Vyznam pre podnikatelov
+
+Podnikatelia si nemusia prevadzkovat vlastny Access Point — to by bolo financne a technicky narocne. Namiesto toho si zvolia poskytovatela (digitalneho postara), ktory pristupovy bod prevadzkuje. Poskytovatel zvycajne ponuka API alebo webove rozhranie, cez ktore mozete e-faktury odosielat a prijimat. Niektori poskytovatelia ponukaju aj priamu integraciu s popularnymi uctovnymi softvermi na Slovensku.

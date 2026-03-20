@@ -1,0 +1,26 @@
+---
+term: "ISDOC"
+termEn: "ISDOC"
+shortDefinitionSk: "Information System Document — cesky/slovensky format elektronickych faktur. Podporovany mnohymi SK softvermi, ale NIE je to format pozadovany zakonom od 2027."
+shortDefinitionEn: "Information System Document — Czech/Slovak electronic invoice format. Supported by many SK software, but NOT the format required by law from 2027."
+category: "technical"
+relatedSlugs: ["xml", "ubl-21", "en-16931"]
+---
+
+ISDOC (Information System Document) je cesky format pre elektronicke faktury, ktory bol vyvinutý v roku 2008 Asociaciou pro elektronickou komerci (APEK) v Cesku. Vdaka jazykovej a ekonomickej blizkosti Ceska a Slovenska sa ISDOC rozsiril aj na slovensky trh a je podporovany mnohymi lokalnymi uctovnymi softvermi.
+
+## ISDOC vs. povinny format od 2027
+
+Je velmi dolezite zdoraznit, ze ISDOC NIE je format, ktory bude akceptovany ako platna e-faktura od roku 2027 na Slovensku. Zakon vyzaduje format podla europskej normy EN 16931 v syntaxi UBL 2.1, dorucovany cez siet Peppol. ISDOC ma inu strukturu a nie je kompatibilný s tymito standardmi.
+
+## Preco ISDOC nestaci
+
+ISDOC bol navrhnuty pre cesky/slovensky trh a nema medzinarodnu interoperabilitu. Nesleduje semanticky model EN 16931, pouziva vlastnu XML schemu a nie je podporovany v sieti Peppol. Aj ked ISDOC faktura je elektronicka a strojovo citatelna, nesplna legislativne poziadavky novely zakona o DPH.
+
+## Co robit, ak pouzivate ISDOC
+
+Ak vas uctovny softver generuje faktury vo formate ISDOC, musite sa pripravit na prechod. Overte u dodavatela softveru, ci planuje podporu UBL 2.1 a Peppol. Niektori poskytovatelia certifikovanych doručovacich sluzieb ponukaju konverznu sluzbu, ktora dokaze ISDOC prekonvertovat na UBL 2.1, ale ide o docasne riesenie — dlhodobo je nevyhnutne prejst na nativnu podporu standardu EN 16931.
+
+## Buducnost formatu ISDOC
+
+ISDOC bude pravdepodobne postupne nahradeny UBL 2.1, najma na Slovensku. V Cesku sa situacia moze vysivat inak v zavislosti na tom, aky format si Ceska republika zvoli pre svoju e-fakturaciu. Pre slovenske firmy je vsak jasne: investujte do UBL 2.1 a Peppol, nie do ISDOC.

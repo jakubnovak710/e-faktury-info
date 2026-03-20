@@ -1,7 +1,7 @@
 /**
  * FAQ Category Page (Programmatic)
  *
- * Generated from src/data/faq.ts for each FAQ category.
+ * Generated from src/content/faq/*.mdx for each FAQ category.
  * Shows all FAQ items in the category as accordions.
  *
  * Target keywords: "{category} e-faktúra", "otázky {category}"
@@ -13,33 +13,32 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, ChevronDown, ChevronRight } from 'lucide-react';
 import { createMetadata } from '@jakubnovak710/universal-web-core/lib/metadata';
-import { Breadcrumbs } from '@/components/breadcrumbs';
-import { faqCategories, type FaqCategory } from '@/data/faq';
+import { getCollection, getCollectionEntry, getCollectionSlugs } from '@/lib/collections';
+import { faqCategorySchema } from '@/content/faq/_schema';
+import { ContentLayout } from '@/components/layouts/content-layout';
+import { buildFaqJsonLd } from '@/components/seo';
 
 interface PageProps {
   params: Promise<{ category: string }>;
 }
 
-function getCategory(slug: string): FaqCategory | undefined {
-  return faqCategories.find((c) => c.slug === slug);
-}
-
-export function generateStaticParams() {
-  return faqCategories.map((category) => ({ category: category.slug }));
+export async function generateStaticParams() {
+  const slugs = await getCollectionSlugs('faq');
+  return slugs.map((slug) => ({ category: slug }));
 }
 
 export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
   const { category } = await params;
-  const cat = getCategory(category);
-  if (!cat) return {};
+  const entry = await getCollectionEntry('faq', category, faqCategorySchema);
+  if (!entry) return {};
 
   return createMetadata({
-    title: `${cat.nameSk} — Otázky o e-faktúre`,
-    description: `${cat.descriptionSk} ${cat.items.length} otázok a odpovedí o elektronickej fakturácii na Slovensku.`,
+    title: `${entry.data.nameSk} — Otázky o e-faktúre`,
+    description: `${entry.data.descriptionSk} ${entry.data.items.length} otázok a odpovedí o elektronickej fakturácii na Slovensku.`,
     keywords: [
-      `${cat.nameSk.toLowerCase()} e-faktúra`,
+      `${entry.data.nameSk.toLowerCase()} e-faktúra`,
       'e-faktúra FAQ',
       'elektronická fakturácia otázky',
     ],
@@ -48,56 +47,45 @@ export async function generateMetadata({
 
 export default async function FaqCategoryPage({ params }: PageProps) {
   const { category } = await params;
-  const cat = getCategory(category);
-  if (!cat) notFound();
+  const entry = await getCollectionEntry('faq', category, faqCategorySchema);
+  if (!entry) notFound();
 
-  const otherCategories = faqCategories.filter((c) => c.slug !== category);
+  const allEntries = await getCollection('faq', faqCategorySchema);
+  const otherEntries = allEntries.filter((e) => e.slug !== category);
 
   // FAQPage JSON-LD for this category
-  const faqJsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'FAQPage',
-    mainEntity: cat.items.map((item) => ({
-      '@type': 'Question',
-      name: item.questionSk,
-      acceptedAnswer: {
-        '@type': 'Answer',
-        text: item.answerSk,
-      },
+  const faqJsonLd = buildFaqJsonLd(
+    entry.data.items.map((item) => ({
+      question: item.questionSk,
+      answer: item.answerSk,
     })),
-  };
+  );
 
   return (
-    <main className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
-      />
-
-      <Breadcrumbs
-        locale="sk"
-        items={[
-          { label: 'Otázky', href: '/otazky' },
-          { label: cat.nameSk },
-        ]}
-      />
-
+    <ContentLayout
+      locale="sk"
+      breadcrumbs={[
+        { label: 'Otázky', href: '/otazky' },
+        { label: entry.data.nameSk },
+      ]}
+      jsonLd={[faqJsonLd]}
+    >
       {/* Header */}
       <div className="mb-8">
         <p className="font-mono text-xs font-bold uppercase tracking-widest text-[var(--accent)]">
-          {cat.items.length} otázok
+          {entry.data.items.length} otázok
         </p>
         <h1 className="mt-2 text-3xl font-black text-[var(--text-primary)] sm:text-4xl">
-          {cat.nameSk}
+          {entry.data.nameSk}
         </h1>
         <p className="mt-4 text-[var(--text-secondary)]">
-          {cat.descriptionSk}
+          {entry.data.descriptionSk}
         </p>
       </div>
 
       {/* All FAQ items as accordions */}
       <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] px-6">
-        {cat.items.map((item) => (
+        {entry.data.items.map((item) => (
           <details
             key={item.id}
             className="group border-b border-[var(--border-default)] last:border-b-0"
@@ -130,7 +118,7 @@ export default async function FaqCategoryPage({ params }: PageProps) {
           Ďalšie kategórie
         </h2>
         <div className="mt-4 grid gap-3 sm:grid-cols-2">
-          {otherCategories.map((other) => (
+          {otherEntries.map((other) => (
             <Link
               key={other.slug}
               href={`/otazky/${other.slug}`}
@@ -138,10 +126,10 @@ export default async function FaqCategoryPage({ params }: PageProps) {
             >
               <div>
                 <p className="font-black text-[var(--text-primary)] group-hover:text-[var(--accent)]">
-                  {other.nameSk}
+                  {other.data.nameSk}
                 </p>
                 <p className="mt-0.5 font-mono text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">
-                  {other.items.length} otázok
+                  {other.data.items.length} otázok
                 </p>
               </div>
               <ChevronRight className="h-5 w-5 shrink-0 text-[var(--text-muted)] transition-colors group-hover:text-[var(--accent)]" />
@@ -165,6 +153,6 @@ export default async function FaqCategoryPage({ params }: PageProps) {
           </Link>
         </p>
       </div>
-    </main>
+    </ContentLayout>
   );
 }

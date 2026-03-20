@@ -1,0 +1,26 @@
+---
+term: "EN 16931"
+termEn: "EN 16931"
+shortDefinitionSk: "Europska norma definujuca semanticky model dat pre elektronicke faktury. Zaklad pre format e-faktury na Slovensku."
+shortDefinitionEn: "European standard defining the semantic data model for electronic invoices. The basis for Slovakia's e-invoice format."
+category: "technical"
+relatedSlugs: ["ubl-21", "xml", "e-faktura", "peppol-bis-billing"]
+---
+
+EN 16931 je europska norma, ktora definuje semanticky datovy model pre zakladnu (core) elektronicku fakturu. Bola prijata Europskym vyborom pre normalizaciu (CEN) v roku 2017 a je zakladnym kamenon e-fakturacie v celej Europskej unii.
+
+## Co norma EN 16931 obsahuje
+
+Norma urcuje, ake informacie musi e-faktura obsahovat a aku maju mat strukturu. Definuje viac ako 160 semantickych prvkov (business terms), ako su identifikacia dodavatela a odberatela, fakturacne obdobie, danove kategorie, polozky faktury, sumy a platobne instrukcie. Kazdy prvok ma presne definovany vyznam, datovy typ a kardinalitu (ci je povinny alebo volitelny).
+
+## Syntaxe — UBL a CII
+
+EN 16931 je technologicky neutralna — definuje len vyznam dat, nie konkretny format suboru. Pre prax vsak Europska komisia schvalila dve syntaxe: UBL 2.1 (pouzivany v Peppol) a UN/CEFACT CII. Na Slovensku sa vyuziva primarne UBL 2.1, co znamena, ze e-faktura je XML subor v UBL formate, ktory splna pravidla EN 16931.
+
+## Vyznam pre Slovensko
+
+Slovensky zakon o DPH vyzaduje, aby e-faktury splnali normu EN 16931. To znamena, ze kazdy uctovny softver, ktory chce generovat platne e-faktury, musi vediet vytvorit XML dokument v sulade s touto normou. Pre podnikatelov je dolezite, aby si overili, ze ich softver je EN 16931 kompatibilny.
+
+## Validacia
+
+Faktury sa validuju oproti pravidlam normy — tzv. business rules a schematron validacie. Ak faktura nesplna povinne polia alebo obsahuje neplatne kombinacie udajov, bude odmetnuta. Preto je klucove pouzivat certifikovane nastroje na generovanie e-faktur, ktore automaticky kontroluju sulade s normou.

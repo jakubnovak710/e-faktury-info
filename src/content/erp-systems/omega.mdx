@@ -1,0 +1,54 @@
+---
+name: "OMEGA"
+vendor: "KROS"
+descriptionSk: "Profesionálny účtovný softvér od KROS, populárny medzi účtovnými kanceláriami. Podporuje podvojné účtovníctvo, DPH, majetok a mzdy."
+descriptionEn: "Professional accounting software by KROS, popular among accounting firms. Supports double-entry bookkeeping, VAT, assets, and payroll."
+peppolStatus: "in-progress"
+peppolStatusNote: "Generovanie štruktúrovaných XML faktúr. Pripravuje priame API napojenie na certifikovaných digitálnych poštárov."
+apiSupport: false
+xmlExport: true
+ublSupport: false
+isdocSupport: true
+targetAudience: ["accountant", "small-business", "medium-business"]
+website: "https://www.kros.sk/omega/"
+pricingFrom: "od 399 EUR/rok"
+features: ["Podvojné účtovníctvo", "DPH", "Majetok", "Mzdy", "Fakturácia", "Sklad", "Daňové priznania"]
+pros: ["Obľúbený medzi účtovníkmi", "Kvalitná SK podpora", "Pravidelné legislatívne updaty", "KROS ekosystém"]
+cons: ["Bez API zatiaľ", "Desktopový softvér", "Vyššia cena pre menšie firmy"]
+---
+
+## Ako nastaviť e-fakturáciu v OMEGA
+
+OMEGA od spoločnosti KROS patrí medzi najpoužívanejšie účtovné softvéry na Slovensku, predovšetkým v profesionálnych účtovných kanceláriách. Hoci priama Peppol integrácia je stále vo vývoji, OMEGA už dnes ponúka nástroje na štruktúrovaný export faktúr, ktoré sú nevyhnutné pre elektronickú fakturáciu.
+
+### Krok 1: Aktualizácia programu
+
+KROS pravidelne vydáva aktualizácie, ktoré reflektujú zmeny v legislatíve aj nové štandardy pre e-fakturáciu. Spustite OMEGU a skontrolujte dostupnosť aktualizácií cez **Pomoc > Aktualizovať program**. KROS distribuuje updaty automaticky, ale ak máte vypnuté automatické aktualizácie, stiahnite najnovšiu verziu z klientskej zóny na kros.sk.
+
+### Krok 2: Kontrola firemných údajov
+
+V menu **Firma > Nastavenie firmy** skontrolujte a doplňte všetky povinné identifikačné údaje: obchodné meno, IČO, DIČ, IČ DPH, adresu sídla a bankový účet v IBAN formáte. OMEGA tieto údaje automaticky vkladá do každej faktúry aj do exportovaných XML súborov. Pre správne fungovanie e-fakturácie je kritické, aby boli údaje kompletné a presné. Ak máte viac bankových účtov, nastavte predvolený účet pre fakturáciu.
+
+### Krok 3: Vystavenie faktúry a ISDOC export
+
+Vytvorte novú faktúru štandardným spôsobom cez **Fakturácia > Vydané faktúry > Nová faktúra**. Po uložení faktúry kliknite na **Tlač/Export** a vyberte formát **ISDOC**. OMEGA vygeneruje štruktúrovaný XML súbor podľa ISDOC štandardu, ktorý obsahuje všetky náležitosti faktúry v strojovo čitateľnom formáte. Tento súbor je kompatibilný s ostatnými účtovnými systémami na slovenskom trhu.
+
+### Krok 4: Hromadný export faktúr
+
+Pre účtovné kancelárie, ktoré spracovávajú desiatky až stovky faktúr mesačne, je kľúčová funkcia hromadného exportu. V zozname vydaných faktúr označte všetky faktúry určené na elektronické odoslanie (pomocou Ctrl+klik alebo Shift+klik) a zvoľte **Hromadné operácie > Export ISDOC**. OMEGA vygeneruje jednotlivé ISDOC súbory pre každú faktúru do zvoleného priečinka.
+
+### Krok 5: Odoslanie cez externého digitálneho poštára
+
+Exportované ISDOC súbory nahrajte do webového rozhrania certifikovaného Peppol Access Pointu. Na Slovensku je k dispozícii niekoľko registrovaných digitálnych poštárov, ktorí konvertujú ISDOC do UBL 2.1 formátu a doručia faktúru príjemcovi cez Peppol sieť. Odporúčame si vytvoriť účet u poštára, ktorý podporuje hromadný upload, čo ušetrí čas pri spracovaní väčšieho počtu dokladov.
+
+### Krok 6: Príjem elektronických faktúr
+
+Pre import prijatých e-faktúr do OMEGY prejdite na **Fakturácia > Prijaté faktúry > Import**. Ak ste prijali faktúru vo formáte ISDOC (stiahnutú z digitálneho poštára), OMEGA automaticky rozpozná štruktúru a vyplní údaje o dodávateľovi, položkách, sumách a DPH. Pred zaúčtovaním vždy skontrolujte správnosť importovaných údajov a prípadne upravte účtovné predkontácie.
+
+### Krok 7: Využitie KROS ekosystému
+
+OMEGA je súčasťou širšieho ekosystému KROS, ktorý zahŕňa aj programy ALFA (jednoduché účtovníctvo) a OLYMP (mzdy). Ak využívate viacero KROS produktov, údaje medzi nimi môžete synchronizovať, čo zjednodušuje celkový účtovný workflow vrátane e-fakturácie. Sledujte novinky KROS, pretože priame API napojenie na Peppol Access Point je v príprave a po jeho nasadení odpadne potreba manuálneho nahrávania súborov.
+
+### Tipy pre účtovné kancelárie
+
+Ak spravujete viac klientov, vytvorte si pre každého klienta samostatnú databázu v OMEGE a nastavte v každej správne firemné údaje. Pri hromadnom exporte faktúr roztrieďte súbory do priečinkov podľa klientov. Zvážte tiež nastavenie automatických zálohovacích plánov, aby ste predišli strate dát počas migrácie na e-fakturáciu.

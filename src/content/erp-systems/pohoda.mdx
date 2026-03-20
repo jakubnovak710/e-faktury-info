@@ -1,0 +1,51 @@
+---
+name: "POHODA"
+vendor: "STORMWARE"
+descriptionSk: "Jeden z najrozšírenejších ekonomických a účtovných systémov na Slovensku. Podporuje jednoduché aj podvojné účtovníctvo, skladové hospodárstvo, mzdy a fakturáciu."
+descriptionEn: "One of the most widely used economic and accounting systems in Slovakia. Supports single and double-entry bookkeeping, inventory, payroll, and invoicing."
+peppolStatus: "in-progress"
+peppolStatusNote: "XML export existuje, natívna Peppol integrácia vo vývoji. UBL 2.1 support plánovaný na Q3 2026."
+peppolDate: "2026-Q3"
+apiSupport: false
+xmlExport: true
+ublSupport: false
+isdocSupport: true
+targetAudience: ["freelancer", "small-business", "medium-business", "accountant"]
+website: "https://www.stormware.sk/pohoda/"
+pricingFrom: "od 299 EUR/rok"
+features: ["Podvojné účtovníctvo", "Jednoduché účtovníctvo", "Sklad", "Mzdy", "Fakturácia", "DPH priznanie", "mPOHODA (mobil)"]
+pros: ["Najrozšírenejší systém na SK", "Široká podpora účtovníkov", "Offline aj online verzia", "ISDOC export"]
+cons: ["Bez API — vyžaduje manuálny XML upload", "Peppol integrácia ešte nie je hotová", "Desktopová aplikácia (nie cloud-native)"]
+---
+
+## Ako nastaviť e-fakturáciu v POHODA
+
+POHODA od spoločnosti STORMWARE je najrozšírenejší ekonomický softvér na Slovensku, preto je pochopiteľné, že mnohí podnikatelia a účtovníci hľadajú návod na nastavenie e-fakturácie práve v tomto systéme. Nasledujúci sprievodca vám krok za krokom ukáže, ako pripraviť POHODU na elektronickú fakturáciu a budúce napojenie na sieť Peppol.
+
+### Krok 1: Aktualizujte na najnovšiu verziu
+
+Pred akýmkoľvek nastavením sa uistite, že máte nainštalovanú najnovšiu verziu POHODA. STORMWARE pravidelne vydáva legislatívne aktualizácie, ktoré obsahujú nové formáty exportu a vylepšenia pre e-fakturáciu. Otvorte POHODU, prejdite do menu **Pomoc > Aktualizácia** a stiahnite najnovší update. Bez aktuálnej verzie nemusia byť dostupné niektoré kľúčové funkcie pre štruktúrovaný export faktúr.
+
+### Krok 2: Nastavenie údajov firmy
+
+Prejdite do **Nastavenie > Globálne nastavenie > Firma**. Vyplňte všetky povinné údaje: IČO, DIČ, IČ DPH (ak ste platca), sídlo firmy a bankové spojenie. Tieto údaje sú kritické, pretože sa automaticky prenášajú do každej vystavenej faktúry a do XML exportu. Nesprávne alebo neúplné údaje spôsobia odmietnutie e-faktúry na strane príjemcu alebo digitálneho poštára.
+
+### Krok 3: Konfigurácia XML exportu
+
+POHODA podporuje export faktúr do formátu ISDOC a vlastného XML formátu. Pre export faktúry prejdite na **Fakturácia > Vydané faktúry**, vyberte konkrétnu faktúru a zvoľte **Súbor > Export > ISDOC**. Systém vygeneruje štruktúrovaný XML súbor, ktorý je kompatibilný s väčšinou slovenských účtovných systémov. Pre hromadný export viacerých faktúr využite funkciu **Hromadné operácie**, kde môžete označiť viac dokladov naraz.
+
+### Krok 4: Odoslanie cez digitálneho poštára
+
+Keďže POHODA zatiaľ nemá priame API napojenie na Peppol, je potrebné využiť externého digitálneho poštára (napríklad ePostak, Peppol.sk alebo iný certifikovaný Access Point). Exportovaný XML/ISDOC súbor nahrajte do webového rozhrania zvoleného poštára. Ten ho skonvertuje do UBL 2.1 formátu a odošle príjemcovi cez sieť Peppol. Tento manuálny krok odpadne po plánovanej natívnej integrácii v Q3 2026.
+
+### Krok 5: Príjem e-faktúr
+
+Pre príjem elektronických faktúr v POHODE využite funkciu **Súbor > Import > ISDOC**. Ak vám dodávateľ pošle faktúru cez Peppol, stiahnite ju z rozhrania vášho digitálneho poštára vo formáte ISDOC a naimportujte do POHODY. Systém automaticky vyplní hlavičkové údaje, položky a sumy. Skontrolujte správnosť importovaných údajov pred zaúčtovaním.
+
+### Krok 6: Nastavenie automatizácie v mPOHODA
+
+Ak využívate mobilnú aplikáciu mPOHODA, môžete faktúry vystavovať aj z terénu. Faktúry vytvorené v mPOHODA sa synchronizujú s desktopovou verziou, odkiaľ ich následne exportujete do ISDOC formátu. Tento workflow je užitočný pre živnostníkov a obchodných zástupcov, ktorí potrebujú fakturovať priamo u zákazníka.
+
+### Tipy na záver
+
+Odporúčame pravidelne zálohovať databázu POHODY pred každým hromadným exportom. Sledujte stránku STORMWARE pre informácie o plánovanej Peppol integrácii. Po jej uvedení bude možné odosielať e-faktúry priamo z prostredia POHODY bez nutnosti externého poštára, čo výrazne zjednoduší celý proces.

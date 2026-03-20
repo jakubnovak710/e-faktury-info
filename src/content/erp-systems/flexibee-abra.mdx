@@ -1,0 +1,64 @@
+---
+name: "FlexiBee (ABRA)"
+vendor: "ABRA Software"
+descriptionSk: "Cloudový ERP systém s pokročilým API a exportom do UBL formátu. Aktuálne najlepšie pripravený na Peppol integráciu spomedzi testovaných softvérov."
+descriptionEn: "Cloud ERP system with advanced API and UBL format export. Currently the best prepared for Peppol integration among tested software."
+peppolStatus: "ready"
+peppolStatusNote: "REST API endpointy pre Peppol pripravené. UBL 2.1 export natívne. Najlepšie pripravený systém."
+apiSupport: true
+xmlExport: true
+ublSupport: true
+isdocSupport: true
+targetAudience: ["small-business", "medium-business"]
+website: "https://www.flexibee.eu/sk/"
+pricingFrom: "od 25 EUR/mesiac"
+features: ["Cloud ERP", "REST API", "UBL export", "Fakturácia", "Účtovníctvo", "Sklad", "CRM", "E-shop integrácie"]
+pros: ["Peppol ready (najlepšie pripravený)", "Silné REST API", "Cloud-native", "UBL 2.1 natívne"]
+cons: ["Menšia používateľská základňa na SK", "Mesačné platby", "Krivka učenia pre pokročilé funkcie"]
+---
+
+## Ako nastaviť e-fakturáciu vo FlexiBee (ABRA)
+
+FlexiBee od ABRA Software je v súčasnosti najlepšie pripravený softvér na Peppol e-fakturáciu na slovenskom trhu. Ako cloudový ERP systém s natívnym UBL 2.1 exportom a robustným REST API ponúka najplynulejší zážitok z e-fakturácie. Tento návod vám ukáže, ako naplno využiť tieto možnosti.
+
+### Krok 1: Vytvorenie účtu a prihlásenie
+
+FlexiBee je cloud-native aplikácia, takže nepotrebujete nič inštalovať. Zaregistrujte sa na flexibee.eu/sk a vyberte si cenový plán. Pre e-fakturáciu s Peppol potrebujete minimálne plán, ktorý zahŕňa API prístup a UBL export. Po registrácii sa prihláste do webového rozhrania, kde nájdete kompletný ERP systém prístupný z akéhokoľvek zariadenia.
+
+### Krok 2: Nastavenie firmy
+
+Prejdite do **Nastavenie > Firma** a vyplňte údaje: obchodné meno, IČO, DIČ, IČ DPH, sídlo a bankové účty. FlexiBee podporuje IBAN formát a umožňuje nastaviť viacero bankových účtov s rôznymi menami. Dôležité je vyplniť aj Peppol ID vašej firmy, ak ho už máte — nájdete ho v **Nastavenie > Peppol**. Ak ho ešte nemáte, FlexiBee vám ho pomôže zaregistrovať.
+
+### Krok 3: Aktivácia Peppol integrácie
+
+FlexiBee má Peppol integráciu priamo zabudovanú. Prejdite do **Nastavenie > Integrácie > Peppol** a aktivujte modul. Systém vás prevedie procesom registrácie do Peppol siete. Po aktivácii získate Peppol endpoint a budete môcť odosielať aj prijímať e-faktúry priamo z FlexiBee bez potreby externého digitálneho poštára.
+
+### Krok 4: Vystavenie a odoslanie e-faktúry
+
+Vytvorte novú faktúru cez **Predaj > Faktúry vydané > Nová faktúra**. Po vyplnení všetkých údajov a uložení faktúry kliknite na **Odoslať cez Peppol**. FlexiBee automaticky vygeneruje UBL 2.1 dokument a odošle ho cez Peppol sieť priamo príjemcovi. Celý proces trvá len niekoľko sekúnd. Stav doručenia môžete sledovať v detaile faktúry, kde sa zobrazuje log odoslania.
+
+### Krok 5: Automatizácia cez REST API
+
+FlexiBee disponuje jedným z najkomplexnejších API na slovenskom trhu. REST API umožňuje plnú automatizáciu fakturačného procesu. Pre nastavenie API prejdite do **Nastavenie > API** a vygenerujte prístupové údaje. Dokumentácia API je dostupná na demo.flexibee.eu/api/dokumentace. Kľúčové API endpointy pre e-fakturáciu:
+
+- `POST /c/{firma}/faktura-vydana` — vytvorenie faktúry
+- `GET /c/{firma}/faktura-vydana/{id}.ubl` — export do UBL 2.1
+- `POST /c/{firma}/faktura-vydana/{id}/peppol-send` — odoslanie cez Peppol
+
+Tieto endpointy umožňujú vybudovať plne automatický pipeline: e-shop vytvorí objednávku, FlexiBee API vystaví faktúru a automaticky ju odošle cez Peppol.
+
+### Krok 6: E-shop integrácia
+
+FlexiBee ponúka priame konektory pre populárne e-shop platformy. V **Nastavenie > Integrácie > E-shop** pripojte svoj obchod. Po pripojení sa objednávky automaticky synchronizujú s FlexiBee, kde sa z nich generujú faktúry. V kombinácii s Peppol modulom môžete nastaviť automatické odosielanie B2B faktúr cez Peppol sieť.
+
+### Krok 7: Príjem e-faktúr
+
+Po aktivácii Peppol modulu FlexiBee automaticky prijíma e-faktúry od vašich dodávateľov. Prijaté faktúry sa zobrazujú v **Nákup > Faktúry prijaté** s označením Peppol. Systém automaticky rozpozná a vyplní všetky údaje, čo eliminuje manuálne prepisovanie. FlexiBee podporuje aj import ISDOC súborov pre dodávateľov, ktorí ešte nie sú v Peppol sieti.
+
+### Krok 8: Reporting a audit trail
+
+FlexiBee automaticky zaznamenáva kompletný audit trail pre každú e-faktúru: kedy bola vytvorená, kedy odoslaná cez Peppol, kedy doručená a kedy uhradená. Tieto záznamy sú dostupné v detaile každej faktúry a sú exportovateľné pre účely auditu. Pre hromadný prehľad využite **Reporty > E-fakturácia**, kde nájdete štatistiky odoslaných a prijatých e-faktúr.
+
+### Prečo je FlexiBee najlepšia voľba pre Peppol
+
+FlexiBee kombinuje cloud-native architektúru, natívny UBL 2.1 export, silné REST API a priamu Peppol integráciu. Pre firmy, ktoré chcú byť na e-fakturáciu pripravené už dnes, je FlexiBee najjednoduchšia cesta. Jedinou nevýhodou je menšia používateľská základňa na Slovensku v porovnaní s POHODOU alebo OMEGOU, no z technického hľadiska je na Peppol pripravený najlepšie.

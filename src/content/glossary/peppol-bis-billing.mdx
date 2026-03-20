@@ -1,0 +1,26 @@
+---
+term: "Peppol BIS Billing 3.0"
+termEn: "Peppol BIS Billing 3.0"
+shortDefinitionSk: "Standardizovany profil e-faktury v sieti Peppol. Definuje povinnu XML strukturu, polia a obchodne pravidla zalozene na UBL 2.1 a EN 16931."
+shortDefinitionEn: "Standardized e-invoice profile in the Peppol network. Defines the mandatory XML structure, fields, and business rules based on UBL 2.1 and EN 16931."
+category: "technical"
+relatedSlugs: ["peppol", "ubl-21", "en-16931"]
+---
+
+Peppol BIS Billing 3.0 je specifikacia (Business Interoperability Specification), ktora presne definuje, ako ma vyzerat e-faktura posielana cez siet Peppol. Stavia na europskej norme EN 16931 a syntaxi UBL 2.1, ale pridava dalsie pravidla a obmedzenia specificke pre Peppol.
+
+## Co BIS Billing obsahuje
+
+Specifikacia definuje dve zakladne typy dokumentov: fakturu (Invoice) a dobropis (Credit Note). Pre kazdy typ urcuje povinne a volitelne polia, povolene hodnoty (napr. kody mien, krajin, danovych kategorii), obchodne pravidla (napr. ze suma poloziek sa musi rovnat celkovej sume) a technicke validacne pravidla (Schematron).
+
+## Rozdiel oproti EN 16931
+
+EN 16931 definuje vseobecny semanticky model — teda CO musi faktura obsahovat. Peppol BIS Billing 3.0 urcuje AKO presne to ma vyzerat v XML formate UBL 2.1 v kontexte Peppol siete. BIS Billing je teda konkretna implementacia normy EN 16931 pre Peppol, s dodatocnymi pravidlami pre interoperabilitu.
+
+## Verzia 3.0
+
+Aktualna verzia 3.0 bola zavedena v roku 2019 a nahradzila starsie verzie BIS Billing. Pravidelne sa aktualizuje — OpenPeppol vydava nove releasy dvakrat rocne (maj a november), ktore mozu priniest nove validacne pravidla alebo upresnenia. Pre softverovych vyvojarov je dolezite sledovat tieto aktualizacie.
+
+## Prakticky dopad na Slovensku
+
+Kazdy uctovny softver, ktory chce generovat e-faktury pre Peppol, musi implementovat Peppol BIS Billing 3.0. To znamena generovat UBL 2.1 XML, ktore prejde vsetkymi validacnymi pravidlami. Neplatna faktura bude Access Pointom odmetnuta a nedorucena. Odporuca sa vyuzivat testovaci prostredie Peppol na overenie kompatibility pred ostrym nasadenim.

@@ -1,8 +1,9 @@
 /**
  * E-faktúra Legislative Timeline
  *
- * Chronological milestones for e-invoicing in Slovakia.
- * Used by: homepage countdown, /kedy-zacne-platit-e-faktura, /nastroje/casova-os
+ * @deprecated for server components — consider moving to content collection.
+ * Kept as static data because timeline is small (6 items) and used by
+ * homepage client component. No MDX needed for this collection.
  *
  * Source: Zákon 385/2025 Z.z. (novela zákona o DPH)
  * Last verified: March 2026

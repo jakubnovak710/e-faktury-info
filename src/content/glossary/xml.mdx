@@ -1,0 +1,26 @@
+---
+term: "XML"
+termEn: "XML"
+shortDefinitionSk: "eXtensible Markup Language — znackovaci jazyk pre strukturovane data. E-faktura je XML subor podla standardu EN 16931."
+shortDefinitionEn: "eXtensible Markup Language — markup language for structured data. The e-invoice is an XML file following EN 16931 standard."
+category: "technical"
+relatedSlugs: ["en-16931", "ubl-21", "e-faktura"]
+---
+
+XML (eXtensible Markup Language) je znackovaci jazyk urceny na ukladanie a prenos strukturovanych dat. V kontexte e-fakturacie je XML zakladnym formatom, v ktorom su e-faktury vytvarane, odosielane a spracovavane.
+
+## Preco XML a nie JSON alebo CSV
+
+XML bol zvoleny pre e-fakturaciu z viacerych dovodov. Ponuka silnu podporu pre schemove validacie (XSD), transformacie (XSLT) a digitalne podpisy (XMLDSig). Na rozdiel od CSV ma hierarchicku strukturu vhodnu pre zlozite obchodne dokumenty. Na rozdiel od JSON existoval v dobe, ked sa europske standardy definovali, a ma zrele nastroje pre validaciu.
+
+## XML v praxi e-fakturacie
+
+Kazda e-faktura podla normy EN 16931 je XML subor v syntaxi UBL 2.1. Tento subor obsahuje vsetky udaje faktury v strojovo citatelnej forme — od identifikacie dodavatela a odberatela cez jednotlive polozky az po danove sumary. Pocitacove systemy dokazu XML automaticky nacitat a spracovat bez manualneho prepisovania.
+
+## Ako vyzera XML e-faktura
+
+XML e-faktura je textovy subor s tagmi (znackami), ktore opisuju jednotlive datove prvky. Napriklad tag `<cbc:InvoiceTypeCode>380</cbc:InvoiceTypeCode>` urcuje, ze ide o standardnu fakturu. Strukturu definuju menné priestory (namespaces) UBL a pravidla normy EN 16931.
+
+## Validacia a spracovanie
+
+XML e-faktury prechadzaju viacurovnovou validaciou: syntakticka validacia (ci je XML spravne formatovane), schemova validacia oproti XSD (ci obsahuje spravne elementy) a obchodna validacia oproti Schematron pravidlam (ci splna business rules). Az po uspesnej validacii je faktura akceptovana v Peppol sieti. Pre podnikatelov to znamena, ze ich uctovny softver musi generovat validne XML — v opacnom pripade bude faktura odmetnuta.

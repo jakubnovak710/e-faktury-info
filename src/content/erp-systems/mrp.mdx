@@ -1,0 +1,62 @@
+---
+name: "MRP"
+vendor: "MRP Company"
+descriptionSk: "Slovenský ekonomický softvér pre malé a stredné firmy. Účtovníctvo, mzdy, fakturácia, sklad."
+descriptionEn: "Slovak economic software for SMEs. Accounting, payroll, invoicing, inventory."
+peppolStatus: "in-progress"
+peppolStatusNote: "MRP pracuje na Peppol Access Point integrácii. ISDOC support existuje."
+apiSupport: false
+xmlExport: true
+ublSupport: false
+isdocSupport: true
+targetAudience: ["small-business", "medium-business", "accountant"]
+website: "https://mrp.sk/"
+pricingFrom: "od 149 EUR/rok"
+features: ["Účtovníctvo", "Mzdy", "Fakturácia", "Sklad", "DPH", "Peppol AP (vo vývoji)"]
+pros: ["Cenovo dostupný", "Slovenský produkt", "Pracuje na vlastnom Peppol AP", "ISDOC"]
+cons: ["Bez API", "Starší dizajn", "Peppol ešte nie je hotový"]
+---
+
+## Ako nastaviť e-fakturáciu v MRP
+
+MRP je slovenský ekonomický softvér s dlhou tradíciou na trhu, primárne určený pre malé a stredné firmy. Zaujímavosťou je, že MRP Company aktívne pracuje na vlastnom Peppol Access Point, čo v budúcnosti umožní priamu integráciu. Zatiaľ je e-fakturácia možná cez ISDOC export a externého digitálneho poštára. Tento návod vás prevedie aktuálne dostupnými možnosťami.
+
+### Krok 1: Aktualizácia MRP na najnovšiu verziu
+
+MRP je desktopová aplikácia, preto je dôležité mať nainštalovanú najnovšiu verziu. Navštívte mrp.sk a v klientskej sekcii stiahnite najnovší update. MRP Company pravidelne vydáva aktualizácie, ktoré obsahujú legislatívne zmeny a vylepšenia exportných funkcií. Najnovšie verzie obsahujú vylepšený ISDOC export, ktorý je kompatibilný s aktuálnymi požiadavkami na e-fakturáciu.
+
+### Krok 2: Nastavenie firemných údajov
+
+Spustite MRP a prejdite do **Nastavenie > Firma**. Vyplňte všetky povinné údaje: obchodné meno, IČO, DIČ, IČ DPH (ak ste platca DPH), sídlo firmy a bankový účet vo formáte IBAN. MRP automaticky prenáša tieto údaje do vystavených faktúr a do ISDOC exportu. Skontrolujte aj správnosť číselných radov faktúr v **Nastavenie > Číslovanie dokladov**.
+
+### Krok 3: Správa obchodných partnerov
+
+V module **Adresár** doplňte údaje o vašich obchodných partneroch. Pre každého partnera vyplňte IČO, DIČ, IČ DPH a adresu. Ak poznáte Peppol ID partnera, uložte ho do poľa poznámka alebo do používateľského poľa. Tieto údaje budete potrebovať pri odosielaní e-faktúr cez digitálneho poštára. MRP umožňuje import kontaktov zo CSV súboru, čo uľahčí hromadné doplnenie údajov.
+
+### Krok 4: Vystavenie faktúry
+
+Vytvorte novú faktúru cez **Fakturácia > Vydané faktúry > Nová**. MRP poskytuje štandardný formulár pre vyplnenie faktúry s údajmi o odberateľovi, položkami, cenami a DPH. Po uložení faktúry je doklad pripravený na export. MRP podporuje aj vytváranie faktúr z dodacích listov alebo objednávok, čo urýchľuje proces pri opakujúcich sa transakciách.
+
+### Krok 5: Export do ISDOC formátu
+
+Na uloženej faktúre kliknite na **Export > ISDOC**. MRP vygeneruje štruktúrovaný XML súbor podľa ISDOC štandardu. Vyberte cieľový priečinok a súbor uložte. Pre hromadný export viacerých faktúr využite funkciu v zozname vydaných faktúr — označte požadované faktúry a zvoľte **Hromadný export > ISDOC**. Systém vytvorí samostatný ISDOC súbor pre každú faktúru.
+
+### Krok 6: Odoslanie cez digitálneho poštára
+
+Exportované ISDOC súbory nahrajte do webového rozhrania certifikovaného Peppol Access Pointu. Na slovenskom trhu sú dostupní viacerí registrovaní digitálni poštári. Poštár skonvertuje ISDOC do UBL 2.1 formátu a odošle faktúru príjemcovi cez Peppol sieť. Uchovajte si potvrdenie o odoslaní, ktoré poštár vygeneruje — slúži ako dôkaz doručenia.
+
+### Krok 7: Príjem elektronických faktúr
+
+Pre import prijatých e-faktúr stiahnite ISDOC súbor z rozhrania vášho digitálneho poštára. V MRP prejdite na **Fakturácia > Prijaté faktúry > Import ISDOC**. Systém automaticky vytvorí novú prijatú faktúru s údajmi extrahovanými zo súboru. Skontrolujte správnosť importovaných údajov: sumy, DPH, dátumy a údaje o dodávateľovi. Priraďte správne účtovné predkontácie pred zaúčtovaním.
+
+### Krok 8: Účtovné spracovanie e-faktúr
+
+MRP integruje fakturáciu s účtovníctvom, takže po zaúčtovaní sa e-faktúra automaticky prejaví v účtovnej evidencii. V module **Účtovníctvo** nájdete zaúčtované e-faktúry v príslušných účtovných knihách. Pre DPH evidenciu sú e-faktúry automaticky zahrnuté do kontrolného výkazu a DPH priznania. Skontrolujte správnosť DPH kódov a sadzieb.
+
+### Krok 9: Archivácia elektronických dokladov
+
+MRP umožňuje systematickú archiváciu dokladov. Originálne ISDOC/XML súbory uchovávajte v štruktúrovanom priečinku na disku, ideálne s názvom vo formáte `{rok}/{mesiac}/{cislo-faktury}.isdoc`. Zákon vyžaduje uchovávanie elektronických faktúr minimálne 10 rokov v pôvodnom formáte. Nastavte automatické zálohovanie databázy MRP v **Nastavenie > Zálohovanie**.
+
+### Výhľad: Vlastný Peppol Access Point
+
+MRP Company je jednou z mála slovenských softvérových firiem, ktorá pracuje na vlastnom Peppol Access Point. Po jeho dokončení bude možné odosielať e-faktúry priamo z prostredia MRP bez potreby externého poštára. Toto bude významná konkurenčná výhoda pre používateľov MRP. Sledujte stránku mrp.sk a newsletter MRP Company pre aktuálne informácie o postupe vývoja a plánovanom termíne spustenia.

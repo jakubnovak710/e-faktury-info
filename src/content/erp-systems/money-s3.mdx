@@ -1,0 +1,58 @@
+---
+name: "Money S3"
+vendor: "Solitea"
+descriptionSk: "Ekonomický systém pre malé a stredné firmy. Účtovníctvo, fakturácia, sklad, mzdy v jednom balíku."
+descriptionEn: "Economic system for SMEs. Accounting, invoicing, inventory, payroll in one package."
+peppolStatus: "planned"
+peppolStatusNote: "Bez API — vyžaduje manuálny upload XML súborov cez digitálneho poštára. Peppol podpora plánovaná."
+apiSupport: false
+xmlExport: true
+ublSupport: false
+isdocSupport: true
+targetAudience: ["small-business", "medium-business", "accountant"]
+website: "https://money.sk/"
+pricingFrom: "od 199 EUR/rok"
+features: ["Podvojné účtovníctvo", "Jednoduché účtovníctvo", "Sklad", "Mzdy", "Fakturácia", "DPH"]
+pros: ["Kompletný ekonomický systém", "Cenovo dostupný", "ISDOC support", "Offline prevádzka"]
+cons: ["Bez API", "Peppol ešte neplánovaný s dátumom", "Staršie rozhranie"]
+---
+
+## Ako nastaviť e-fakturáciu v Money S3
+
+Money S3 od Solitea je kompletný ekonomický systém, ktorý kombinuje účtovníctvo, fakturáciu, sklad a mzdy v jednom balíku. Hoci Peppol integrácia je zatiaľ len plánovaná a systém nemá API, Money S3 podporuje ISDOC export, čo je základ pre elektronickú fakturáciu. Tento návod vám ukáže, ako využiť dostupné nástroje na e-fakturáciu.
+
+### Krok 1: Inštalácia a aktualizácia
+
+Money S3 je desktopová aplikácia, ktorú je potrebné nainštalovať na počítač. Stiahnite najnovšiu verziu z money.sk alebo spustite aktualizáciu cez **Pomoc > Aktualizácia programu**. Solitea vydáva legislatívne updaty minimálne pri každej zmene zákonov, preto je dôležité mať vždy najnovšiu verziu. Aktualizácia zabezpečí, že máte k dispozícii najnovšie exportné formáty vrátane aktuálnej verzie ISDOC.
+
+### Krok 2: Nastavenie účtovnej jednotky
+
+Po spustení programu prejdite do **Nastavenie > Účtovná jednotka**. Vyplňte kompletné firemné údaje: obchodné meno, IČO, DIČ, IČ DPH, sídlo a bankové účty. Money S3 umožňuje evidovať viacero bankových účtov a priradiť ich k rôznym typom dokladov. Pre e-fakturáciu je dôležité, aby bol bankový účet vo formáte IBAN, pretože UBL štandard vyžaduje tento formát.
+
+### Krok 3: Konfigurácia fakturácie
+
+V **Nastavenie > Fakturácia** nastavte predvolené parametre: číslovanie faktúr, predvolenú splatnosť, textové poznámky a predkontácie. Money S3 umožňuje vytvoriť šablóny pre rôzne typy faktúr. Pre e-fakturáciu odporúčame vytvoriť samostatnú číselnú radu pre elektronické faktúry, čo uľahčí ich evidenciu a kontrolu.
+
+### Krok 4: Vystavenie faktúry
+
+Vytvorte novú faktúru cez **Fakturácia > Vydané faktúry > Pridať**. Vyplňte údaje o odberateľovi — Money S3 umožňuje načítanie údajov z adresára, kde môžete pri obchodných partneroch evidovať aj ich Peppol ID (uložte ho do poznámky kontaktu). Zadajte položky faktúry, sumy a DPH. Po uložení máte faktúru pripravenú na export.
+
+### Krok 5: Export do ISDOC formátu
+
+Na uloženej faktúre zvoľte **Export > ISDOC**. Money S3 vygeneruje štruktúrovaný XML súbor v ISDOC formáte, ktorý obsahuje všetky povinné náležitosti faktúry. Vyberte cieľový priečinok a uložte súbor. Pre hromadný export označte viacero faktúr v zozname a použite **Hromadné operácie > Export ISDOC**. Toto je obzvlášť užitočné na konci mesiaca, keď potrebujete spracovať väčší počet dokladov naraz.
+
+### Krok 6: Odoslanie cez digitálneho poštára
+
+Keďže Money S3 nemá API ani priamu Peppol integráciu, exportované ISDOC súbory je potrebné manuálne nahrať do webového rozhrania certifikovaného Peppol Access Pointu. Poštár skonvertuje ISDOC do UBL 2.1 a odošle faktúru príjemcovi cez Peppol sieť. Tento krok vyžaduje manuálnu prácu, no pri menšom počte faktúr mesačne je to zvládnuteľné.
+
+### Krok 7: Import prijatých e-faktúr
+
+Pre príjem elektronických faktúr stiahnite ISDOC súbor z rozhrania vášho digitálneho poštára. V Money S3 prejdite na **Fakturácia > Prijaté faktúry > Import > ISDOC**. Systém automaticky vytvorí novú prijatú faktúru s vyplnenými údajmi z importovaného súboru. Skontrolujte správnosť údajov a priraďte správne účtovné predkontácie pred zaúčtovaním.
+
+### Krok 8: Archivácia a zálohovanie
+
+Money S3 umožňuje systematickú archiváciu dokladov. V **Nastavenie > Archivácia** nastavte automatické zálohovanie databázy. Pre e-fakturáciu je dôležité uchovávať originálne ISDOC/XML súbory — vytvorte si na disku štruktúru priečinkov podľa mesiacov a rokov. Zákon vyžaduje uchovávanie elektronických faktúr minimálne 10 rokov.
+
+### Výhľad do budúcnosti
+
+Solitea avizovala plán na Peppol integráciu v Money S3, no konkrétny dátum zatiaľ nebol oznámený. Dovtedy je manuálny workflow cez ISDOC export a digitálneho poštára jedinou cestou. Odporúčame sledovať stránku money.sk pre aktuálne informácie o vývoji Peppol podpory.

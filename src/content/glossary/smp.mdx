@@ -1,0 +1,26 @@
+---
+term: "SMP (Service Metadata Publisher)"
+termEn: "SMP (Service Metadata Publisher)"
+shortDefinitionSk: "Register v Peppol sieti, kde su ulozene informacie o ucastnikoch — ich Peppol ID, podporovane dokumenty a pristupove body."
+shortDefinitionEn: "Registry in the Peppol network storing participant information — their Peppol ID, supported documents, and access points."
+category: "technical"
+relatedSlugs: ["peppol", "peppol-id", "access-point"]
+---
+
+SMP (Service Metadata Publisher) je distribuovany register v sieti Peppol, ktory sluzi ako "telefonne zoznam" vsetkych ucastnikov. Obsahuje klucove informacie potrebne na dorucenie dokumentov spravnemu prijimatelovi cez spravny Access Point.
+
+## Co SMP obsahuje
+
+Pre kazdeho zaregistrovaneho ucastnika SMP uchovava jeho Peppol ID, zoznam typov dokumentov, ktore je schopny prijimat (napr. faktury, dobropisy, objednavky), technicky endpoint (URL) Access Pointu, cez ktory dokumenty prijima, a certifikaty potrebne pre zabezpecenu komunikaciu.
+
+## Ako SMP funguje v praxi
+
+Ked firma A chce poslat e-fakturu firme B, Access Point firmy A najprv vykona tzv. lookup — dotaz na SMP. Zisti, ci firma B existuje v sieti, ci prijima faktury a na aky Access Point ma dokument dorucit. Tento proces prebieha automaticky a trva len zlomok sekundy. Ak firma B nie je v registri, e-fakturu nie je mozne dorucit.
+
+## SMP a SML
+
+SMP funguje v tandeme so sluzbou SML (Service Metadata Locator), ktoru prevadzkuje priamo OpenPeppol. SML je centralny register, ktory urcuje, ktory SMP server je zodpovedny za daneho ucastnika. Proces lookupu teda prebieha v dvoch krokoch: najprv sa cez SML zisti adresa SMP, potom sa z SMP ziskaju metadata o prijimatelovi.
+
+## Vyznam pre podnikatelov
+
+Podnikatelia sa s SMP priamo nestretnu — vsetko prebieha automaticky na pozadi. Je vsak dolezite vediet, ze registracia v SMP je sucastou procesu ziskania Peppol ID. Ked sa firma zaregistruje u digitalneho postara, ten zaregistruje jej udaje do SMP. Ak udaje nie su aktualne (napr. po zmene Access Pointu), e-faktury nemusia byt spravne dorucene. Preto je dolezite informovat svojho digitalneho postara o akychkolvek zmenach.

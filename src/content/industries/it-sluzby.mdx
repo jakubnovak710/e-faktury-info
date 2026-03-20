@@ -1,0 +1,31 @@
+---
+nameSk: "IT a digitálne služby"
+nameEn: "IT and digital services"
+descriptionSk: "Softvérové firmy, agentúry, freelance developeri. Predplatné, SaaS fakturácia, medzinárodní klienti."
+descriptionEn: "Software companies, agencies, freelance developers. Subscriptions, SaaS billing, international clients."
+commonErpSlugs: ["superfaktura", "flexibee-abra", "billdu", "fintoro"]
+typicalChallengesSk:
+  - "Opakovaná fakturácia (subscriptions, mesačné platby)"
+  - "Medzinárodní klienti (cezhraničné až od 2030)"
+  - "Viacero mien (EUR, USD, CZK)"
+  - "Automatizácia fakturácie cez API"
+typicalChallengesEn:
+  - "Recurring billing (subscriptions, monthly payments)"
+  - "International clients (cross-border from 2030)"
+  - "Multiple currencies (EUR, USD, CZK)"
+  - "Invoice automation via API"
+recommendationsSk: "Vyberte si fakturačný systém s API a Peppol podporou (SuperFaktúra, FlexiBee, Billdu). Pre medzinárodných klientov zatiaľ nie je e-faktúra povinná."
+recommendationsEn: "Choose an invoicing system with API and Peppol support (SuperFaktúra, FlexiBee, Billdu). For international clients, e-invoicing is not yet mandatory."
+---
+
+## E-faktúra v IT a digitálnych službách — podrobný sprievodca
+
+IT sektor je paradoxne jedným z najlepšie pripravených odvetví na e-faktúru, no zároveň čelí unikátnym výzvam. Softvérové firmy a digitálne agentúry majú technickú gramotnosť na rýchlu adaptáciu, ale ich obchodné modely prinášajú špecifické fakturačné scenáre, ktoré vyžadujú premyslenú implementáciu.
+
+Najväčšou výzvou je opakovaná fakturácia. SaaS produkty, mesačné retainre a predplatné generujú desiatky až stovky faktúr mesačne s rovnakým obsahom, len s iným obdobím. Automatizácia cez API je preto kľúčová — manuálne vystavovanie e-faktúr v Peppol formáte pre každú subscription by bolo neúnosné. Moderné fakturačné systémy ako SuperFaktúra alebo FlexiBee ponúkajú API endpointy, ktoré umožňujú programatické vystavenie a odoslanie e-faktúr priamo z vášho billing systému.
+
+Medzinárodní klienti predstavujú ďalší špecifický aspekt. Povinná cezhraničná e-faktúra v rámci EÚ je plánovaná až od roku 2030, takže pre zahraničných klientov zatiaľ nie je potrebné vystavovať e-faktúry v Peppol formáte. Avšak mnohé krajiny EÚ už majú vlastné systémy e-fakturácie (Taliansko SDI, Francúzsko Chorus Pro), a niektorí klienti môžu e-faktúru vyžadovať dobrovoľne.
+
+Viacero mien je technicky riešiteľné — Peppol BIS 3.0 plne podporuje fakturáciu v rôznych menách vrátane správneho prepočtu na EUR pre účely DPH. IT firmy by mali overiť, že ich fakturačný systém správne generuje kurzové údaje v štruktúrovanom XML.
+
+Pre freelance developerov a malé agentúry je odporúčanie jednoduché: vyberte si jeden z cloudových fakturačných systémov s natívnou Peppol integráciou a nastavte automatické vystavovanie. Väčšina systémov zvládne prechod na e-faktúru bez zmeny vašich existujúcich procesov.

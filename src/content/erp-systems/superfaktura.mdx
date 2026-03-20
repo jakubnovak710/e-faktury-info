@@ -1,0 +1,54 @@
+---
+name: "SuperFaktúra"
+vendor: "SuperFaktúra s.r.o."
+descriptionSk: "Populárny online fakturačný systém s rozsiahlou automatizáciou. Integrácia s e-shopmi, CRM, skladom a bankovým párovaním."
+descriptionEn: "Popular online invoicing system with extensive automation. Integration with e-shops, CRM, inventory, and bank reconciliation."
+peppolStatus: "ready"
+peppolStatusNote: "Plná Peppol integrácia pripravená. Stačí aktivovať Peppol modul v nastaveniach."
+apiSupport: true
+xmlExport: true
+ublSupport: true
+isdocSupport: true
+targetAudience: ["freelancer", "small-business"]
+website: "https://www.superfaktura.sk/"
+pricingFrom: "od 0 EUR (free tier)"
+features: ["Online fakturácia", "Automatické párovanie platieb", "API", "E-shop integrácie", "CRM", "Sklad", "Mobilná app"]
+pros: ["Peppol ready", "Silné API", "Free tier k dispozícii", "Jednoduché rozhranie", "E-shop integrácie"]
+cons: ["Len fakturácia (nie plné účtovníctvo)", "Limitované funkcie vo free verzii", "Menej vhodná pre väčšie firmy"]
+---
+
+## Ako nastaviť e-fakturáciu v SuperFaktúra
+
+SuperFaktúra je jedným z mála slovenských fakturačných systémov, ktoré už majú plnú Peppol integráciu priamo v aplikácii. Vďaka tomu je nastavenie e-fakturácie výrazne jednoduchšie ako v systémoch, kde je potrebný externý digitálny poštár. Tento návod vás prevedie celým procesom od aktivácie po prvé odoslanie e-faktúry.
+
+### Krok 1: Prihlásenie a kontrola plánu
+
+Prihláste sa do svojho SuperFaktúra účtu na superfaktura.sk. Peppol modul je dostupný v platených plánoch. Ak používate free tier, budete musieť prejsť na platenú verziu. Skontrolujte svoj aktuálny plán v **Nastavenia > Predplatné** a prípadne ho aktualizujte. Peppol funkcionalita je dostupná od plánu „Business".
+
+### Krok 2: Aktivácia Peppol modulu
+
+Prejdite do **Nastavenia > Integrácie > Peppol** a kliknite na **Aktivovať Peppol**. SuperFaktúra vás prevedie krátkym procesom registrácie, počas ktorého budete musieť potvrdiť firemné údaje a súhlasiť s podmienkami Peppol siete. Po aktivácii získate unikátny Peppol identifikátor (Peppol ID), ktorý slúži ako vaša adresa v sieti Peppol. Tento identifikátor zdieľajte so svojimi obchodnými partnermi.
+
+### Krok 3: Overenie firemných údajov
+
+V **Nastavenia > Firemné údaje** skontrolujte, že máte vyplnené: obchodné meno, IČO, DIČ, IČ DPH, adresu sídla a bankový účet. SuperFaktúra tieto údaje automaticky mapuje do UBL 2.1 štruktúry pri odosielaní e-faktúr. Ak sú údaje neúplné, Peppol sieť faktúru odmietne.
+
+### Krok 4: Odoslanie prvej e-faktúry cez Peppol
+
+Vytvorte novú faktúru štandardným spôsobom. Pri odoslaní faktúry uvidíte novú možnosť **Odoslať cez Peppol** vedľa klasického e-mailového odoslania. Kliknite na túto možnosť. SuperFaktúra automaticky skonvertuje faktúru do UBL 2.1 formátu a odošle ju cez Peppol sieť. Príjemca dostane faktúru priamo do svojho účtovného systému, ak je tiež registrovaný v Peppol. Ak príjemca nie je v Peppol sieti, systém vás na to upozorní a môžete faktúru odoslať klasicky e-mailom.
+
+### Krok 5: Príjem e-faktúr cez Peppol
+
+Po aktivácii Peppol modulu začnete automaticky prijímať e-faktúry od dodávateľov, ktorí sú v sieti Peppol a poznajú vaše Peppol ID. Prijaté e-faktúry sa zobrazia v sekcii **Prijaté faktúry** s označením „Peppol". SuperFaktúra automaticky rozpozná a vyplní všetky údaje z prijatej UBL faktúry, čo eliminuje manuálne prepisovanie.
+
+### Krok 6: Nastavenie API pre automatizáciu
+
+Ak prevádzkujete e-shop alebo používate vlastný systém, môžete e-fakturáciu plne automatizovať cez SuperFaktúra API. V **Nastavenia > API** vygenerujte API kľúč. Dokumentácia API je dostupná na apidoc.superfaktura.sk. API endpoint pre Peppol odoslanie umožňuje programaticky vystavovať a odosielať e-faktúry bez manuálneho zásahu. Toto je ideálne riešenie pre e-shopy s vysokým objemom faktúr.
+
+### Krok 7: E-shop integrácia a Peppol
+
+SuperFaktúra ponúka priame integrácie s populárnymi e-shop platformami (WooCommerce, Shoptet, PrestaShop a ďalšie). Po pripojení e-shopu sa faktúry generujú automaticky. V kombinácii s Peppol modulom môžete nastaviť, aby sa B2B faktúry automaticky odosielali cez Peppol, zatiaľ čo B2C faktúry sa posielajú klasicky e-mailom. Toto nastavenie nájdete v **Nastavenia > Integrácie > E-shop > Pravidlá odosielania**.
+
+### Tipy na efektívne využívanie
+
+Zapnite automatické párovanie platieb s bankovým účtom, čo v kombinácii s Peppol e-faktúrami vytvorí takmer plne automatizovaný fakturačný workflow. Využite šablóny faktúr pre opakujúcich sa zákazníkov a nastavte automatické upomienky pre neuhradené faktúry.

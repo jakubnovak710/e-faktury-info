@@ -1,102 +1,36 @@
 /**
- * Content Utilities — Blog & Guide Management
+ * Blog Content Utilities
  *
- * Handles loading, parsing, and sorting of MDX content files.
- * Uses filesystem-based content from src/content/blog/*.mdx
- *
- * Frontmatter format:
- * ---
- * title: "Čo je e-faktúra"
- * titleEn: "What is an e-invoice"
- * description: "Kompletný vysvetlenie elektronickej faktúry..."
- * descriptionEn: "Complete explanation of electronic invoicing..."
- * date: "2026-03-20"
- * author: "Jakub Novák"
- * tags: ["e-faktúra", "základy"]
- * image: "/blog/co-je-e-faktura.png"
- * readingTime: 8
- * published: true
- * ---
+ * Thin wrapper around the generic collection loader for blog-specific operations.
+ * All blog posts live in src/content/blog/*.mdx
  *
  * Usage:
  *   const posts = await getAllPosts();
  *   const post = await getPostBySlug('co-je-e-faktura');
  */
 
-import fs from 'fs/promises';
-import path from 'path';
-import matter from 'gray-matter';
+import { getCollection, getCollectionEntry, getCollectionSlugs, type CollectionEntry } from '@/lib/collections';
+import { blogSchema, type BlogEntry } from '@/content/blog/_schema';
 
-const BLOG_DIR = path.join(process.cwd(), 'src/content/blog');
-
-export interface PostFrontmatter {
-  title: string;
-  titleEn: string;
-  description: string;
-  descriptionEn: string;
-  date: string;
-  author: string;
-  tags: string[];
-  image?: string;
-  readingTime: number;
-  published: boolean;
-}
-
-export interface PostMeta extends PostFrontmatter {
-  slug: string;
-}
-
-export interface Post extends PostMeta {
-  content: string;
-}
+export type PostMeta = CollectionEntry<BlogEntry>;
 
 /**
  * Get all published blog posts, sorted by date (newest first)
  */
 export async function getAllPosts(): Promise<PostMeta[]> {
-  try {
-    const files = await fs.readdir(BLOG_DIR);
-    const mdxFiles = files.filter((f) => f.endsWith('.mdx'));
-
-    const posts: PostMeta[] = [];
-
-    for (const file of mdxFiles) {
-      const slug = file.replace('.mdx', '');
-      const filePath = path.join(BLOG_DIR, file);
-      const raw = await fs.readFile(filePath, 'utf-8');
-      const { data } = matter(raw);
-
-      const frontmatter = data as PostFrontmatter;
-      if (!frontmatter.published) continue;
-
-      posts.push({ ...frontmatter, slug });
-    }
-
-    return posts.sort(
-      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
-    );
-  } catch {
-    // No blog directory or no files yet
-    return [];
-  }
+  const entries = await getCollection('blog', blogSchema, (a, b) =>
+    new Date(b.data.date).getTime() - new Date(a.data.date).getTime(),
+  );
+  return entries.filter((e) => e.data.published);
 }
 
 /**
  * Get a single blog post by slug (including content)
  */
-export async function getPostBySlug(slug: string): Promise<Post | null> {
-  try {
-    const filePath = path.join(BLOG_DIR, `${slug}.mdx`);
-    const raw = await fs.readFile(filePath, 'utf-8');
-    const { data, content } = matter(raw);
-
-    const frontmatter = data as PostFrontmatter;
-    if (!frontmatter.published) return null;
-
-    return { ...frontmatter, slug, content };
-  } catch {
-    return null;
-  }
+export async function getPostBySlug(slug: string): Promise<PostMeta | null> {
+  const entry = await getCollectionEntry('blog', slug, blogSchema);
+  if (!entry || !entry.data.published) return null;
+  return entry;
 }
 
 /**
@@ -106,7 +40,7 @@ export async function getAllTags(): Promise<string[]> {
   const posts = await getAllPosts();
   const tagSet = new Set<string>();
   for (const post of posts) {
-    for (const tag of post.tags) {
+    for (const tag of post.data.tags) {
       tagSet.add(tag);
     }
   }
@@ -114,17 +48,8 @@ export async function getAllTags(): Promise<string[]> {
 }
 
 /**
- * Get posts by tag
- */
-export async function getPostsByTag(tag: string): Promise<PostMeta[]> {
-  const posts = await getAllPosts();
-  return posts.filter((post) => post.tags.includes(tag));
-}
-
-/**
- * Get all post slugs (for static generation)
+ * Get all post slugs (for generateStaticParams)
  */
 export async function getAllPostSlugs(): Promise<string[]> {
-  const posts = await getAllPosts();
-  return posts.map((p) => p.slug);
+  return getCollectionSlugs('blog');
 }

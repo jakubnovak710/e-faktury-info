@@ -1,0 +1,58 @@
+---
+name: "HELIOS"
+vendor: "Asseco Solutions"
+descriptionSk: "Enterprise ERP systém pre stredné a veľké firmy. Komplexné riešenie zahŕňajúce účtovníctvo, výrobu, logistiku a HR."
+descriptionEn: "Enterprise ERP system for medium and large companies. Comprehensive solution including accounting, manufacturing, logistics, and HR."
+peppolStatus: "ready"
+peppolStatusNote: "Asseco Solutions je certifikovaný Peppol Access Point. HELIOS má natívnu Peppol integráciu."
+apiSupport: true
+xmlExport: true
+ublSupport: true
+isdocSupport: true
+targetAudience: ["medium-business", "enterprise"]
+website: "https://www.helios.eu/sk/"
+pricingFrom: "individuálna cenová ponuka"
+features: ["ERP", "Účtovníctvo", "Výroba", "Logistika", "HR/Mzdy", "CRM", "BI", "Peppol AP"]
+pros: ["Peppol ready (Asseco je certifikovaný AP)", "Komplexný enterprise ERP", "Silná SK podpora", "Dlhoročné skúsenosti"]
+cons: ["Vysoká cena", "Dlhá implementácia", "Nie pre malé firmy"]
+---
+
+## Ako nastaviť e-fakturáciu v HELIOS
+
+HELIOS od Asseco Solutions je enterprise ERP systém určený pre stredné a veľké firmy. Veľkou výhodou je, že Asseco Solutions je certifikovaný Peppol Access Point, čo znamená, že HELIOS má natívnu Peppol integráciu bez potreby externého digitálneho poštára. Tento návod je určený pre administrátorov a implementačných konzultantov, ktorí nastavujú e-fakturáciu v HELIOS prostredí.
+
+### Krok 1: Overenie licencie a modulov
+
+Prihláste sa do HELIOS a overte, že máte aktívnu licenciu s modulom elektronickej fakturácie. Prejdite do **Administrácia > Licencie** a skontrolujte dostupnosť modulu **E-fakturácia / Peppol**. Ak modul nemáte, kontaktujte svojho Asseco obchodného zástupcu pre jeho aktiváciu. Enterprise edícia štandardne obsahuje Peppol modul, no v niektorých konfiguráciách môže byť potrebné jeho explicitné zapnutie.
+
+### Krok 2: Konfigurácia Peppol Access Pointu
+
+Keďže Asseco Solutions prevádzkuje vlastný certifikovaný Peppol Access Point, konfigurácia je priamočiara. Prejdite do **Nastavenie > Elektronická fakturácia > Peppol**. Vyplňte Peppol parametre: registračné údaje vašej firmy, Peppol ID (ak ho už máte z predchádzajúcej registrácie) a preferovaný formát dokumentov (UBL 2.1 je štandard). Ak nemáte Peppol ID, HELIOS vás prevedie registračným procesom cez Asseco Peppol AP.
+
+### Krok 3: Nastavenie firemných údajov
+
+V **Nastavenie > Organizácia** skontrolujte kompletnosť firemných údajov: obchodné meno, IČO, DIČ, IČ DPH, sídlo, bankové účty. Pre enterprise prostredie je dôležité nastaviť aj organizačnú štruktúru — ak má firma viacero pobočiek alebo divízií, každá môže mať vlastné Peppol ID. Nastavte hierarchiu v **Organizačná štruktúra > Pobočky** a priraďte Peppol identifikátory.
+
+### Krok 4: Mapovanie obchodných partnerov
+
+V module **CRM > Obchodní partneri** doplňte Peppol ID vašich obchodných partnerov. HELIOS umožňuje vyhľadávanie partnerov v Peppol registri priamo z rozhrania — zadajte IČO partnera a systém automaticky zistí, či je registrovaný v Peppol sieti a aké je jeho Peppol ID. Pre veľké firmy s tisíckami partnerov je dostupný hromadný import Peppol ID zo CSV súboru.
+
+### Krok 5: Vystavenie a odoslanie e-faktúry
+
+Vytvorte novú faktúru cez **Predaj > Faktúry vydané > Nová faktúra**. Po vyplnení údajov a uložení kliknite na **Elektronické odoslanie > Peppol**. HELIOS automaticky vygeneruje UBL 2.1 dokument, digitálne ho podpíše a odošle cez Asseco Peppol Access Point. Stav doručenia sa zobrazuje v reálnom čase: odoslaná, prijatá AP príjemcu, doručená príjemcovi. Kompletný audit trail je dostupný v záložke **E-fakturácia** na detaile faktúry.
+
+### Krok 6: Automatizácia hromadného odosielania
+
+Pre stredné a veľké firmy, ktoré vystavujú stovky až tisíce faktúr mesačne, HELIOS ponúka hromadné Peppol odosielanie. V **Predaj > Faktúry vydané** nastavte filter pre neodoslané faktúry a použite **Hromadné operácie > Peppol odoslanie**. Systém spracuje všetky vybrané faktúry a odošle ich cez Peppol v dávke. Tento proces je možné naplánovať cez **Plánovač úloh**, kde nastavíte automatické odosielanie nových faktúr v pravidelných intervaloch (napríklad denne o 18:00).
+
+### Krok 7: Príjem a spracovanie e-faktúr
+
+HELIOS automaticky prijíma e-faktúry z Peppol siete. Prijaté faktúry sa zobrazujú v **Nákup > Faktúry prijaté > Elektronicky prijaté**. Systém automaticky rozpozná údaje z UBL dokumentu a vytvorí návrh prijatej faktúry. Pre enterprise prostredie je dôležitý workflow schvaľovania: prijaté e-faktúry prechádzajú cez definovaný schvaľovací proces (vedúci oddelenia, finančný riaditeľ) pred zaúčtovaním. Nastavte schvaľovací workflow v **Nastavenie > Workflow > Prijaté faktúry**.
+
+### Krok 8: Integrácia s výrobou a logistikou
+
+HELIOS ako enterprise ERP integruje e-fakturáciu s ostatnými modulmi. Faktúry vydané sa automaticky generujú z dodacích listov, objednávok alebo výrobných zákaziek. Peppol odoslanie môžete naviazať na udalosť „expedícia tovaru" alebo „dokončenie zákazky", čo zabezpečí automatické vystavenie a doručenie e-faktúry v momente, keď je tovar alebo služba dodaná.
+
+### Krok 9: Reporting a compliance
+
+V **Reporty > E-fakturácia** nájdete prehľad všetkých odoslaných a prijatých e-faktúr, štatistiky úspešnosti doručenia, priemerné časy spracovania a compliance reporty. Tieto reporty sú užitočné pre interný audit aj pre komunikáciu s regulátorom. HELIOS automaticky archivuje všetky e-faktúry v súlade s legislatívnymi požiadavkami na uchovávanie elektronických dokumentov.

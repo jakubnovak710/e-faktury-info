@@ -1,45 +1,17 @@
 /**
  * Dynamic Sitemap Generator
  *
- * Generates sitemap.xml from:
- * 1. Core static pages (navigation config)
- * 2. Programmatic pages (ERP integrations, glossary, industries, FAQ)
- * 3. Locale prefixes (/sk/... and /en/...)
- * 4. Hreflang annotations (xmlns:xhtml) for each locale pair
- *
- * Priority tiers:
- * - 1.0: Homepage
- * - 0.9: Pillar pages (core content)
- * - 0.8: Blog
- * - 0.7: Programmatic pages (integrations, glossary)
- * - 0.5: Industry pages, FAQ
- * - 0.3: Legal pages
- *
- * Per SEO plan section 7.2
+ * Generates sitemap.xml from filesystem-based content collections.
+ * Auto-discovers all content by scanning collection directories.
+ * Includes hreflang alternates for SK + EN.
  */
 
 import type { MetadataRoute } from 'next';
 import { siteConfig } from '@config/site.config';
 import { i18nConfig } from '@/i18n/config';
-import { erpSystems } from '@/data/erp-systems';
-import { glossaryTerms } from '@/data/glossary';
-import { industries } from '@/data/industries';
-import { faqCategories } from '@/data/faq';
+import { getCollectionSlugs } from '@/lib/collections';
 
 const LEGAL_PATHS = new Set(['/ochrana-sukromia', '/obchodne-podmienky']);
-
-const PILLAR_PATHS = new Set([
-  '/co-je-e-faktura',
-  '/kedy-zacne-platit-e-faktura',
-  '/ako-sa-pripravit-na-e-fakturu',
-  '/e-faktura-pre-zivnostnikov',
-  '/e-faktura-pre-male-firmy',
-  '/e-faktura-pre-uctovnikov',
-  '/legislativa-e-faktura',
-  '/peppol-slovensko',
-  '/pokuty-za-e-fakturu',
-  '/digitalni-postari',
-]);
 
 interface SitemapEntry {
   path: string;
@@ -47,51 +19,67 @@ interface SitemapEntry {
   changeFrequency: 'daily' | 'weekly' | 'monthly' | 'yearly';
 }
 
-function buildEntries(): SitemapEntry[] {
+async function buildEntries(): Promise<SitemapEntry[]> {
+  // Scan collections for dynamic slugs
+  const [erpSlugs, glossarySlugs, industrySlugs, faqSlugs, blogSlugs] = await Promise.all([
+    getCollectionSlugs('erp-systems'),
+    getCollectionSlugs('glossary'),
+    getCollectionSlugs('industries'),
+    getCollectionSlugs('faq'),
+    getCollectionSlugs('blog'),
+  ]);
+
   const entries: SitemapEntry[] = [];
 
-  // Homepage
+  // Static core pages
   entries.push({ path: '/', priority: 1.0, changeFrequency: 'weekly' });
 
-  // Pillar pages
-  for (const path of PILLAR_PATHS) {
+  const pillarPages = [
+    '/co-je-e-faktura', '/kedy-zacne-platit-e-faktura', '/ako-sa-pripravit-na-e-fakturu',
+    '/e-faktura-pre-zivnostnikov', '/e-faktura-pre-male-firmy', '/e-faktura-pre-uctovnikov',
+    '/legislativa-e-faktura', '/peppol-slovensko', '/pokuty-za-e-fakturu', '/digitalni-postari',
+  ];
+  for (const path of pillarPages) {
     entries.push({ path, priority: 0.9, changeFrequency: 'weekly' });
   }
 
   // Hub pages
-  entries.push({ path: '/integracie', priority: 0.8, changeFrequency: 'weekly' });
-  entries.push({ path: '/slovnik', priority: 0.7, changeFrequency: 'monthly' });
-  entries.push({ path: '/odvetvia', priority: 0.7, changeFrequency: 'monthly' });
-  entries.push({ path: '/otazky', priority: 0.7, changeFrequency: 'monthly' });
-  entries.push({ path: '/porovnanie', priority: 0.7, changeFrequency: 'monthly' });
-  entries.push({ path: '/blog', priority: 0.8, changeFrequency: 'daily' });
-
-  // Service + about pages
-  entries.push({ path: '/sluzby', priority: 0.7, changeFrequency: 'monthly' });
-  entries.push({ path: '/kontakt', priority: 0.5, changeFrequency: 'monthly' });
-  entries.push({ path: '/o-nas', priority: 0.5, changeFrequency: 'monthly' });
-
-  // ERP integration pages (programmatic)
-  for (const erp of erpSystems) {
-    entries.push({ path: `/integracie/${erp.slug}`, priority: 0.7, changeFrequency: 'monthly' });
+  for (const path of ['/integracie', '/blog']) {
+    entries.push({ path, priority: 0.8, changeFrequency: 'daily' });
+  }
+  for (const path of ['/slovnik', '/odvetvia', '/otazky', '/porovnanie', '/sluzby']) {
+    entries.push({ path, priority: 0.7, changeFrequency: 'monthly' });
+  }
+  for (const path of ['/kontakt', '/o-nas']) {
+    entries.push({ path, priority: 0.5, changeFrequency: 'monthly' });
   }
 
-  // Glossary pages (programmatic)
-  for (const term of glossaryTerms) {
-    entries.push({ path: `/slovnik/${term.slug}`, priority: 0.6, changeFrequency: 'monthly' });
+  // Programmatic: ERP integrations
+  for (const slug of erpSlugs) {
+    entries.push({ path: `/integracie/${slug}`, priority: 0.7, changeFrequency: 'monthly' });
   }
 
-  // Industry pages (programmatic)
-  for (const industry of industries) {
-    entries.push({ path: `/odvetvia/${industry.slug}`, priority: 0.5, changeFrequency: 'monthly' });
+  // Programmatic: Glossary
+  for (const slug of glossarySlugs) {
+    entries.push({ path: `/slovnik/${slug}`, priority: 0.6, changeFrequency: 'monthly' });
   }
 
-  // FAQ category pages
-  for (const category of faqCategories) {
-    entries.push({ path: `/otazky/${category.slug}`, priority: 0.5, changeFrequency: 'monthly' });
+  // Programmatic: Industries
+  for (const slug of industrySlugs) {
+    entries.push({ path: `/odvetvia/${slug}`, priority: 0.5, changeFrequency: 'monthly' });
   }
 
-  // Legal pages
+  // Programmatic: FAQ categories
+  for (const slug of faqSlugs) {
+    entries.push({ path: `/otazky/${slug}`, priority: 0.5, changeFrequency: 'monthly' });
+  }
+
+  // Blog posts
+  for (const slug of blogSlugs) {
+    entries.push({ path: `/blog/${slug}`, priority: 0.8, changeFrequency: 'weekly' });
+  }
+
+  // Legal
   for (const path of LEGAL_PATHS) {
     entries.push({ path, priority: 0.3, changeFrequency: 'yearly' });
   }
@@ -99,17 +87,15 @@ function buildEntries(): SitemapEntry[] {
   return entries;
 }
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = siteConfig.url;
   const now = new Date();
-  const entries = buildEntries();
+  const entries = await buildEntries();
 
-  // Generate entries for each locale
   const sitemapEntries: MetadataRoute.Sitemap = [];
 
   for (const entry of entries) {
     for (const locale of i18nConfig.locales) {
-      // Build alternates for hreflang
       const alternates: Record<string, string> = {};
       for (const altLocale of i18nConfig.locales) {
         alternates[altLocale] = `${baseUrl}/${altLocale}${entry.path === '/' ? '' : entry.path}`;
@@ -120,9 +106,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
         lastModified: now,
         changeFrequency: entry.changeFrequency,
         priority: entry.priority,
-        alternates: {
-          languages: alternates,
-        },
+        alternates: { languages: alternates },
       });
     }
   }
