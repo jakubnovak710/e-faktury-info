@@ -12,7 +12,7 @@ import { securityConfig } from '@config/security.config';
 import { emailConfig } from '@config/email.config';
 import { features } from '@config/features.config';
 import { Navigation } from '@/components/navigation';
-import { Footer } from '@jakubnovak710/universal-web-core/components/layout/footer';
+import { Footer } from '@/components/footer';
 import { UmamiProvider } from '@/components/analytics/umami-provider';
 import { EngagementTracker } from '@/components/analytics/engagement-tracker';
 import '@/styles/globals.css';
