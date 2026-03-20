@@ -419,7 +419,7 @@ export default function HomePage() {
           ].map((item) => (
             <motion.div key={item.step} variants={staggerItem}>
               <GlassCard className="relative h-full p-6">
-                <span className="absolute -top-3 left-4 flex h-8 w-8 items-center justify-center rounded-full bg-[var(--accent)] font-mono text-sm font-black text-white">
+                <span className="absolute -top-4 left-4 z-10 flex h-8 w-8 items-center justify-center rounded-full font-mono text-sm font-black text-white shadow-lg" style={{ backgroundColor: 'var(--accent)', boxShadow: '0 0 12px var(--accent-glow)' }}>
                   {item.step}
                 </span>
                 <item.icon className="mt-4 h-6 w-6 text-[var(--accent)]" />
