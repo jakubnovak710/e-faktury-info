@@ -51,12 +51,12 @@ export default function EFakturaPreUctovnikovPage() {
 
         <h3 className="font-black text-[var(--text-primary)]">Automatizácia príjmu faktúr</h3>
         <p>
-          Koniec ručného prepisovania údajov z PDF faktúr. E-faktúry vo formáte XML sa automaticky importujú do účtovného systému. To znamená menej chýb, rýchlejšie spracovanie a viac času na poradenstvo.
+          Koniec ručného prepisovania údajov z PDF faktúr. E-faktúry vo formáte <a href="https://sk.wikipedia.org/wiki/Kateg%C3%B3ria:XML" target="_blank" rel="noopener noreferrer" className="text-[var(--accent)]">XML</a> sa automaticky importujú do účtovného systému. To znamená menej chýb, rýchlejšie spracovanie a viac času na poradenstvo.
         </p>
 
         <h3 className="font-black text-[var(--text-primary)]">Real-time reporting</h3>
         <p>
-          Údaje z faktúr sa budú odosielať finančnej správe v reálnom čase. To mení dynamiku — chyby sa odhalia skôr, ale opravy musia byť rýchlejšie. DPH kontrolný výkaz bude čiastočne automatický.
+          Údaje z faktúr sa budú odosielať <a href="https://www.financnasprava.sk/sk/titulna-stranka" target="_blank" rel="noopener noreferrer" className="text-[var(--accent)]">finančnej správe</a> v reálnom čase. To mení dynamiku — chyby sa odhalia skôr, ale opravy musia byť rýchlejšie. DPH kontrolný výkaz bude čiastočne automatický.
         </p>
 
         <h3 className="font-black text-[var(--text-primary)]">Nová lehota</h3>
@@ -68,7 +68,7 @@ export default function EFakturaPreUctovnikovPage() {
 
         <ol>
           <li>
-            <strong>Konzultácie k prechodu</strong> — pomoc klientom s výberom softvéru, digitálneho poštára, registráciou v Peppol. Nová platená služba.
+            <strong>Konzultácie k prechodu</strong> — pomoc klientom s výberom softvéru, digitálneho poštára, registráciou v <a href="https://en.wikipedia.org/wiki/PEPPOL" target="_blank" rel="noopener noreferrer" className="text-[var(--accent)]">Peppol</a>. Nová platená služba.
           </li>
           <li>
             <strong>Implementačná podpora</strong> — nastavenie e-fakturácie v účtovných systémoch klientov.

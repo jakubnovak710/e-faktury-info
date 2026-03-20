@@ -108,7 +108,7 @@ export default function CoJeEFakturaPage() {
 
         <p>
           E-faktúra je faktúra vyhotovená, zaslaná a prijatá v{' '}
-          <strong>štruktúrovanom elektronickom formáte XML</strong> podľa
+          <strong>štruktúrovanom elektronickom formáte <a href="https://sk.wikipedia.org/wiki/Kateg%C3%B3ria:XML" target="_blank" rel="noopener noreferrer" className="text-[var(--accent)]">XML</a></strong> podľa
           európskeho štandardu{' '}
           <Link href="/slovnik/en-16931" className="text-[var(--accent)]">
             EN 16931
@@ -221,7 +221,7 @@ export default function CoJeEFakturaPage() {
             <strong>automaticky spracovanú</strong>.
           </li>
           <li>
-            Údaje sa <strong>v reálnom čase</strong> odošlú aj finančnej správe.
+            Údaje sa <strong>v reálnom čase</strong> odošlú aj <a href="https://www.financnasprava.sk/sk/titulna-stranka" target="_blank" rel="noopener noreferrer" className="text-[var(--accent)]">finančnej správe</a>.
           </li>
         </ol>
 
@@ -232,7 +232,7 @@ export default function CoJeEFakturaPage() {
 
         <p>
           Od 1.1.2027 sa povinnosť vystavovať e-faktúry vzťahuje na{' '}
-          <strong>všetkých platiteľov DPH</strong> usadených na Slovensku pri
+          <strong>všetkých platiteľov <a href="https://sk.wikipedia.org/wiki/Da%C5%88_z_pridanej_hodnoty" target="_blank" rel="noopener noreferrer" className="text-[var(--accent)]">DPH</a></strong> usadených na Slovensku pri
           tuzemských transakciách:
         </p>
 

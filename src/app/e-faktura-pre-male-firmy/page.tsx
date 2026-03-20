@@ -51,9 +51,9 @@ export default function EFakturaPreMaleFirmyPage() {
 
         <p>Od 1.1.2027 budete musieť:</p>
         <ul>
-          <li><strong>Vystavovať</strong> všetky tuzemské B2B faktúry ako e-faktúry (XML formát cez Peppol)</li>
+          <li><strong>Vystavovať</strong> všetky tuzemské B2B faktúry ako e-faktúry (<a href="https://sk.wikipedia.org/wiki/Kateg%C3%B3ria:XML" target="_blank" rel="noopener noreferrer" className="text-[var(--accent)]">XML</a> formát cez Peppol)</li>
           <li><strong>Prijímať</strong> e-faktúry od dodávateľov automaticky cez Peppol sieť</li>
-          <li><strong>Reportovať</strong> údaje z faktúr finančnej správe v reálnom čase</li>
+          <li><strong>Reportovať</strong> údaje z faktúr <a href="https://www.financnasprava.sk/sk/titulna-stranka" target="_blank" rel="noopener noreferrer" className="text-[var(--accent)]">finančnej správe</a> v reálnom čase</li>
           <li><strong>Dodržať lehotu</strong> 10 dní na vystavenie (skrátenie z 15 dní)</li>
         </ul>
 
@@ -73,7 +73,7 @@ export default function EFakturaPreMaleFirmyPage() {
           <li>
             <strong>Vyberte digitálneho poštára</strong> — porovnanie na <a href="https://digitalnipostari.sk" target="_blank" rel="noopener" className="text-[var(--accent)]">digitalnipostari.sk</a>
           </li>
-          <li><strong>Zaregistrujte firmu v Peppol</strong> — získajte Peppol ID (1-2 pracovné dni)</li>
+          <li><strong>Zaregistrujte firmu v <a href="https://en.wikipedia.org/wiki/PEPPOL" target="_blank" rel="noopener noreferrer" className="text-[var(--accent)]">Peppol</a></strong> — získajte Peppol ID (1-2 pracovné dni)</li>
           <li><strong>Otestujte v dobrovoľnej fáze</strong> — od Q2 2026</li>
           <li><strong>Školte zamestnancov</strong> — kto vystavuje faktúry, musí vedieť pracovať s novým systémom</li>
           <li><strong>Informujte dodávateľov a odberateľov</strong> — komunikujte váš Peppol ID</li>

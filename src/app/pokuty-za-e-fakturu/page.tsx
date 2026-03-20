@@ -115,7 +115,7 @@ export default function PokutyZaEFakturuPage() {
         </h2>
 
         <p>
-          Finančná správa SR má právomoc ukladať pokuty za rôzne druhy porušení
+          <a href="https://www.financnasprava.sk/sk/titulna-stranka" target="_blank" rel="noopener noreferrer" className="text-[var(--accent)]">Finančná správa SR</a> má právomoc ukladať pokuty za rôzne druhy porušení
           súvisiacich s e-fakturáciou. Výška pokuty závisí od závažnosti
           porušenia, okolností a od toho, či ide o prvé alebo opakované
           previnenie. Tu je prehľad konkrétnych sankcií:
@@ -254,7 +254,7 @@ export default function PokutyZaEFakturuPage() {
         <ul>
           <li>
             <strong>Automatizovaný monitoring</strong> — keďže e-faktúry
-            prechádzajú cez Peppol sieť a údaje sa automaticky odosielajú
+            prechádzajú cez <a href="https://en.wikipedia.org/wiki/PEPPOL" target="_blank" rel="noopener noreferrer" className="text-[var(--accent)]">Peppol</a> sieť a údaje sa automaticky odosielajú
             Finančnej správe v reálnom čase (e-reporting), systém dokáže
             automaticky identifikovať nesúlady. Napríklad ak vystavíte faktúru v
             účtovnom programe, ale neodošlete ju cez Peppol.
@@ -377,7 +377,7 @@ export default function PokutyZaEFakturuPage() {
         </h3>
         <p>
           Áno. Oneskorené odoslanie e-faktúry cez Peppol sieť je porušenie
-          zákona. E-faktúra musí byť odoslaná v lehote stanovenej zákonom o DPH.
+          zákona. E-faktúra musí byť odoslaná v lehote stanovenej zákonom o <a href="https://sk.wikipedia.org/wiki/Da%C5%88_z_pridanej_hodnoty" target="_blank" rel="noopener noreferrer" className="text-[var(--accent)]">DPH</a>.
           Finančná správa SR môže za oneskorenie uložiť pokutu do{' '}
           <strong>10 000 EUR</strong>. Čím dlhšie oneskorenie, tým vyššia
           pravdepodobnosť a výška sankcie. Najlepšia prevencia je automatické

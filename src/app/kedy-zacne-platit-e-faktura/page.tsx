@@ -110,7 +110,7 @@ export default function KedyZacnePlatitEFakturaPage() {
         <p>
           Právnym základom povinnej e-fakturácie na Slovensku je{' '}
           <strong>zákon 385/2025 Z.z.</strong> — novela zákona č. 222/2004
-          Z.z. o dani z pridanej hodnoty. Národná rada SR tento zákon
+          Z.z. o <a href="https://sk.wikipedia.org/wiki/Da%C5%88_z_pridanej_hodnoty" target="_blank" rel="noopener noreferrer" className="text-[var(--accent)]">dani z pridanej hodnoty</a>. Národná rada SR tento zákon
           schválila <strong>9. decembra 2025</strong>. Zákon transponuje
           požiadavky európskej smernice{' '}
           <strong>ViDA (VAT in the Digital Age) — smernica EÚ 2025/516</strong>,
@@ -125,7 +125,7 @@ export default function KedyZacnePlatitEFakturaPage() {
 
         <ul>
           <li>
-            <strong>Povinný formát</strong> — XML podľa európskeho štandardu
+            <strong>Povinný formát</strong> — <a href="https://sk.wikipedia.org/wiki/Kateg%C3%B3ria:XML" target="_blank" rel="noopener noreferrer" className="text-[var(--accent)]">XML</a> podľa európskeho štandardu
             EN 16931 (Peppol BIS Billing 3.0)
           </li>
           <li>
@@ -140,7 +140,7 @@ export default function KedyZacnePlatitEFakturaPage() {
           </li>
           <li>
             <strong>Automatický e-reporting</strong> — údaje z faktúr sa v
-            reálnom čase odosielajú finančnej správe
+            reálnom čase odosielajú <a href="https://www.financnasprava.sk/sk/titulna-stranka" target="_blank" rel="noopener noreferrer" className="text-[var(--accent)]">finančnej správe</a>
           </li>
           <li>
             <strong>Sankcie</strong> — pokuty za nesplnenie povinností až{' '}

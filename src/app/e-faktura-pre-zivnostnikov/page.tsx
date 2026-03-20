@@ -152,14 +152,14 @@ export default function EFakturaPreZivnostnikovPage() {
 
         <p>
           Od <strong>1. januára 2027</strong> musíte všetky tuzemské B2B
-          faktúry vystavovať ako e-faktúry vo formáte XML. To zahŕňa:
+          faktúry vystavovať ako e-faktúry vo formáte <a href="https://sk.wikipedia.org/wiki/Kateg%C3%B3ria:XML" target="_blank" rel="noopener noreferrer" className="text-[var(--accent)]">XML</a>. To zahŕňa:
         </p>
 
         <ul>
           <li>Faktúry za služby pre firmy a SZČO</li>
           <li>Faktúry za dodanie tovaru iným podnikateľom</li>
           <li>Opravné doklady (dobropisy, ťarchopisy)</li>
-          <li>Zálohové faktúry podliehajúce DPH</li>
+          <li>Zálohové faktúry podliehajúce <a href="https://sk.wikipedia.org/wiki/Da%C5%88_z_pridanej_hodnoty" target="_blank" rel="noopener noreferrer" className="text-[var(--accent)]">DPH</a></li>
         </ul>
 
         <p>
@@ -217,7 +217,7 @@ export default function EFakturaPreZivnostnikovPage() {
           Používate paušálne výdavky (60% z príjmov)? Aj na vás sa vzťahuje
           povinnosť <strong>prijímať</strong> e-faktúry. Hoci skutočné výdavky
           nedokladujete, vaši dodávatelia — platitelia DPH — vám budú posielať
-          e-faktúry cez Peppol.
+          e-faktúry cez <a href="https://en.wikipedia.org/wiki/PEPPOL" target="_blank" rel="noopener noreferrer" className="text-[var(--accent)]">Peppol</a>.
         </p>
 
         <p>

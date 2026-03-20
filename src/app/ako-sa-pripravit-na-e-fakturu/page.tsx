@@ -153,7 +153,7 @@ export default function AkoSaPripravetiNaEFakturu() {
           <Link href="/kedy-zacne-platit-e-faktura" className="text-[var(--accent)]">
             1. januára 2027
           </Link>{' '}
-          bude e-faktúra povinná pre všetkých platiteľov DPH na Slovensku.
+          bude e-faktúra povinná pre všetkých platiteľov <a href="https://sk.wikipedia.org/wiki/Da%C5%88_z_pridanej_hodnoty" target="_blank" rel="noopener noreferrer" className="text-[var(--accent)]">DPH</a> na Slovensku.
           Dobrovoľná fáza začína už v <strong>Q2 2026</strong> — a práve to je
           ideálny čas na prípravu. Firmy, ktoré sa pripravia včas, sa vyhnú
           stresu, chybám aj{' '}
@@ -408,7 +408,7 @@ export default function AkoSaPripravetiNaEFakturu() {
         </h2>
 
         <p>
-          Od <strong>Q2 2026</strong> spúšťa slovenská Finančná správa
+          Od <strong>Q2 2026</strong> spúšťa slovenská <a href="https://www.financnasprava.sk/sk/titulna-stranka" target="_blank" rel="noopener noreferrer" className="text-[var(--accent)]">Finančná správa</a>
           dobrovoľnú fázu e-fakturácie. To je vaša príležitosť otestovať celý
           proces <strong>bez rizika pokút</strong> a odstrániť prípadné
           problémy ešte pred ostrým štartom 1.1.2027.
@@ -422,7 +422,7 @@ export default function AkoSaPripravetiNaEFakturu() {
           <li>
             <strong>Odoslanie testovacej faktúry</strong> — vystavte e-faktúru a
             odošlite ju cez Peppol sieť spolupracujúcemu partnerovi. Overte, že
-            XML obsahuje všetky povinné údaje.
+            <a href="https://sk.wikipedia.org/wiki/Kateg%C3%B3ria:XML" target="_blank" rel="noopener noreferrer" className="text-[var(--accent)]">XML</a> obsahuje všetky povinné údaje.
           </li>
           <li>
             <strong>Prijatie e-faktúry</strong> — požiadajte partnera alebo
