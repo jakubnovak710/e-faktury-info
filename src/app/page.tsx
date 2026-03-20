@@ -78,9 +78,9 @@ function FaqAccordion({ question, answer }: { question: string; answer: string }
 
 function ReadinessBadge({ status }: { status: string }) {
   const config = {
-    ready: { label: 'Ready', className: 'bg-emerald-500/20 text-emerald-400' },
-    'in-progress': { label: 'Pripravuje sa', className: 'bg-amber-500/20 text-amber-400' },
-    planned: { label: 'Plánované', className: 'bg-blue-500/20 text-blue-400' },
+    ready: { label: 'Ready', className: 'bg-[var(--color-success-muted)] text-[var(--color-success)]' },
+    'in-progress': { label: 'Pripravuje sa', className: 'bg-[var(--color-warning-muted)] text-[var(--color-warning)]' },
+    planned: { label: 'Plánované', className: 'bg-[var(--color-info-muted)] text-[var(--color-info)]' },
     unknown: { label: 'Neznámy', className: 'bg-gray-500/20 text-gray-400' },
   }[status] ?? { label: status, className: 'bg-gray-500/20 text-gray-400' };
 
@@ -356,7 +356,7 @@ export default function HomePage() {
                 {/* Dot */}
                 <div className="absolute left-4 z-10 -translate-x-1/2 sm:left-1/2">
                   {milestone.status === 'completed' ? (
-                    <CheckCircle2 className="h-6 w-6 rounded-full bg-[var(--bg-base)] text-emerald-400" />
+                    <CheckCircle2 className="h-6 w-6 rounded-full bg-[var(--bg-base)] text-[var(--color-success)]" />
                   ) : milestone.status === 'active' ? (
                     <div className="h-6 w-6 rounded-full border-2 border-[var(--accent)] bg-[var(--accent)]/20" />
                   ) : (

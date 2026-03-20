@@ -106,38 +106,38 @@ export default function EFakturaPreZivnostnikovPage() {
             <tbody>
               <tr>
                 <td>Vystavovať e-faktúry</td>
-                <td className="text-red-400">
+                <td style={{ color: 'var(--color-danger)' }}>
                   <AlertTriangle className="mr-1 inline h-4 w-4" /> Povinné od
                   1.1.2027
                 </td>
-                <td className="text-emerald-400">
+                <td style={{ color: 'var(--color-success)' }}>
                   <XCircle className="mr-1 inline h-4 w-4" /> Nepovinné (do
                   30.6.2030)
                 </td>
               </tr>
               <tr>
                 <td>Prijímať e-faktúry</td>
-                <td className="text-red-400">
+                <td style={{ color: 'var(--color-danger)' }}>
                   <AlertTriangle className="mr-1 inline h-4 w-4" /> Povinné
                 </td>
-                <td className="text-red-400">
+                <td style={{ color: 'var(--color-danger)' }}>
                   <AlertTriangle className="mr-1 inline h-4 w-4" /> Povinné
                 </td>
               </tr>
               <tr>
                 <td>Registrácia v Peppol</td>
-                <td className="text-red-400">Povinná</td>
-                <td className="text-red-400">Povinná (na príjem)</td>
+                <td style={{ color: 'var(--color-danger)' }}>Povinná</td>
+                <td style={{ color: 'var(--color-danger)' }}>Povinná (na príjem)</td>
               </tr>
               <tr>
                 <td>Digitálny poštár</td>
-                <td className="text-red-400">Povinný</td>
-                <td className="text-red-400">Povinný (na príjem)</td>
+                <td style={{ color: 'var(--color-danger)' }}>Povinný</td>
+                <td style={{ color: 'var(--color-danger)' }}>Povinný (na príjem)</td>
               </tr>
               <tr>
                 <td>Real-time reporting</td>
-                <td className="text-red-400">Povinné</td>
-                <td className="text-emerald-400">
+                <td style={{ color: 'var(--color-danger)' }}>Povinné</td>
+                <td style={{ color: 'var(--color-success)' }}>
                   <XCircle className="mr-1 inline h-4 w-4" /> Nie
                 </td>
               </tr>
@@ -168,7 +168,7 @@ export default function EFakturaPreZivnostnikovPage() {
           Stačí klasická faktúra alebo bloček.
         </p>
 
-        <div className="rounded-lg border border-amber-500/20 bg-amber-500/5 p-4">
+        <div className="rounded-lg border border-[var(--color-warning-border)] bg-[var(--color-warning-muted)] p-4">
           <p className="text-sm">
             <strong>Lehota:</strong> E-faktúru musíte vystaviť a odoslať do{' '}
             <strong>10 dní</strong> od dodania (skrátenie z pôvodných 15 dní).
@@ -190,7 +190,7 @@ export default function EFakturaPreZivnostnikovPage() {
           (minimálne do 30.6.2030). Ale je tu háčik:
         </p>
 
-        <div className="rounded-lg border border-red-500/20 bg-red-500/5 p-4">
+        <div className="rounded-lg border border-[var(--color-danger-border)] bg-[var(--color-danger-muted)] p-4">
           <p className="text-sm">
             <strong>Dôležité:</strong> Aj ako neplatiteľ DPH{' '}
             <strong>musíte byť schopní prijímať e-faktúry</strong> od vašich

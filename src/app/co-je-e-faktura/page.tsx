@@ -147,17 +147,17 @@ export default function CoJeEFakturaPage() {
               </tr>
               <tr>
                 <td>Strojové spracovanie</td>
-                <td className="text-red-400">
+                <td style={{ color: 'var(--color-danger)' }}>
                   <XCircle className="mr-1 inline h-4 w-4" /> Nie
                 </td>
-                <td className="text-emerald-400">
+                <td style={{ color: 'var(--color-success)' }}>
                   <CheckCircle2 className="mr-1 inline h-4 w-4" /> Áno
                 </td>
               </tr>
               <tr>
                 <td>Manuálne prepisovanie</td>
-                <td className="text-red-400">Potrebné</td>
-                <td className="text-emerald-400">Automatické</td>
+                <td style={{ color: 'var(--color-danger)' }}>Potrebné</td>
+                <td style={{ color: 'var(--color-success)' }}>Automatické</td>
               </tr>
               <tr>
                 <td>Doručenie</td>
@@ -171,11 +171,11 @@ export default function CoJeEFakturaPage() {
               </tr>
               <tr>
                 <td>Právny status od 2027</td>
-                <td className="text-red-400">
+                <td style={{ color: 'var(--color-danger)' }}>
                   <AlertTriangle className="mr-1 inline h-4 w-4" /> Nespĺňa
                   zákon (B2B)
                 </td>
-                <td className="text-emerald-400">
+                <td style={{ color: 'var(--color-success)' }}>
                   <CheckCircle2 className="mr-1 inline h-4 w-4" /> Povinný
                   formát
                 </td>
@@ -261,7 +261,7 @@ export default function CoJeEFakturaPage() {
           </li>
         </ul>
 
-        <div className="rounded-lg border border-amber-500/20 bg-amber-500/5 p-4">
+        <div className="rounded-lg border border-[var(--color-warning-border)] bg-[var(--color-warning-muted)] p-4">
           <p className="text-sm">
             <strong>Dôležité:</strong> Neplatitelia DPH nemusia e-faktúry{' '}
             <em>vystavovať</em> (minimálne do 30.6.2030), ale{' '}

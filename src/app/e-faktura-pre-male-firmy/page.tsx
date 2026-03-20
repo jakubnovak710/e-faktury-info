@@ -57,9 +57,9 @@ export default function EFakturaPreMaleFirmyPage() {
           <li><strong>Dodržať lehotu</strong> 10 dní na vystavenie (skrátenie z 15 dní)</li>
         </ul>
 
-        <div className="rounded-lg border border-amber-500/20 bg-amber-500/5 p-4">
+        <div className="rounded-lg border border-[var(--color-warning-border)] bg-[var(--color-warning-muted)] p-4">
           <p className="text-sm">
-            <AlertTriangle className="mr-1 inline h-4 w-4 text-amber-400" />
+            <AlertTriangle className="mr-1 inline h-4 w-4 text-[var(--color-warning)]" />
             <strong>Pozor:</strong> Toto sa týka VŠETKÝCH s.r.o. a obchodných spoločností, ktoré sú platiteľmi DPH — bez ohľadu na veľkosť alebo obrat.
           </p>
         </div>

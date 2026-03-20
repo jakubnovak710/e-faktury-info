@@ -159,11 +159,11 @@ export default function PokutyZaEFakturuPage() {
               </tr>
               <tr>
                 <td>
-                  <AlertTriangle className="mr-1 inline h-4 w-4 text-amber-400" />{' '}
+                  <AlertTriangle className="mr-1 inline h-4 w-4 text-[var(--color-warning)]" />{' '}
                   Opakované porušenie povinností
                 </td>
                 <td>
-                  <strong className="text-amber-400">do 100 000 EUR</strong>
+                  <strong style={{ color: 'var(--color-warning)' }}>do 100 000 EUR</strong>
                 </td>
               </tr>
               <tr>
@@ -227,9 +227,9 @@ export default function PokutyZaEFakturuPage() {
           </li>
         </ul>
 
-        <div className="rounded-lg border border-amber-500/20 bg-amber-500/5 p-4">
+        <div className="rounded-lg border border-[var(--color-warning-border)] bg-[var(--color-warning-muted)] p-4">
           <p className="mb-0 text-sm">
-            <AlertTriangle className="mr-1 inline h-4 w-4 text-amber-400" />
+            <AlertTriangle className="mr-1 inline h-4 w-4 text-[var(--color-warning)]" />
             <strong>Pozor:</strong> Aj keď sa pokute vyhnete, neúmyselná chyba
             neznamená, že nemáte povinnosť ju napraviť. Vždy je potrebné chybu
             opraviť čo najskôr. Opakované &ldquo;neúmyselné&rdquo; chyby môže
@@ -333,8 +333,8 @@ export default function PokutyZaEFakturuPage() {
         </ol>
 
         {/* ── Varovanie ── */}
-        <div className="rounded-lg border border-amber-500/30 bg-amber-500/5 p-6">
-          <h3 className="mt-0 font-black text-amber-400">
+        <div className="rounded-lg border border-[var(--color-warning-border)] bg-[var(--color-warning-muted)] p-6">
+          <h3 className="mt-0 font-black text-[var(--color-warning)]">
             <AlertTriangle className="mr-2 inline h-5 w-5" />
             Nepodceňujte prípravu
           </h3>

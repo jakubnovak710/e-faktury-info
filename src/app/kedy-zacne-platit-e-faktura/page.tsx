@@ -361,9 +361,9 @@ export default function KedyZacnePlatitEFakturaPage() {
           </li>
         </ul>
 
-        <div className="rounded-lg border border-amber-500/20 bg-amber-500/5 p-4">
+        <div className="rounded-lg border border-[var(--color-warning-border)] bg-[var(--color-warning-muted)] p-4">
           <p className="flex items-start gap-2 text-sm">
-            <Info className="mt-0.5 h-4 w-4 shrink-0 text-amber-400" />
+            <Info className="mt-0.5 h-4 w-4 shrink-0 text-[var(--color-warning)]" />
             <span>
               <strong>Pozor:</strong> Aj keď nemusíte vystavovať e-faktúry,
               bez registrácie v Peppol nebudete vedieť prijímať faktúry od

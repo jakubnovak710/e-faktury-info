@@ -440,7 +440,7 @@ export default function AkoSaPripravetiNaEFakturu() {
           </li>
         </ul>
 
-        <div className="rounded-lg border border-amber-500/20 bg-amber-500/5 p-4">
+        <div className="rounded-lg border border-[var(--color-warning-border)] bg-[var(--color-warning-muted)] p-4">
           <p className="text-sm">
             <strong>Tip:</strong> Dohodnite sa s 2-3 obchodnými partnermi, že
             budete testovať spoločne. Vzájomné odosielanie testovacích faktúr

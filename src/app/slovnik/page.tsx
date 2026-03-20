@@ -21,9 +21,9 @@ export function generateMetadata(): Metadata {
 }
 
 const CATEGORY_CONFIG = {
-  technical: { label: 'Technické', icon: BookOpen, className: 'text-blue-400' },
-  legal: { label: 'Legislatívne', icon: Scale, className: 'text-amber-400' },
-  business: { label: 'Obchodné', icon: Briefcase, className: 'text-emerald-400' },
+  technical: { label: 'Technické', icon: BookOpen, className: 'text-[var(--color-info)]' },
+  legal: { label: 'Legislatívne', icon: Scale, className: 'text-[var(--color-warning)]' },
+  business: { label: 'Obchodné', icon: Briefcase, className: 'text-[var(--color-success)]' },
 } as const;
 
 function groupByCategory(entries: CollectionEntry<GlossaryEntry>[]) {

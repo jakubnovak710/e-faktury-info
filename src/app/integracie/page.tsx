@@ -23,10 +23,10 @@ export function generateMetadata(): Metadata {
 }
 
 const STATUS_CONFIG = {
-  ready: { label: 'Peppol Ready', icon: CheckCircle2, className: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20' },
-  'in-progress': { label: 'Pripravuje sa', icon: Clock, className: 'text-amber-400 bg-amber-500/10 border-amber-500/20' },
-  planned: { label: 'Plánované', icon: Calendar, className: 'text-blue-400 bg-blue-500/10 border-blue-500/20' },
-  unknown: { label: 'Neznámy stav', icon: HelpCircle, className: 'text-gray-400 bg-gray-500/10 border-gray-500/20' },
+  ready: { label: 'Peppol Ready', icon: CheckCircle2, style: { color: 'var(--color-success)', backgroundColor: 'var(--color-success-muted)', borderColor: 'var(--color-success-border)' } },
+  'in-progress': { label: 'Pripravuje sa', icon: Clock, style: { color: 'var(--color-warning)', backgroundColor: 'var(--color-warning-muted)', borderColor: 'var(--color-warning-border)' } },
+  planned: { label: 'Plánované', icon: Calendar, style: { color: 'var(--color-info)', backgroundColor: 'var(--color-info-muted)', borderColor: 'var(--color-info-border)' } },
+  unknown: { label: 'Neznámy stav', icon: HelpCircle, style: { color: 'var(--text-muted)', backgroundColor: 'var(--bg-elevated)', borderColor: 'var(--border-default)' } },
 } as const;
 
 export default async function IntegracieHubPage() {
@@ -52,11 +52,11 @@ export default async function IntegracieHubPage() {
 
         <div className="mt-8 flex justify-center gap-6">
           <div className="text-center">
-            <p className="text-2xl font-black text-emerald-400">{readyCount}</p>
+            <p className="text-2xl font-black" style={{ color: 'var(--color-success)' }}>{readyCount}</p>
             <p className="font-mono text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">Peppol Ready</p>
           </div>
           <div className="text-center">
-            <p className="text-2xl font-black text-amber-400">{inProgressCount}</p>
+            <p className="text-2xl font-black text-[var(--color-warning)]">{inProgressCount}</p>
             <p className="font-mono text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">Pripravuje sa</p>
           </div>
           <div className="text-center">
@@ -82,7 +82,7 @@ export default async function IntegracieHubPage() {
                   <h2 className="text-lg font-black text-[var(--text-primary)] group-hover:text-[var(--accent)]">{erp.name}</h2>
                   <p className="text-xs text-[var(--text-muted)]">{erp.vendor}</p>
                 </div>
-                <span className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 font-mono text-[10px] font-bold uppercase tracking-wider ${status.className}`}>
+                <span className="inline-flex items-center gap-1 rounded-full border px-2 py-0.5 font-mono text-[10px] font-bold uppercase tracking-wider" style={status.style}>
                   <StatusIcon className="h-3 w-3" />
                   {status.label}
                 </span>

@@ -38,10 +38,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 const STATUS_LABEL = {
-  ready: { text: 'Peppol Ready', className: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20', Icon: CheckCircle2 },
-  'in-progress': { text: 'Pripravuje sa', className: 'text-amber-400 bg-amber-500/10 border-amber-500/20', Icon: Clock },
-  planned: { text: 'Plánované', className: 'text-blue-400 bg-blue-500/10 border-blue-500/20', Icon: Calendar },
-  unknown: { text: 'Neznámy', className: 'text-gray-400 bg-gray-500/10 border-gray-500/20', Icon: HelpCircle },
+  ready: { text: 'Peppol Ready', style: { color: 'var(--color-success)', backgroundColor: 'var(--color-success-muted)', borderColor: 'var(--color-success-border)' }, Icon: CheckCircle2 },
+  'in-progress': { text: 'Pripravuje sa', style: { color: 'var(--color-warning)', backgroundColor: 'var(--color-warning-muted)', borderColor: 'var(--color-warning-border)' }, Icon: Clock },
+  planned: { text: 'Plánované', style: { color: 'var(--color-info)', backgroundColor: 'var(--color-info-muted)', borderColor: 'var(--color-info-border)' }, Icon: Calendar },
+  unknown: { text: 'Neznámy', style: { color: 'var(--text-muted)', backgroundColor: 'var(--bg-elevated)', borderColor: 'var(--border-default)' }, Icon: HelpCircle },
 } as const;
 
 export default async function ErpDetailPage({ params }: PageProps) {
@@ -83,7 +83,7 @@ export default async function ErpDetailPage({ params }: PageProps) {
         lastUpdated: 'Marec 2026',
         sources: [erp.vendor, erp.website.replace('https://', '')],
         badge: (
-          <span className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 font-mono text-xs font-bold uppercase tracking-wider ${status.className}`}>
+          <span className="inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 font-mono text-xs font-bold uppercase tracking-wider" style={status.style}>
             <status.Icon className="h-4 w-4" />
             {status.text}
           </span>
@@ -111,8 +111,8 @@ export default async function ErpDetailPage({ params }: PageProps) {
                 <td>{row.label}</td>
                 <td>
                   {row.value
-                    ? <><CheckCircle2 className="inline h-4 w-4 text-emerald-400" /> Áno</>
-                    : <><XCircle className="inline h-4 w-4 text-red-400" /> Nie</>}
+                    ? <><CheckCircle2 className="inline h-4 w-4" style={{ color: 'var(--color-success)' }} /> Áno</>
+                    : <><XCircle className="inline h-4 w-4" style={{ color: 'var(--color-danger)' }} /> Nie</>}
                 </td>
               </tr>
             ))}
@@ -138,22 +138,22 @@ export default async function ErpDetailPage({ params }: PageProps) {
 
       <h2 className="font-black text-[var(--text-primary)]">Výhody a nevýhody</h2>
       <div className="grid gap-4 sm:grid-cols-2">
-        <div className="rounded-lg border border-emerald-500/20 bg-emerald-500/5 p-4">
-          <p className="mb-2 font-mono text-xs font-bold uppercase tracking-widest text-emerald-400">Výhody</p>
+        <div className="rounded-lg border p-4" style={{ backgroundColor: 'var(--color-success-muted)', borderColor: 'var(--color-success-border)' }}>
+          <p className="mb-2 font-mono text-xs font-bold uppercase tracking-widest" style={{ color: 'var(--color-success)' }}>Výhody</p>
           <ul className="space-y-1 text-sm">
             {erp.pros.map((p) => (
               <li key={p} className="flex items-start gap-2">
-                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-400" /><span>{p}</span>
+                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" style={{ color: 'var(--color-success)' }} /><span>{p}</span>
               </li>
             ))}
           </ul>
         </div>
-        <div className="rounded-lg border border-red-500/20 bg-red-500/5 p-4">
-          <p className="mb-2 font-mono text-xs font-bold uppercase tracking-widest text-red-400">Nevýhody</p>
+        <div className="rounded-lg border p-4" style={{ backgroundColor: 'var(--color-danger-muted)', borderColor: 'var(--color-danger-border)' }}>
+          <p className="mb-2 font-mono text-xs font-bold uppercase tracking-widest" style={{ color: 'var(--color-danger)' }}>Nevýhody</p>
           <ul className="space-y-1 text-sm">
             {erp.cons.map((c) => (
               <li key={c} className="flex items-start gap-2">
-                <XCircle className="mt-0.5 h-4 w-4 shrink-0 text-red-400" /><span>{c}</span>
+                <XCircle className="mt-0.5 h-4 w-4 shrink-0" style={{ color: 'var(--color-danger)' }} /><span>{c}</span>
               </li>
             ))}
           </ul>
