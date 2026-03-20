@@ -3,23 +3,15 @@
  *
  * Provides consistent structure:
  * - Max-width container with responsive padding
- * - Breadcrumbs navigation
+ * - Optional hero section (ContentPageHero)
  * - Article wrapper with prose styling
- * - Optional JSON-LD injection
- *
- * Usage:
- *   <ContentLayout
- *     locale="sk"
- *     breadcrumbs={[{ label: 'Sprievodca', href: '/co-je-e-faktura' }, { label: 'Čo je e-faktúra' }]}
- *     jsonLd={[articleJsonLd, faqJsonLd]}
- *   >
- *     <h1>...</h1>
- *     <p>...</p>
- *   </ContentLayout>
+ * - JSON-LD injection
+ * - Navigation + Footer (if standalone = true)
  */
 
-import { Breadcrumbs, type BreadcrumbItem } from '@/components/breadcrumbs';
 import type { Locale } from '@/i18n/config';
+import { ContentPageHero } from './content-page-hero';
+import type { BreadcrumbItem } from '@/components/breadcrumbs';
 
 interface ContentLayoutProps {
   children: React.ReactNode;
@@ -27,6 +19,15 @@ interface ContentLayoutProps {
   breadcrumbs: BreadcrumbItem[];
   jsonLd?: Record<string, unknown>[];
   maxWidth?: 'sm' | 'md' | 'lg' | 'xl';
+  /** Hero section props — if provided, renders ContentPageHero */
+  hero?: {
+    title: string;
+    description?: string;
+    lastUpdated?: string;
+    sources?: string[];
+    readingTime?: number;
+    badge?: React.ReactNode;
+  };
 }
 
 const MAX_WIDTH_CLASSES = {
@@ -42,6 +43,7 @@ export function ContentLayout({
   breadcrumbs,
   jsonLd,
   maxWidth = 'md',
+  hero,
 }: ContentLayoutProps) {
   return (
     <main className={`mx-auto ${MAX_WIDTH_CLASSES[maxWidth]} px-4 py-16 sm:px-6 lg:px-8`}>
@@ -53,7 +55,18 @@ export function ContentLayout({
         />
       ))}
 
-      <Breadcrumbs locale={locale} items={breadcrumbs} />
+      {hero ? (
+        <ContentPageHero
+          locale={locale}
+          breadcrumbs={breadcrumbs}
+          title={hero.title}
+          description={hero.description}
+          lastUpdated={hero.lastUpdated}
+          sources={hero.sources}
+          readingTime={hero.readingTime}
+          badge={hero.badge}
+        />
+      ) : null}
 
       <article className="prose prose-invert max-w-none">
         {children}

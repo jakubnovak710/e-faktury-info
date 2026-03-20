@@ -28,7 +28,24 @@
 import fs from 'fs/promises';
 import path from 'path';
 import matter from 'gray-matter';
+import { unified } from 'unified';
+import remarkParse from 'remark-parse';
+import remarkRehype from 'remark-rehype';
+import rehypeStringify from 'rehype-stringify';
 import type { z } from 'zod';
+
+/**
+ * Convert raw markdown to HTML string via remark/rehype pipeline.
+ */
+async function markdownToHtml(markdown: string): Promise<string> {
+  if (!markdown.trim()) return '';
+  const result = await unified()
+    .use(remarkParse)
+    .use(remarkRehype)
+    .use(rehypeStringify)
+    .process(markdown);
+  return String(result);
+}
 
 const CONTENT_DIR = path.join(process.cwd(), 'src/content');
 
@@ -37,7 +54,7 @@ export interface CollectionEntry<T> {
   slug: string;
   /** Validated frontmatter data */
   data: T;
-  /** MDX body content (raw markdown string) */
+  /** Body content rendered as HTML (converted from markdown) */
   content: string;
 }
 
@@ -54,7 +71,8 @@ async function loadEntry<T>(
     const parsed = schema.parse(data);
     const slug = path.basename(filePath, '.mdx');
 
-    return { slug, data: parsed, content };
+    const html = await markdownToHtml(content);
+    return { slug, data: parsed, content: html };
   } catch (error) {
     console.error(`[collections] Failed to load ${filePath}:`, error);
     return null;

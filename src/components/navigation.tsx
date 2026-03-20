@@ -4,7 +4,7 @@ import { useState, useCallback, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'motion/react';
-import { Menu, X, ArrowRight, ChevronDown, Sun, Moon, Code, Phone } from 'lucide-react';
+import { Menu, X, ArrowRight, ChevronDown, Sun, Moon, FileText, Phone } from 'lucide-react';
 import { useTheme } from '@jakubnovak710/universal-web-core/components/providers/theme-provider';
 import { cn } from '@jakubnovak710/universal-web-core/lib/utils';
 import { navigationConfig } from '@config/navigation.config';
@@ -303,13 +303,13 @@ function DefaultLogo({ subtitle }: { subtitle?: string }) {
             boxShadow: '0 0 12px var(--accent-glow)',
           }}
         >
-          <Code className="h-3.5 w-3.5" style={{ color: 'var(--bg-base)' }} />
+          <FileText className="h-3.5 w-3.5" style={{ color: 'var(--bg-base)' }} />
         </div>
         <span
           className="text-lg font-black tracking-tight transition-colors"
           style={{ color: 'var(--text-primary)' }}
         >
-          Universal Web
+          e-Faktúry.info
         </span>
       </div>
       {subtitle && (

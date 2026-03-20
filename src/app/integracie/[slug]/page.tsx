@@ -11,7 +11,6 @@ import Link from 'next/link';
 import { ArrowRight, CheckCircle2, XCircle, Clock, Calendar, HelpCircle } from 'lucide-react';
 import { createMetadata } from '@jakubnovak710/universal-web-core/lib/metadata';
 import { ContentLayout } from '@/components/layouts/content-layout';
-import { SourceBox } from '@/components/source-box';
 import { PartnerCTA } from '@/components/partner-cta';
 import { buildArticleJsonLd } from '@/components/seo';
 import { getCollection, getCollectionEntry, getCollectionSlugs } from '@/lib/collections';
@@ -78,30 +77,19 @@ export default async function ErpDetailPage({ params }: PageProps) {
       locale="sk"
       breadcrumbs={[{ label: 'Integrácie', href: '/integracie' }, { label: erp.name }]}
       jsonLd={[softwareJsonLd, articleJsonLd]}
+      hero={{
+        title: `${erp.name} a e-faktúra`,
+        description: erp.descriptionSk,
+        lastUpdated: 'Marec 2026',
+        sources: [erp.vendor, erp.website.replace('https://', '')],
+        badge: (
+          <span className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 font-mono text-xs font-bold uppercase tracking-wider ${status.className}`}>
+            <status.Icon className="h-4 w-4" />
+            {status.text}
+          </span>
+        ),
+      }}
     >
-      {/* Header */}
-      <div className="not-prose mb-8 flex items-start justify-between">
-        <div>
-          <h1 className="text-3xl font-black text-[var(--text-primary)] sm:text-4xl">
-            {erp.name} a e-faktúra
-          </h1>
-          <p className="mt-1 text-sm text-[var(--text-muted)]">{erp.vendor}</p>
-        </div>
-        <span className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 font-mono text-xs font-bold uppercase tracking-wider ${status.className}`}>
-          <status.Icon className="h-4 w-4" />
-          {status.text}
-        </span>
-      </div>
-
-      <p className="text-lg text-[var(--text-secondary)]">{erp.descriptionSk}</p>
-
-      <SourceBox
-        lastUpdated="Marec 2026"
-        sources={[
-          `${erp.vendor}`,
-          erp.website.replace('https://', ''),
-        ]}
-      />
 
       <h2 className="font-black text-[var(--text-primary)]">Stav Peppol integrácie</h2>
       <p>{erp.peppolStatusNote}</p>
