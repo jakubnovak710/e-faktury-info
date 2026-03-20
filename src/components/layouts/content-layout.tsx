@@ -68,7 +68,7 @@ export function ContentLayout({
         />
       ) : null}
 
-      <article className="prose prose-invert max-w-none">
+      <article className="prose max-w-none">
         {children}
       </article>
     </main>

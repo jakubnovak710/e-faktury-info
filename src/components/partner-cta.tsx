@@ -62,7 +62,7 @@ export function PartnerCTA({ partner, pagePath, locale, title, description }: Pa
   }
 
   return (
-    <aside className="group relative my-10 overflow-hidden rounded-xl border border-[var(--accent)]/20 transition-all hover:border-[var(--accent)]/40">
+    <aside className="not-prose group relative my-10 overflow-hidden rounded-xl border border-[var(--accent)]/20 transition-all hover:border-[var(--accent)]/40">
       {/* Glass background */}
       <div className="absolute inset-0 bg-[var(--bg-surface)]/80 backdrop-blur-sm" />
 

@@ -14,7 +14,7 @@ export function generateMetadata(): Metadata {
 export default function ObchodnePodmienkyPage() {
   return (
     <main className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8">
-      <article className="prose prose-invert max-w-none">
+      <article className="prose max-w-none">
         <h1 className="font-black text-[var(--text-primary)]">
           Obchodné podmienky a podmienky používania
         </h1>

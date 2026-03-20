@@ -418,7 +418,7 @@ export default function HomePage() {
             { step: 4, title: 'Otestujte', desc: 'V dobrovoľnej fáze (2026) si vyskúšajte odosielanie a prijímanie e-faktúr.', icon: CheckCircle2 },
           ].map((item) => (
             <motion.div key={item.step} variants={staggerItem}>
-              <GlassCard className="relative h-full p-6">
+              <GlassCard className="relative h-full overflow-visible p-6">
                 <span className="absolute -top-4 left-4 z-10 flex h-8 w-8 items-center justify-center rounded-full font-mono text-sm font-black text-white shadow-lg" style={{ backgroundColor: 'var(--accent)', boxShadow: '0 0 12px var(--accent-glow)' }}>
                   {item.step}
                 </span>

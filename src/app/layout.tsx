@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import { headers } from 'next/headers';
 import Script from 'next/script';
 import '@/lib/init-config';
 import { CoreConfigProvider } from '@jakubnovak710/universal-web-core/components/providers/config-provider';
@@ -20,17 +19,15 @@ export function generateMetadata(): Metadata {
   return createMetadata();
 }
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const nonce = (await headers()).get('x-nonce') ?? undefined;
-
   return (
     <html lang={getSiteConfig().locale} data-theme="dark" suppressHydrationWarning>
       <head>
-        <Script src="/theme-init.js" strategy="beforeInteractive" nonce={nonce} />
+        <Script src="/theme-init.js" strategy="beforeInteractive" />
         <link rel="alternate" type="text/plain" href="/llms.txt" title="LLM-friendly content" />
         <OrganizationJsonLd />
         <WebSiteJsonLd />
