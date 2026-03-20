@@ -3,15 +3,14 @@
  *
  * Generates sitemap.xml from filesystem-based content collections.
  * Auto-discovers all content by scanning collection directories.
- * Includes hreflang alternates for SK + EN.
+ *
+ * NOTE: i18n (hreflang) is disabled until pages move under [locale]/.
+ * Currently all pages live at root paths: /co-je-e-faktura, /integracie, etc.
  */
 
 import type { MetadataRoute } from 'next';
 import { siteConfig } from '@config/site.config';
-import { i18nConfig } from '@/i18n/config';
 import { getCollectionSlugs } from '@/lib/collections';
-
-const LEGAL_PATHS = new Set(['/ochrana-sukromia', '/obchodne-podmienky']);
 
 interface SitemapEntry {
   path: string;
@@ -20,7 +19,6 @@ interface SitemapEntry {
 }
 
 async function buildEntries(): Promise<SitemapEntry[]> {
-  // Scan collections for dynamic slugs
   const [erpSlugs, glossarySlugs, industrySlugs, faqSlugs, blogSlugs] = await Promise.all([
     getCollectionSlugs('erp-systems'),
     getCollectionSlugs('glossary'),
@@ -31,9 +29,10 @@ async function buildEntries(): Promise<SitemapEntry[]> {
 
   const entries: SitemapEntry[] = [];
 
-  // Static core pages
+  // Homepage
   entries.push({ path: '/', priority: 1.0, changeFrequency: 'weekly' });
 
+  // Pillar pages
   const pillarPages = [
     '/co-je-e-faktura', '/kedy-zacne-platit-e-faktura', '/ako-sa-pripravit-na-e-fakturu',
     '/e-faktura-pre-zivnostnikov', '/e-faktura-pre-male-firmy', '/e-faktura-pre-uctovnikov',
@@ -54,33 +53,25 @@ async function buildEntries(): Promise<SitemapEntry[]> {
     entries.push({ path, priority: 0.5, changeFrequency: 'monthly' });
   }
 
-  // Programmatic: ERP integrations
+  // Programmatic pages (auto-discovered from filesystem)
   for (const slug of erpSlugs) {
     entries.push({ path: `/integracie/${slug}`, priority: 0.7, changeFrequency: 'monthly' });
   }
-
-  // Programmatic: Glossary
   for (const slug of glossarySlugs) {
     entries.push({ path: `/slovnik/${slug}`, priority: 0.6, changeFrequency: 'monthly' });
   }
-
-  // Programmatic: Industries
   for (const slug of industrySlugs) {
     entries.push({ path: `/odvetvia/${slug}`, priority: 0.5, changeFrequency: 'monthly' });
   }
-
-  // Programmatic: FAQ categories
   for (const slug of faqSlugs) {
     entries.push({ path: `/otazky/${slug}`, priority: 0.5, changeFrequency: 'monthly' });
   }
-
-  // Blog posts
   for (const slug of blogSlugs) {
     entries.push({ path: `/blog/${slug}`, priority: 0.8, changeFrequency: 'weekly' });
   }
 
   // Legal
-  for (const path of LEGAL_PATHS) {
+  for (const path of ['/ochrana-sukromia', '/obchodne-podmienky']) {
     entries.push({ path, priority: 0.3, changeFrequency: 'yearly' });
   }
 
@@ -92,24 +83,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
   const entries = await buildEntries();
 
-  const sitemapEntries: MetadataRoute.Sitemap = [];
-
-  for (const entry of entries) {
-    for (const locale of i18nConfig.locales) {
-      const alternates: Record<string, string> = {};
-      for (const altLocale of i18nConfig.locales) {
-        alternates[altLocale] = `${baseUrl}/${altLocale}${entry.path === '/' ? '' : entry.path}`;
-      }
-
-      sitemapEntries.push({
-        url: `${baseUrl}/${locale}${entry.path === '/' ? '' : entry.path}`,
-        lastModified: now,
-        changeFrequency: entry.changeFrequency,
-        priority: entry.priority,
-        alternates: { languages: alternates },
-      });
-    }
-  }
-
-  return sitemapEntries;
+  return entries.map((entry) => ({
+    url: `${baseUrl}${entry.path === '/' ? '' : entry.path}`,
+    lastModified: now,
+    changeFrequency: entry.changeFrequency,
+    priority: entry.priority,
+  }));
 }

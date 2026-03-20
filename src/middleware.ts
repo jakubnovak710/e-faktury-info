@@ -1,32 +1,18 @@
-import { type NextRequest, NextResponse } from 'next/server';
 import { createMiddleware } from '@jakubnovak710/universal-web-core/middleware';
 import { securityConfig } from '@config/security.config';
-import { handleI18nRouting } from '@/i18n/middleware';
 
 /**
- * Combined middleware: i18n routing + security headers
+ * Middleware: Security headers only
  *
- * Order:
- * 1. i18n — redirect bare URLs to locale-prefixed URLs (/page → /sk/page)
- * 2. Security — CSP nonce, CORS, rate limiting (from core library)
+ * i18n routing is DISABLED until pages are migrated under [locale]/.
+ * The i18n infrastructure (src/i18n/) is ready but not active in routing.
+ * Pages currently live at root paths: /co-je-e-faktura, /integracie, etc.
+ *
+ * To enable i18n routing in future:
+ * 1. Move all pages under src/app/[locale]/
+ * 2. Re-import and call handleI18nRouting() here
  */
-const securityMiddleware = createMiddleware({ security: securityConfig });
-
-export async function middleware(request: NextRequest) {
-  // 1. i18n redirect (if needed)
-  const i18nResponse = handleI18nRouting(request);
-  if (i18nResponse) {
-    return i18nResponse;
-  }
-
-  // 2. Security middleware (CSP, CORS, rate limiting)
-  if (typeof securityMiddleware === 'function') {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return (securityMiddleware as any)(request);
-  }
-
-  return NextResponse.next();
-}
+export const middleware = createMiddleware({ security: securityConfig });
 
 export const config = {
   matcher: [
