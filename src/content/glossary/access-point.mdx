@@ -1,26 +1,26 @@
 ---
 term: "Access Point"
 termEn: "Access Point"
-shortDefinitionSk: "Pristupovy bod do Peppol siete — technicky koncovy bod digitalneho postara, cez ktory sa odosielaju a prijimaju e-faktury."
+shortDefinitionSk: "Prístupový bod do Peppol siete — technický koncový bod digitálneho poštára, cez ktorý sa odosielajú a prijímajú e-faktúry."
 shortDefinitionEn: "Entry point to the Peppol network — the technical endpoint of a digital postman through which e-invoices are sent and received."
 category: "technical"
 relatedSlugs: ["digitalny-postar", "peppol", "smp"]
 ---
 
-Access Point (pristupovy bod) je technicky koncovy bod, ktory zabezpecuje pripojenie firmy do siete Peppol. Je to server prevadzkovany certifikovanym poskytovatelom (digitalnym postarom), ktory odosiela a prijima elektronicke dokumenty v mene svojich klientov.
+Access Point (prístupový bod) je technický koncový bod, ktorý zabezpečuje pripojenie firmy do siete Peppol. Je to server prevádzkovaný certifikovaným poskytovateľom (digitálnym poštárom), ktorý odosiela a prijíma elektronické dokumenty v mene svojich klientov.
 
 ## Ako Access Point funguje
 
-Ked firma potrebuje odoslat e-fakturu, jej uctovny system odovzda dokument Access Pointu odosielatela. Ten najprv overi format a validitu faktury, potom vyhladal v registri SMP (Service Metadata Publisher) Access Point prijimatela a dorucil mu dokument. Komunikacia medzi Access Pointmi prebieha cez zabezpeceny protokol AS4 so sifrovnanim a digitalnym podpisom.
+Keď firma potrebuje odoslať e-faktúru, jej účtovný systém odovzdá dokument Access Pointu odosielateľa. Ten najprv overí formát a validitu faktúry, potom vyhľadá v registri SMP (Service Metadata Publisher) Access Point prijímateľa a doručí mu dokument. Komunikácia medzi Access Pointmi prebieha cez zabezpečený protokol AS4 so šifrovaním a digitálnym podpisom.
 
-## Certifikacia a bezpecnost
+## Certifikácia a bezpečnosť
 
-Kazdy Access Point musi prejst certifikacnym procesom organizacie OpenPeppol. Poskytovatel musi splnit prisne technicke a bezpecnostne poziadavky, podpisat zmluvu s OpenPeppol a pravidelne prechadzat auditmi. Certifikat sa obnovuje kazdorocne. Na Slovensku bude navyse potrebna akreditacia Financnou spravou SR.
+Každý Access Point musí prejsť certifikačným procesom organizácie OpenPeppol. Poskytovateľ musí splniť prísne technické a bezpečnostné požiadavky, podpísať zmluvu s OpenPeppol a pravidelne prechádzať auditmi. Certifikát sa obnovuje každoročne. Na Slovensku je navyše potrebná akreditácia Finančnou správou SR.
 
-## Access Point vs. digitalny postar
+## Access Point vs. digitálny poštár
 
-Pojmy Access Point a digitalny postar spolu uzko suvisia, ale nie su identicke. Access Point je technicky termin pre serverovu infrastrukturu, zatial co digitalny postar je obchodne oznacenie pre poskytovatela, ktory tento Access Point prevadzkuje a ponuka klientom sluzby dorucovanie e-faktur.
+Pojmy Access Point a digitálny poštár spolu úzko súvisia, ale nie sú identické. Access Point je technický termín pre serverovú infraštruktúru, zatiaľ čo digitálny poštár je obchodné označenie pre poskytovateľa, ktorý tento Access Point prevádzkuje a ponúka klientom služby doručovania e-faktúr.
 
-## Vyznam pre podnikatelov
+## Význam pre podnikateľov
 
-Podnikatelia si nemusia prevadzkovat vlastny Access Point — to by bolo financne a technicky narocne. Namiesto toho si zvolia poskytovatela (digitalneho postara), ktory pristupovy bod prevadzkuje. Poskytovatel zvycajne ponuka API alebo webove rozhranie, cez ktore mozete e-faktury odosielat a prijimat. Niektori poskytovatelia ponukaju aj priamu integraciu s popularnymi uctovnymi softvermi na Slovensku.
+Podnikatelia si nemusia prevádzkovať vlastný Access Point — to by bolo finančne a technicky náročné. Namiesto toho si zvolia poskytovateľa (digitálneho poštára), ktorý prístupový bod prevádzkuje. Poskytovateľ zvyčajne ponúka API alebo webové rozhranie, cez ktoré môžete e-faktúry odosielať a prijímať. Niektorí poskytovatelia ponúkajú aj priamu integráciu s populárnymi účtovnými softvérmi na Slovensku.

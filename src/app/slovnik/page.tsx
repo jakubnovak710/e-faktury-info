@@ -9,6 +9,7 @@ import Link from 'next/link';
 import { BookOpen, Scale, Briefcase } from 'lucide-react';
 import { createMetadata } from '@jakubnovak710/universal-web-core/lib/metadata';
 import { Breadcrumbs } from '@/components/breadcrumbs';
+import { ContentDisclaimer } from '@/components/content-disclaimer';
 import { getCollection, type CollectionEntry } from '@/lib/collections';
 import { glossarySchema, type GlossaryEntry } from '@/content/glossary/_schema';
 
@@ -89,6 +90,10 @@ export default async function SlovnikHubPage() {
           </div>
         );
       })}
+
+      <div className="mt-8">
+        <ContentDisclaimer variant="article" />
+      </div>
     </main>
   );
 }

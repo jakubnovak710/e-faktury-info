@@ -149,7 +149,7 @@ export default async function FaqCategoryPage({ params }: PageProps) {
             href="/ako-sa-pripravit-na-e-fakturu"
             className="text-[var(--accent)] hover:underline"
           >
-            kompletný sprievodca prípravou na e-faktúru
+            kompletného sprievodcu prípravou na e-faktúru
           </Link>
         </p>
       </div>

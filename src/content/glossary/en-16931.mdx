@@ -1,26 +1,26 @@
 ---
 term: "EN 16931"
 termEn: "EN 16931"
-shortDefinitionSk: "Europska norma definujuca semanticky model dat pre elektronicke faktury. Zaklad pre format e-faktury na Slovensku."
+shortDefinitionSk: "Európska norma definujúca sémantický model dát pre elektronické faktúry. Základ pre formát e-faktúry na Slovensku."
 shortDefinitionEn: "European standard defining the semantic data model for electronic invoices. The basis for Slovakia's e-invoice format."
 category: "technical"
 relatedSlugs: ["ubl-21", "xml", "e-faktura", "peppol-bis-billing"]
 ---
 
-EN 16931 je europska norma, ktora definuje semanticky datovy model pre zakladnu (core) elektronicku fakturu. Bola prijata Europskym vyborom pre normalizaciu (CEN) v roku 2017 a je zakladnym kamenon e-fakturacie v celej Europskej unii.
+EN 16931 je európska norma, ktorá definuje sémantický dátový model pre základnú (core) elektronickú faktúru. Bola prijatá Európskym výborom pre normalizáciu (CEN) v roku 2017 a je základným kameňom e-fakturácie v celej Európskej únii.
 
-## Co norma EN 16931 obsahuje
+## Čo norma EN 16931 obsahuje
 
-Norma urcuje, ake informacie musi e-faktura obsahovat a aku maju mat strukturu. Definuje viac ako 160 semantickych prvkov (business terms), ako su identifikacia dodavatela a odberatela, fakturacne obdobie, danove kategorie, polozky faktury, sumy a platobne instrukcie. Kazdy prvok ma presne definovany vyznam, datovy typ a kardinalitu (ci je povinny alebo volitelny).
+Norma určuje, aké informácie musí e-faktúra obsahovať a akú majú mať štruktúru. Definuje viac ako 160 sémantických prvkov (business terms), ako sú identifikácia dodávateľa a odberateľa, fakturačné obdobie, daňové kategórie, položky faktúry, sumy a platobné inštrukcie. Každý prvok má presne definovaný význam, dátový typ a kardinalitu (či je povinný alebo voliteľný).
 
 ## Syntaxe — UBL a CII
 
-EN 16931 je technologicky neutralna — definuje len vyznam dat, nie konkretny format suboru. Pre prax vsak Europska komisia schvalila dve syntaxe: UBL 2.1 (pouzivany v Peppol) a UN/CEFACT CII. Na Slovensku sa vyuziva primarne UBL 2.1, co znamena, ze e-faktura je XML subor v UBL formate, ktory splna pravidla EN 16931.
+EN 16931 je technologicky neutrálna — definuje len význam dát, nie konkrétny formát súboru. Pre prax však Európska komisia schválila dve syntaxe: UBL 2.1 (používaný v Peppol) a UN/CEFACT CII. Na Slovensku sa využíva primárne UBL 2.1, čo znamená, že e-faktúra je XML súbor v UBL formáte, ktorý spĺňa pravidlá EN 16931.
 
-## Vyznam pre Slovensko
+## Význam pre Slovensko
 
-Slovensky zakon o DPH vyzaduje, aby e-faktury splnali normu EN 16931. To znamena, ze kazdy uctovny softver, ktory chce generovat platne e-faktury, musi vediet vytvorit XML dokument v sulade s touto normou. Pre podnikatelov je dolezite, aby si overili, ze ich softver je EN 16931 kompatibilny.
+Slovenský zákon o DPH vyžaduje, aby e-faktúry spĺňali normu EN 16931. To znamená, že každý účtovný softvér, ktorý chce generovať platné e-faktúry, musí vedieť vytvoriť XML dokument v súlade s touto normou. Pre podnikateľov je dôležité, aby si overili, že ich softvér je EN 16931 kompatibilný.
 
-## Validacia
+## Validácia
 
-Faktury sa validuju oproti pravidlam normy — tzv. business rules a schematron validacie. Ak faktura nesplna povinne polia alebo obsahuje neplatne kombinacie udajov, bude odmetnuta. Preto je klucove pouzivat certifikovane nastroje na generovanie e-faktur, ktore automaticky kontroluju sulade s normou.
+Faktúry sa validujú oproti pravidlám normy — tzv. business rules a schematron validácie. Ak faktúra nespĺňa povinné polia alebo obsahuje neplatné kombinácie údajov, bude odmietnutá. Preto je kľúčové používať certifikované nástroje na generovanie e-faktúr, ktoré automaticky kontrolujú súlad s normou.

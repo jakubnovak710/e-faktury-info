@@ -10,6 +10,7 @@ import Link from 'next/link';
 import { CheckCircle2, Clock, Calendar, HelpCircle } from 'lucide-react';
 import { createMetadata } from '@jakubnovak710/universal-web-core/lib/metadata';
 import { Breadcrumbs } from '@/components/breadcrumbs';
+import { ContentDisclaimer } from '@/components/content-disclaimer';
 import { getCollection } from '@/lib/collections';
 import { erpSchema } from '@/content/erp-systems/_schema';
 
@@ -106,6 +107,10 @@ export default async function IntegracieHubPage() {
           Neviete sa rozhodnúť? Prečítajte si{' '}
           <Link href="/ako-sa-pripravit-na-e-fakturu" className="text-[var(--accent)] hover:underline">ako vybrať správny softvér</Link>.
         </p>
+      </div>
+
+      <div className="mt-8">
+        <ContentDisclaimer variant="article" />
       </div>
     </main>
   );

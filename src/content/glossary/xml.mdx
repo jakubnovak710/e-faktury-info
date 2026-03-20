@@ -1,26 +1,26 @@
 ---
 term: "XML"
 termEn: "XML"
-shortDefinitionSk: "eXtensible Markup Language — znackovaci jazyk pre strukturovane data. E-faktura je XML subor podla standardu EN 16931."
+shortDefinitionSk: "eXtensible Markup Language — značkovací jazyk pre štruktúrované dáta. E-faktúra je XML súbor podľa štandardu EN 16931."
 shortDefinitionEn: "eXtensible Markup Language — markup language for structured data. The e-invoice is an XML file following EN 16931 standard."
 category: "technical"
 relatedSlugs: ["en-16931", "ubl-21", "e-faktura"]
 ---
 
-XML (eXtensible Markup Language) je znackovaci jazyk urceny na ukladanie a prenos strukturovanych dat. V kontexte e-fakturacie je XML zakladnym formatom, v ktorom su e-faktury vytvarane, odosielane a spracovavane.
+XML (eXtensible Markup Language) je značkovací jazyk určený na ukladanie a prenos štruktúrovaných dát. V kontexte e-fakturácie je XML základným formátom, v ktorom sú e-faktúry vytvárané, odosielané a spracovávané.
 
-## Preco XML a nie JSON alebo CSV
+## Prečo XML a nie JSON alebo CSV
 
-XML bol zvoleny pre e-fakturaciu z viacerych dovodov. Ponuka silnu podporu pre schemove validacie (XSD), transformacie (XSLT) a digitalne podpisy (XMLDSig). Na rozdiel od CSV ma hierarchicku strukturu vhodnu pre zlozite obchodne dokumenty. Na rozdiel od JSON existoval v dobe, ked sa europske standardy definovali, a ma zrele nastroje pre validaciu.
+XML bol zvolený pre e-fakturáciu z viacerých dôvodov. Ponúka silnú podporu pre schémové validácie (XSD), transformácie (XSLT) a digitálne podpisy (XMLDSig). Na rozdiel od CSV má hierarchickú štruktúru vhodnú pre zložité obchodné dokumenty. Na rozdiel od JSON existoval v dobe, keď sa európske štandardy definovali, a má zrelé nástroje pre validáciu.
 
-## XML v praxi e-fakturacie
+## XML v praxi e-fakturácie
 
-Kazda e-faktura podla normy EN 16931 je XML subor v syntaxi UBL 2.1. Tento subor obsahuje vsetky udaje faktury v strojovo citatelnej forme — od identifikacie dodavatela a odberatela cez jednotlive polozky az po danove sumary. Pocitacove systemy dokazu XML automaticky nacitat a spracovat bez manualneho prepisovania.
+Každá e-faktúra podľa normy EN 16931 je XML súbor v syntaxi UBL 2.1. Tento súbor obsahuje všetky údaje faktúry v strojovo čitateľnej forme — od identifikácie dodávateľa a odberateľa cez jednotlivé položky až po daňové sumáre. Počítačové systémy dokážu XML automaticky načítať a spracovať bez manuálneho prepisovania.
 
-## Ako vyzera XML e-faktura
+## Ako vyzerá XML e-faktúra
 
-XML e-faktura je textovy subor s tagmi (znackami), ktore opisuju jednotlive datove prvky. Napriklad tag `<cbc:InvoiceTypeCode>380</cbc:InvoiceTypeCode>` urcuje, ze ide o standardnu fakturu. Strukturu definuju menné priestory (namespaces) UBL a pravidla normy EN 16931.
+XML e-faktúra je textový súbor s tagmi (značkami), ktoré opisujú jednotlivé dátové prvky. Napríklad tag `<cbc:InvoiceTypeCode>380</cbc:InvoiceTypeCode>` určuje, že ide o štandardnú faktúru. Štruktúru definujú menné priestory (namespaces) UBL a pravidlá normy EN 16931.
 
-## Validacia a spracovanie
+## Validácia a spracovanie
 
-XML e-faktury prechadzaju viacurovnovou validaciou: syntakticka validacia (ci je XML spravne formatovane), schemova validacia oproti XSD (ci obsahuje spravne elementy) a obchodna validacia oproti Schematron pravidlam (ci splna business rules). Az po uspesnej validacii je faktura akceptovana v Peppol sieti. Pre podnikatelov to znamena, ze ich uctovny softver musi generovat validne XML — v opacnom pripade bude faktura odmetnuta.
+XML e-faktúry prechádzajú viacúrovňovou validáciou: syntaktická validácia (či je XML správne formátované), schémová validácia oproti XSD (či obsahuje správne elementy) a obchodná validácia oproti Schematron pravidlám (či spĺňa business rules). Až po úspešnej validácii je faktúra akceptovaná v Peppol sieti. Pre podnikateľov to znamená, že ich účtovný softvér musí generovať validné XML — v opačnom prípade bude faktúra odmietnutá.
