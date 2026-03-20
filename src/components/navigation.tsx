@@ -184,9 +184,8 @@ function MobileMenu({ isOpen, onClose }: { isOpen: boolean; onClose: () => void 
     return () => { document.body.style.overflow = ''; };
   }, [isOpen]);
 
-  const phone = navigationConfig.phone;
   const ctaLabel = navigationConfig.ctaLabel ?? 'Kontakt';
-  const ctaTarget = navigationConfig.ctaTarget ?? '/contact';
+  const ctaTarget = navigationConfig.ctaAction === 'newsletter' ? '#newsletter' : '/contact';
 
   return (
     <AnimatePresence>
@@ -257,16 +256,6 @@ function MobileMenu({ isOpen, onClose }: { isOpen: boolean; onClose: () => void 
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4, duration: 0.4 }}
             >
-              {phone && (
-                <a
-                  href={`tel:${phone.replace(/\s/g, '')}`}
-                  className="mb-4 flex items-center gap-2 font-mono text-2xl font-bold"
-                  style={{ color: 'var(--text-primary)' }}
-                >
-                  <Phone size={20} style={{ color: 'var(--accent)' }} />
-                  {phone}
-                </a>
-              )}
               <Link
                 href={ctaTarget}
                 className="flex w-full items-center justify-center gap-2 rounded-lg px-6 py-3 text-sm font-bold transition-all active:scale-95"
@@ -358,9 +347,8 @@ export function Navigation({ logo, subtitle, className }: NavigationProps) {
   }, []);
 
   const navLinks = navigationConfig.header;
-  const phone = navigationConfig.phone;
   const ctaLabel = navigationConfig.ctaLabel ?? 'Kontakt';
-  const ctaTarget = navigationConfig.ctaTarget ?? '/contact';
+  const ctaTarget = navigationConfig.ctaAction === 'newsletter' ? '#newsletter' : '/contact';
 
   return (
     <>
@@ -416,23 +404,8 @@ export function Navigation({ logo, subtitle, className }: NavigationProps) {
             })}
           </div>
 
-          {/* Right side: phone + CTA + theme + hamburger */}
+          {/* Right side: CTA + theme + hamburger */}
           <div className="flex items-center gap-3">
-            {/* Phone (lg+) */}
-            {phone && (
-              <a
-                href={`tel:${phone.replace(/\s/g, '')}`}
-                className="hidden items-center gap-1.5 rounded-md border px-3 py-2 font-mono text-xs font-bold transition-colors lg:flex"
-                style={{
-                  color: 'var(--text-muted)',
-                  backgroundColor: 'var(--fill-subtle)',
-                  borderColor: 'var(--border-subtle)',
-                }}
-              >
-                <Phone size={12} />
-                {phone}
-              </a>
-            )}
 
             {/* CTA button (md+) */}
             <Link
