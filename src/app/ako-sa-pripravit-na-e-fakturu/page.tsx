@@ -35,7 +35,8 @@ import {
 } from 'lucide-react';
 import { createMetadata } from '@jakubnovak710/universal-web-core/lib/metadata';
 import { siteConfig } from '@config/site.config';
-import { Breadcrumbs } from '@/components/breadcrumbs';
+import { ContentLayout } from '@/components/layouts/content-layout';
+import { buildArticleJsonLd } from '@/components/seo';
 import { PartnerCTA } from '@/components/partner-cta';
 
 export function generateMetadata(): Metadata {
@@ -58,19 +59,12 @@ export function generateMetadata(): Metadata {
 export default function AkoSaPripravetiNaEFakturu() {
   const pageUrl = `${siteConfig.url}/ako-sa-pripravit-na-e-fakturu`;
 
-  // Article JSON-LD
-  const articleJsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'Article',
+  const articleJsonLd = buildArticleJsonLd({
     headline: 'Ako sa pripraviť na e-faktúru — Praktický sprievodca krok za krokom',
     description:
       'Kompletný postup prípravy na e-fakturáciu na Slovensku. 6 krokov od auditu softvéru po školenie zamestnancov.',
-    datePublished: '2026-03-20',
-    dateModified: '2026-03-20',
-    author: { '@type': 'Organization', name: '8888 Servis s. r. o.' },
-    publisher: { '@type': 'Organization', name: 'e-Faktúry.info', url: siteConfig.url },
-    mainEntityOfPage: pageUrl,
-  };
+    path: '/ako-sa-pripravit-na-e-fakturu',
+  });
 
   // HowTo JSON-LD (rich snippets)
   const howToJsonLd = {
@@ -132,47 +126,22 @@ export default function AkoSaPripravetiNaEFakturu() {
   };
 
   return (
-    <main className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8">
-      {/* Schema markup */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(howToJsonLd) }}
-      />
-
-      {/* Breadcrumbs */}
-      <Breadcrumbs
-        locale="sk"
-        items={[
-          { label: 'Sprievodca', href: '/co-je-e-faktura' },
-          { label: 'Ako sa pripraviť na e-faktúru' },
-        ]}
-      />
-
-      <article className="prose prose-invert max-w-none">
-        {/* H1 — primary keyword */}
-        <h1 className="font-black text-[var(--text-primary)]">
-          Ako sa pripraviť na e-faktúru — Praktický sprievodca krok za krokom
-        </h1>
-
-        <p className="text-lg text-[var(--text-secondary)]">
-          Prechod na e-fakturáciu nemusí byť komplikovaný. Tento sprievodca vás
-          prevedie celým procesom — od auditu aktuálneho stavu cez výber
-          softvéru a digitálneho poštára až po testovanie a školenie
-          zamestnancov. Stačí 6 krokov a budete pripravení.
-        </p>
-
-        <p className="rounded-lg border border-[var(--accent)]/20 bg-[var(--bg-surface)] p-4 text-sm">
-          <strong>Posledná aktualizácia:</strong> Marec 2026 |{' '}
-          <strong>Čas čítania:</strong> 8 minút |{' '}
-          <strong>Súvisiace:</strong>{' '}
-          <Link href="/co-je-e-faktura" className="text-[var(--accent)]">
-            Čo je e-faktúra
-          </Link>
-        </p>
+    <ContentLayout
+      locale="sk"
+      breadcrumbs={[
+        { label: 'Sprievodca', href: '/co-je-e-faktura' },
+        { label: 'Ako sa pripraviť na e-faktúru' },
+      ]}
+      jsonLd={[articleJsonLd, howToJsonLd]}
+      hero={{
+        title: 'Ako sa pripraviť na e-faktúru',
+        description:
+          'Prechod na e-fakturáciu nemusí byť komplikovaný. Tento sprievodca vás prevedie celým procesom — od auditu aktuálneho stavu cez výber softvéru a digitálneho poštára až po testovanie a školenie zamestnancov. Stačí 6 krokov a budete pripravení.',
+        lastUpdated: 'Marec 2026',
+        sources: ['Zákon 385/2025 Z.z.'],
+        readingTime: 10,
+      }}
+    >
 
         {/* ── Prečo sa pripraviť včas ── */}
         <h2 className="font-black text-[var(--text-primary)]">
@@ -731,7 +700,6 @@ export default function AkoSaPripravetiNaEFakturu() {
           </Link>
           .
         </p>
-      </article>
-    </main>
+    </ContentLayout>
   );
 }

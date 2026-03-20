@@ -9,8 +9,8 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ArrowRight, AlertTriangle } from 'lucide-react';
 import { createMetadata } from '@jakubnovak710/universal-web-core/lib/metadata';
-import { siteConfig } from '@config/site.config';
-import { Breadcrumbs } from '@/components/breadcrumbs';
+import { ContentLayout } from '@/components/layouts/content-layout';
+import { buildArticleJsonLd } from '@/components/seo';
 import { PartnerCTA } from '@/components/partner-cta';
 
 export function generateMetadata(): Metadata {
@@ -23,33 +23,29 @@ export function generateMetadata(): Metadata {
 }
 
 export default function EFakturaPreMaleFirmyPage() {
-  const articleJsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'Article',
+  const articleJsonLd = buildArticleJsonLd({
     headline: 'E-faktúra pre malé firmy a s.r.o.',
-    datePublished: '2026-03-20',
-    dateModified: '2026-03-20',
-    author: { '@type': 'Organization', name: '8888 Servis s. r. o.' },
-    publisher: { '@type': 'Organization', name: 'e-Faktúry.info', url: siteConfig.url },
-    mainEntityOfPage: `${siteConfig.url}/e-faktura-pre-male-firmy`,
-  };
+    description: 'Čo musia malé firmy a s.r.o. vedieť o povinnej e-faktúre od 1.1.2027. Príprava, softvér, digitálny poštár, pokuty.',
+    path: '/e-faktura-pre-male-firmy',
+  });
 
   return (
-    <main className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }} />
-
-      <Breadcrumbs locale="sk" items={[{ label: 'Pre koho', href: '/e-faktura-pre-male-firmy' }, { label: 'Pre malé firmy' }]} />
-
-      <article className="prose prose-invert max-w-none">
-        <h1 className="font-black text-[var(--text-primary)]">E-faktúra pre malé firmy a s.r.o.</h1>
-
-        <p className="text-lg text-[var(--text-secondary)]">
-          Máte s.r.o. alebo malú firmu a ste platiteľ DPH? Od <strong>1. januára 2027</strong> musíte prejsť na elektronickú fakturáciu. Tento sprievodca vám ukáže, čo presne treba urobiť a ako sa vyhnúť pokutám až do <strong>100 000 EUR</strong>.
-        </p>
-
-        <p className="rounded-lg border border-[var(--accent)]/20 bg-[var(--bg-surface)] p-4 text-sm">
-          <strong>Posledná aktualizácia:</strong> Marec 2026 | <strong>Zdroj:</strong> Zákon 385/2025 Z.z.
-        </p>
+    <ContentLayout
+      locale="sk"
+      breadcrumbs={[
+        { label: 'Pre koho', href: '/e-faktura-pre-male-firmy' },
+        { label: 'Pre malé firmy' },
+      ]}
+      jsonLd={[articleJsonLd]}
+      hero={{
+        title: 'E-faktúra pre malé firmy a s.r.o.',
+        description:
+          'Máte s.r.o. alebo malú firmu a ste platiteľ DPH? Od 1. januára 2027 musíte prejsť na elektronickú fakturáciu. Tento sprievodca vám ukáže, čo presne treba urobiť a ako sa vyhnúť pokutám až do 100 000 EUR.',
+        lastUpdated: 'Marec 2026',
+        sources: ['Zákon 385/2025 Z.z.'],
+        readingTime: 7,
+      }}
+    >
 
         <h2 className="font-black text-[var(--text-primary)]">Čo sa zmení pre vašu firmu</h2>
 
@@ -124,7 +120,6 @@ export default function EFakturaPreMaleFirmyPage() {
         <p>
           Čas sa kráti — začnite sa pripravovať. Prečítajte si <Link href="/co-je-e-faktura" className="text-[var(--accent)]">čo je e-faktúra</Link>, overte softvér na <Link href="/integracie" className="text-[var(--accent)]">stránke integrácií</Link> a sledujte <Link href="/kedy-zacne-platit-e-faktura" className="text-[var(--accent)]">termíny</Link>.
         </p>
-      </article>
-    </main>
+    </ContentLayout>
   );
 }

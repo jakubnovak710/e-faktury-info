@@ -23,8 +23,8 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ArrowRight, CheckCircle2, XCircle, AlertTriangle } from 'lucide-react';
 import { createMetadata } from '@jakubnovak710/universal-web-core/lib/metadata';
-import { siteConfig } from '@config/site.config';
-import { Breadcrumbs } from '@/components/breadcrumbs';
+import { ContentLayout } from '@/components/layouts/content-layout';
+import { buildArticleJsonLd } from '@/components/seo';
 import { PartnerCTA } from '@/components/partner-cta';
 
 export function generateMetadata(): Metadata {
@@ -45,20 +45,11 @@ export function generateMetadata(): Metadata {
 }
 
 export default function CoJeEFakturaPage() {
-  const pageUrl = `${siteConfig.url}/co-je-e-faktura`;
-
-  // Article JSON-LD
-  const articleJsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'Article',
+  const articleJsonLd = buildArticleJsonLd({
     headline: 'Čo je e-faktúra — Kompletný sprievodca elektronickou fakturáciou na Slovensku',
     description: 'Čo je e-faktúra, ako funguje, koho sa týka a kedy bude povinná na Slovensku.',
-    datePublished: '2026-03-20',
-    dateModified: '2026-03-20',
-    author: { '@type': 'Organization', name: '8888 Servis s. r. o.' },
-    publisher: { '@type': 'Organization', name: 'e-Faktúry.info', url: siteConfig.url },
-    mainEntityOfPage: pageUrl,
-  };
+    path: '/co-je-e-faktura',
+  });
 
   // FAQ JSON-LD (embedded FAQ section)
   const faqJsonLd = {
@@ -93,44 +84,22 @@ export default function CoJeEFakturaPage() {
   };
 
   return (
-    <main className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8">
-      {/* Schema markup */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
-      />
-
-      {/* Breadcrumbs */}
-      <Breadcrumbs
-        locale="sk"
-        items={[
-          { label: 'Sprievodca', href: '/co-je-e-faktura' },
-          { label: 'Čo je e-faktúra' },
-        ]}
-      />
-
-      <article className="prose prose-invert max-w-none">
-        {/* H1 — primary keyword */}
-        <h1 className="font-black text-[var(--text-primary)]">
-          Čo je e-faktúra — Kompletný sprievodca elektronickou fakturáciou
-        </h1>
-
-        <p className="text-lg text-[var(--text-secondary)]">
-          Od <strong>1. januára 2027</strong> bude na Slovensku povinná
-          elektronická faktúra (e-faktúra) pre všetkých platiteľov DPH. Ak
-          podnikáte, táto zmena sa s najväčšou pravdepodobnosťou týka aj vás.
-          V tomto sprievodcovi sa dozviete všetko, čo potrebujete vedieť.
-        </p>
-
-        <p className="rounded-lg border border-[var(--accent)]/20 bg-[var(--bg-surface)] p-4 text-sm">
-          <strong>Posledná aktualizácia:</strong> Marec 2026 |{' '}
-          <strong>Zdroj:</strong> Zákon 385/2025 Z.z. (novela zákona o DPH),{' '}
-          Finančná správa SR
-        </p>
+    <ContentLayout
+      locale="sk"
+      breadcrumbs={[
+        { label: 'Sprievodca', href: '/co-je-e-faktura' },
+        { label: 'Čo je e-faktúra' },
+      ]}
+      jsonLd={[articleJsonLd, faqJsonLd]}
+      hero={{
+        title: 'Čo je e-faktúra',
+        description:
+          'Od 1. januára 2027 bude na Slovensku povinná elektronická faktúra (e-faktúra) pre všetkých platiteľov DPH. Ak podnikáte, táto zmena sa s najväčšou pravdepodobnosťou týka aj vás. V tomto sprievodcovi sa dozviete všetko, čo potrebujete vedieť.',
+        lastUpdated: 'Marec 2026',
+        sources: ['Zákon 385/2025 Z.z.', 'Finančná správa SR'],
+        readingTime: 12,
+      }}
+    >
 
         {/* ── Definícia ── */}
         <h2 className="font-black text-[var(--text-primary)]">
@@ -510,7 +479,6 @@ export default function CoJeEFakturaPage() {
           </Link>
           .
         </p>
-      </article>
-    </main>
+    </ContentLayout>
   );
 }

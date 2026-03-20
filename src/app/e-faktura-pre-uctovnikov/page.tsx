@@ -9,8 +9,8 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import { createMetadata } from '@jakubnovak710/universal-web-core/lib/metadata';
-import { siteConfig } from '@config/site.config';
-import { Breadcrumbs } from '@/components/breadcrumbs';
+import { ContentLayout } from '@/components/layouts/content-layout';
+import { buildArticleJsonLd } from '@/components/seo';
 import { PartnerCTA } from '@/components/partner-cta';
 
 export function generateMetadata(): Metadata {
@@ -23,33 +23,29 @@ export function generateMetadata(): Metadata {
 }
 
 export default function EFakturaPreUctovnikovPage() {
-  const articleJsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'Article',
+  const articleJsonLd = buildArticleJsonLd({
     headline: 'E-faktúra pre účtovníkov a účtovné kancelárie',
-    datePublished: '2026-03-20',
-    dateModified: '2026-03-20',
-    author: { '@type': 'Organization', name: '8888 Servis s. r. o.' },
-    publisher: { '@type': 'Organization', name: 'e-Faktúry.info', url: siteConfig.url },
-    mainEntityOfPage: `${siteConfig.url}/e-faktura-pre-uctovnikov`,
-  };
+    description: 'Ako e-faktúra ovplyvní prácu účtovníkov. Nové povinnosti, zmeny v procesoch, príležitosť pre novú službu.',
+    path: '/e-faktura-pre-uctovnikov',
+  });
 
   return (
-    <main className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }} />
-
-      <Breadcrumbs locale="sk" items={[{ label: 'Pre koho', href: '/e-faktura-pre-uctovnikov' }, { label: 'Pre účtovníkov' }]} />
-
-      <article className="prose prose-invert max-w-none">
-        <h1 className="font-black text-[var(--text-primary)]">E-faktúra pre účtovníkov a účtovné kancelárie</h1>
-
-        <p className="text-lg text-[var(--text-secondary)]">
-          E-faktúra nie je len povinnosť — pre účtovníkov je to <strong>príležitosť</strong>. Vaši klienti sa budú pýtať, ako sa pripraviť. Budete ten, koho zavolajú prvého. Buďte pripravení.
-        </p>
-
-        <p className="rounded-lg border border-[var(--accent)]/20 bg-[var(--bg-surface)] p-4 text-sm">
-          <strong>Posledná aktualizácia:</strong> Marec 2026 | <strong>Zdroj:</strong> Zákon 385/2025 Z.z., FAQ Finančnej správy SR
-        </p>
+    <ContentLayout
+      locale="sk"
+      breadcrumbs={[
+        { label: 'Pre koho', href: '/e-faktura-pre-uctovnikov' },
+        { label: 'Pre účtovníkov' },
+      ]}
+      jsonLd={[articleJsonLd]}
+      hero={{
+        title: 'E-faktúra pre účtovníkov a účtovné kancelárie',
+        description:
+          'E-faktúra nie je len povinnosť — pre účtovníkov je to príležitosť. Vaši klienti sa budú pýtať, ako sa pripraviť. Budete ten, koho zavolajú prvého. Buďte pripravení.',
+        lastUpdated: 'Marec 2026',
+        sources: ['Zákon 385/2025 Z.z.', 'FAQ Finančnej správy SR'],
+        readingTime: 8,
+      }}
+    >
 
         <h2 className="font-black text-[var(--text-primary)]">Čo sa zmení v práci účtovníka</h2>
 
@@ -137,7 +133,6 @@ export default function EFakturaPreUctovnikovPage() {
         <p>
           E-faktúra zmení prácu účtovníka k lepšiemu — menej manuálnej práce, viac automatizácie. Ale len pre tých, čo sa pripravia. Začnite teraz: <Link href="/ako-sa-pripravit-na-e-fakturu" className="text-[var(--accent)]">sprievodca prípravou</Link>, <Link href="/co-je-e-faktura" className="text-[var(--accent)]">čo je e-faktúra</Link>, <Link href="/kedy-zacne-platit-e-faktura" className="text-[var(--accent)]">kľúčové termíny</Link>.
         </p>
-      </article>
-    </main>
+    </ContentLayout>
   );
 }

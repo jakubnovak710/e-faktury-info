@@ -23,8 +23,8 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ArrowRight, Calendar, CheckCircle2, Clock, AlertTriangle, Info } from 'lucide-react';
 import { createMetadata } from '@jakubnovak710/universal-web-core/lib/metadata';
-import { siteConfig } from '@config/site.config';
-import { Breadcrumbs } from '@/components/breadcrumbs';
+import { ContentLayout } from '@/components/layouts/content-layout';
+import { buildArticleJsonLd } from '@/components/seo';
 import { PartnerCTA } from '@/components/partner-cta';
 
 export function generateMetadata(): Metadata {
@@ -45,21 +45,12 @@ export function generateMetadata(): Metadata {
 }
 
 export default function KedyZacnePlatitEFakturaPage() {
-  const pageUrl = `${siteConfig.url}/kedy-zacne-platit-e-faktura`;
-
-  // Article JSON-LD
-  const articleJsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'Article',
+  const articleJsonLd = buildArticleJsonLd({
     headline: 'Kedy začne platiť e-faktúra na Slovensku — Kompletný harmonogram',
     description:
       'Kompletný harmonogram zavedenia povinnej e-faktúry na Slovensku: dobrovoľná fáza 2026, povinnosť od 1.1.2027, cezhraničné transakcie od 2030.',
-    datePublished: '2026-03-20',
-    dateModified: '2026-03-20',
-    author: { '@type': 'Organization', name: '8888 Servis s. r. o.' },
-    publisher: { '@type': 'Organization', name: 'e-Faktúry.info', url: siteConfig.url },
-    mainEntityOfPage: pageUrl,
-  };
+    path: '/kedy-zacne-platit-e-faktura',
+  });
 
   // FAQ JSON-LD
   const faqJsonLd = {
@@ -94,46 +85,22 @@ export default function KedyZacnePlatitEFakturaPage() {
   };
 
   return (
-    <main className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8">
-      {/* Schema markup */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
-      />
-
-      {/* Breadcrumbs */}
-      <Breadcrumbs
-        locale="sk"
-        items={[
-          { label: 'Sprievodca', href: '/co-je-e-faktura' },
-          { label: 'Kedy začne platiť e-faktúra' },
-        ]}
-      />
-
-      <article className="prose prose-invert max-w-none">
-        {/* H1 — primary keyword */}
-        <h1 className="font-black text-[var(--text-primary)]">
-          Kedy začne platiť e-faktúra na Slovensku
-        </h1>
-
-        <p className="text-lg text-[var(--text-secondary)]">
-          Povinná elektronická faktúra na Slovensku začne platiť{' '}
-          <strong>1. januára 2027</strong>. Zákon 385/2025 Z.z., schválený
-          9. decembra 2025, zavádza postupný harmonogram s dobrovoľnou fázou
-          od roku 2026 až po plné pokrytie cezhraničných transakcií v roku
-          2030. V tomto článku nájdete kompletný prehľad všetkých termínov
-          a povinností.
-        </p>
-
-        <p className="rounded-lg border border-[var(--accent)]/20 bg-[var(--bg-surface)] p-4 text-sm">
-          <strong>Posledná aktualizácia:</strong> Marec 2026 |{' '}
-          <strong>Zdroj:</strong> Zákon 385/2025 Z.z. (novela zákona o DPH),{' '}
-          smernica EÚ 2025/516 (ViDA), Finančná správa SR
-        </p>
+    <ContentLayout
+      locale="sk"
+      breadcrumbs={[
+        { label: 'Sprievodca', href: '/co-je-e-faktura' },
+        { label: 'Kedy začne platiť e-faktúra' },
+      ]}
+      jsonLd={[articleJsonLd, faqJsonLd]}
+      hero={{
+        title: 'Kedy začne platiť e-faktúra na Slovensku',
+        description:
+          'Povinná elektronická faktúra na Slovensku začne platiť 1. januára 2027. Zákon 385/2025 Z.z., schválený 9. decembra 2025, zavádza postupný harmonogram s dobrovoľnou fázou od roku 2026 až po plné pokrytie cezhraničných transakcií v roku 2030. V tomto článku nájdete kompletný prehľad všetkých termínov a povinností.',
+        lastUpdated: 'Marec 2026',
+        sources: ['Zákon 385/2025 Z.z.', 'Smernica EÚ 2025/516 (ViDA)', 'Finančná správa SR'],
+        readingTime: 6,
+      }}
+    >
 
         {/* ── Legislatívny základ ── */}
         <h2 className="font-black text-[var(--text-primary)]">
@@ -584,7 +551,6 @@ export default function KedyZacnePlatitEFakturaPage() {
             </Link>
           </li>
         </ul>
-      </article>
-    </main>
+    </ContentLayout>
   );
 }

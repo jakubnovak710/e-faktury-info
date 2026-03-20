@@ -29,8 +29,8 @@ import {
   CheckCircle2,
 } from 'lucide-react';
 import { createMetadata } from '@jakubnovak710/universal-web-core/lib/metadata';
-import { siteConfig } from '@config/site.config';
-import { Breadcrumbs } from '@/components/breadcrumbs';
+import { ContentLayout } from '@/components/layouts/content-layout';
+import { buildArticleJsonLd } from '@/components/seo';
 import { PartnerCTA } from '@/components/partner-cta';
 
 export function generateMetadata(): Metadata {
@@ -51,21 +51,12 @@ export function generateMetadata(): Metadata {
 }
 
 export default function PokutyZaEFakturuPage() {
-  const pageUrl = `${siteConfig.url}/pokuty-za-e-fakturu`;
-
-  // Article JSON-LD
-  const articleJsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'Article',
+  const articleJsonLd = buildArticleJsonLd({
     headline: 'Pokuty a sankcie za e-faktúru — Čo hrozí za nesplnenie povinností',
     description:
       'Prehľad pokút za e-faktúru na Slovensku: až 10 000 EUR za nevystavenie, 100 000 EUR pri opakovanom porušení.',
-    datePublished: '2026-03-20',
-    dateModified: '2026-03-20',
-    author: { '@type': 'Organization', name: '8888 Servis s. r. o.' },
-    publisher: { '@type': 'Organization', name: 'e-Faktúry.info', url: siteConfig.url },
-    mainEntityOfPage: pageUrl,
-  };
+    path: '/pokuty-za-e-fakturu',
+  });
 
   // FAQ JSON-LD (embedded FAQ section)
   const faqJsonLd = {
@@ -100,49 +91,22 @@ export default function PokutyZaEFakturuPage() {
   };
 
   return (
-    <main className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8">
-      {/* Schema markup */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
-      />
-
-      {/* Breadcrumbs */}
-      <Breadcrumbs
-        locale="sk"
-        items={[
-          { label: 'Sprievodca', href: '/co-je-e-faktura' },
-          { label: 'Pokuty a sankcie' },
-        ]}
-      />
-
-      <article className="prose prose-invert max-w-none">
-        {/* H1 — primary keyword */}
-        <h1 className="font-black text-[var(--text-primary)]">
-          Pokuty a sankcie za e-faktúru — Čo hrozí za nesplnenie povinností
-        </h1>
-
-        <p className="text-lg text-[var(--text-secondary)]">
-          Od <strong>1. januára 2027</strong> je{' '}
-          <Link href="/co-je-e-faktura" className="text-[var(--accent)]">
-            elektronická faktúra (e-faktúra)
-          </Link>{' '}
-          povinná pre všetkých platiteľov DPH na Slovensku. Zákon 385/2025 Z.z.
-          stanovuje <strong>prísne sankcie</strong> za porušenie tejto povinnosti.
-          Pokuta môže dosiahnuť až{' '}
-          <strong>100 000 EUR pri opakovanom porušení</strong>. Pripravili sme
-          kompletný prehľad, aby ste vedeli, čo presne hrozí a ako sa chrániť.
-        </p>
-
-        <p className="rounded-lg border border-[var(--accent)]/20 bg-[var(--bg-surface)] p-4 text-sm">
-          <strong>Posledná aktualizácia:</strong> Marec 2026 |{' '}
-          <strong>Zdroj:</strong> Zákon 385/2025 Z.z. (novela zákona o DPH),{' '}
-          Finančná správa SR
-        </p>
+    <ContentLayout
+      locale="sk"
+      breadcrumbs={[
+        { label: 'Sprievodca', href: '/co-je-e-faktura' },
+        { label: 'Pokuty a sankcie' },
+      ]}
+      jsonLd={[articleJsonLd, faqJsonLd]}
+      hero={{
+        title: 'Pokuty a sankcie za e-faktúru',
+        description:
+          'Od 1. januára 2027 je elektronická faktúra (e-faktúra) povinná pre všetkých platiteľov DPH na Slovensku. Zákon 385/2025 Z.z. stanovuje prísne sankcie za porušenie tejto povinnosti. Pokuta môže dosiahnuť až 100 000 EUR pri opakovanom porušení. Pripravili sme kompletný prehľad, aby ste vedeli, čo presne hrozí a ako sa chrániť.',
+        lastUpdated: 'Marec 2026',
+        sources: ['Zákon 385/2025 Z.z.', 'Finančná správa SR'],
+        readingTime: 7,
+      }}
+    >
 
         {/* ── Prehľad pokút ── */}
         <h2 className="font-black text-[var(--text-primary)]">
@@ -497,7 +461,6 @@ export default function PokutyZaEFakturuPage() {
             <ArrowRight className="ml-1 inline h-4 w-4" />
           </Link>
         </p>
-      </article>
-    </main>
+    </ContentLayout>
   );
 }

@@ -15,8 +15,8 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ArrowRight, XCircle, AlertTriangle } from 'lucide-react';
 import { createMetadata } from '@jakubnovak710/universal-web-core/lib/metadata';
-import { siteConfig } from '@config/site.config';
-import { Breadcrumbs } from '@/components/breadcrumbs';
+import { ContentLayout } from '@/components/layouts/content-layout';
+import { buildArticleJsonLd } from '@/components/seo';
 import { PartnerCTA } from '@/components/partner-cta';
 
 export function generateMetadata(): Metadata {
@@ -35,17 +35,11 @@ export function generateMetadata(): Metadata {
 }
 
 export default function EFakturaPreZivnostnikovPage() {
-  const articleJsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'Article',
+  const articleJsonLd = buildArticleJsonLd({
     headline: 'E-faktúra pre živnostníkov a SZČO — Čo musíte vedieť',
     description: 'Kompletný sprievodca e-faktúrou pre živnostníkov a SZČO na Slovensku.',
-    datePublished: '2026-03-20',
-    dateModified: '2026-03-20',
-    author: { '@type': 'Organization', name: '8888 Servis s. r. o.' },
-    publisher: { '@type': 'Organization', name: 'e-Faktúry.info', url: siteConfig.url },
-    mainEntityOfPage: `${siteConfig.url}/e-faktura-pre-zivnostnikov`,
-  };
+    path: '/e-faktura-pre-zivnostnikov',
+  });
 
   const faqJsonLd = {
     '@context': 'https://schema.org',
@@ -79,40 +73,21 @@ export default function EFakturaPreZivnostnikovPage() {
   };
 
   return (
-    <main className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
-      />
-
-      <Breadcrumbs
-        locale="sk"
-        items={[
-          { label: 'Pre koho', href: '/e-faktura-pre-zivnostnikov' },
-          { label: 'Pre živnostníkov' },
-        ]}
-      />
-
-      <article className="prose prose-invert max-w-none">
-        <h1 className="font-black text-[var(--text-primary)]">
-          E-faktúra pre živnostníkov a SZČO
-        </h1>
-
-        <p className="text-lg text-[var(--text-secondary)]">
-          Ak podnikáte ako živnostník alebo SZČO, e-faktúra sa vás týka —
-          otázka je len <strong>v akom rozsahu</strong>. Záleží na tom, či ste
-          platiteľ DPH alebo nie. Tento sprievodca vám vysvetlí presne, čo
-          musíte urobiť.
-        </p>
-
-        <p className="rounded-lg border border-[var(--accent)]/20 bg-[var(--bg-surface)] p-4 text-sm">
-          <strong>Posledná aktualizácia:</strong> Marec 2026 |{' '}
-          <strong>Zdroj:</strong> Zákon 385/2025 Z.z., FAQ Finančnej správy SR
-        </p>
+    <ContentLayout
+      locale="sk"
+      breadcrumbs={[
+        { label: 'Pre koho', href: '/e-faktura-pre-zivnostnikov' },
+        { label: 'Pre živnostníkov' },
+      ]}
+      jsonLd={[articleJsonLd, faqJsonLd]}
+      hero={{
+        title: 'E-faktúra pre živnostníkov a SZČO',
+        description: 'Ak podnikáte ako živnostník alebo SZČO, e-faktúra sa vás týka — otázka je len v akom rozsahu. Záleží na tom, či ste platiteľ DPH alebo nie.',
+        lastUpdated: 'Marec 2026',
+        sources: ['Zákon 385/2025 Z.z.', 'FAQ Finančnej správy SR'],
+        readingTime: 8,
+      }}
+    >
 
         {/* ── Platiteľ vs neplatiteľ ── */}
         <h2 className="font-black text-[var(--text-primary)]">
@@ -456,7 +431,6 @@ export default function EFakturaPreZivnostnikovPage() {
             </Link>
           </li>
         </ul>
-      </article>
-    </main>
+    </ContentLayout>
   );
 }
