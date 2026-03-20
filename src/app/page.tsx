@@ -1,479 +1,663 @@
+/**
+ * Homepage — e-Faktúry.info
+ *
+ * Design psychology (per loaded skills):
+ * - Hero: Loss Aversion (penalty anchor), Urgency (countdown), Curiosity Gap
+ * - Problem: Framing Effect (change is inevitable)
+ * - For Whom: Selective Attention, Similarity Bias
+ * - Timeline: Goal-Gradient, Zeigarnik Effect
+ * - Steps: Activation Energy reduction, EAST framework
+ * - Software: Authority Bias, Bandwagon Effect
+ * - FAQ: Uncertainty reduction, Confirmation Bias
+ * - Stats: Anchoring, Social Proof
+ * - Newsletter: Peak-End Rule, Reciprocity, Foot-in-the-Door
+ * - Partners: Nudge (non-aggressive)
+ *
+ * Target keywords: e-faktúra, elektronická faktúra slovensko, e-fakturácia 2027
+ * Primary CTA: Newsletter signup (email only)
+ * Secondary CTA: Readiness check tool
+ */
+
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
+import Link from 'next/link';
 import { motion, useInView } from 'motion/react';
 import {
-  Palette,
-  Shield,
-  Zap,
-  Globe,
+  FileText,
   ArrowRight,
-  Layers,
-  Mail,
-  Activity,
-  Database,
-  Languages,
-  BarChart3,
-  Timer,
-  Lock,
-  Sparkles,
+  AlertTriangle,
+  Building2,
+  Briefcase,
+  Calculator,
+  CheckCircle2,
+  Circle,
+  ChevronDown,
+  Users,
+  Shield,
+  Globe,
+  Send,
+  ExternalLink,
 } from 'lucide-react';
-
 import {
   GlassCard,
-  FeaturedCard,
-  CompactCard,
   MonoLabel,
   SectionDivider,
   GradientHeading,
-  IconContainer,
-  ProgressBar,
-  Scanlines,
-  GradientBar,
 } from '@jakubnovak710/universal-web-core/components/design-system';
 import { Footer } from '@jakubnovak710/universal-web-core/components/layout/footer';
 import { ScrollToTop } from '@jakubnovak710/universal-web-core/components/layout/scroll-to-top';
 import { fadeInUp, staggerContainer, staggerItem } from '@jakubnovak710/universal-web-core/lib/motion';
-
 import { Navigation } from '@/components/navigation';
-import { MagneticButton } from '@/components/magnetic-button';
-import { ShimmerButton } from '@/components/shimmer-button';
 import { CountUp } from '@/components/count-up';
-import { GlowCard } from '@/components/glow-card';
+import { Countdown } from '@/components/countdown';
+import { ShimmerButton } from '@/components/shimmer-button';
 import { AmbientBackground } from '@/components/ambient-background';
+import { trackNewsletterSignup, trackCTA } from '@/lib/analytics';
+import { timeline } from '@/data/timeline';
+import { erpSystems } from '@/data/erp-systems';
+import { faqCategories } from '@/data/faq';
 
-// ---------------------------------------------------------------------------
-// Cursor glow — follows mouse, subtle accent radial
-// ---------------------------------------------------------------------------
+/* ─── FAQ Accordion ────────────────────────────────────── */
 
-function CursorGlow() {
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    function onMove(e: PointerEvent) {
-      if (ref.current) {
-        ref.current.style.left = `${e.clientX}px`;
-        ref.current.style.top = `${e.clientY}px`;
-      }
-    }
-    window.addEventListener('pointermove', onMove, { passive: true });
-    return () => window.removeEventListener('pointermove', onMove);
-  }, []);
-
+function FaqAccordion({ question, answer }: { question: string; answer: string }) {
   return (
-    <div
-      ref={ref}
-      className="pointer-events-none fixed z-0 -translate-x-1/2 -translate-y-1/2"
-      style={{
-        width: 400,
-        height: 400,
-        background: 'radial-gradient(circle, var(--accent-glow), transparent 70%)',
-        opacity: 0.05,
-        mixBlendMode: 'screen',
-      }}
-      aria-hidden="true"
-    />
+    <details className="group border-b border-[var(--border-default)]">
+      <summary className="flex cursor-pointer items-center justify-between py-4 text-left text-[var(--text-primary)] transition-colors hover:text-[var(--accent)]">
+        <span className="pr-4 font-bold">{question}</span>
+        <ChevronDown className="h-5 w-5 shrink-0 transition-transform group-open:rotate-180" />
+      </summary>
+      <p className="pb-4 text-sm leading-relaxed text-[var(--text-secondary)]">
+        {answer}
+      </p>
+    </details>
   );
 }
 
-// ---------------------------------------------------------------------------
-// Typewriter terminal
-// ---------------------------------------------------------------------------
+/* ─── ERP Readiness Badge ──────────────────────────────── */
 
-const terminalLines = [
-  { text: '> Sentry: TypeError caught', color: 'var(--error)', delay: 0 },
-  { text: '> Webhook → GitHub Action', color: 'var(--warning)', delay: 400 },
-  { text: '> Triage (haiku): classifying...', color: 'var(--accent)', delay: 800 },
-  { text: '> FIXABLE: type error in component', color: 'var(--accent)', delay: 1200 },
-  { text: '> Fix (sonnet): applying patch...', color: 'var(--accent-secondary)', delay: 1600 },
-  { text: '> Verify: pnpm build — PASSED', color: 'var(--success)', delay: 2200 },
-  { text: '> Fix PR #42 created', color: 'var(--success)', delay: 2600 },
-  { text: '> CI passed → auto-merged', color: 'var(--success)', delay: 3000 },
-  { text: '> Deploy successful', color: 'var(--success)', delay: 3400 },
-];
-
-function TypewriterTerminal() {
-  const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, { once: true, margin: '-80px' });
-  const [visibleCount, setVisibleCount] = useState(0);
-
-  useEffect(() => {
-    if (!isInView) return;
-    const timers = terminalLines.map((line, i) =>
-      setTimeout(() => setVisibleCount(i + 1), line.delay),
-    );
-    return () => timers.forEach(clearTimeout);
-  }, [isInView]);
+function ReadinessBadge({ status }: { status: string }) {
+  const config = {
+    ready: { label: 'Ready', className: 'bg-emerald-500/20 text-emerald-400' },
+    'in-progress': { label: 'Pripravuje sa', className: 'bg-amber-500/20 text-amber-400' },
+    planned: { label: 'Plánované', className: 'bg-blue-500/20 text-blue-400' },
+    unknown: { label: 'Neznámy', className: 'bg-gray-500/20 text-gray-400' },
+  }[status] ?? { label: status, className: 'bg-gray-500/20 text-gray-400' };
 
   return (
-    <div
-      ref={ref}
-      className="relative rounded-xl p-4 font-mono text-[11px] leading-relaxed"
-      style={{
-        backgroundColor: 'var(--fill-subtle)',
-        border: '1px solid var(--border-subtle)',
-        color: 'var(--text-muted)',
-        minHeight: 200,
-      }}
-    >
-      <Scanlines opacity={0.03} />
-      {terminalLines.slice(0, visibleCount).map((line, i) => (
-        <motion.div
-          key={i}
-          initial={{ opacity: 0, x: -8 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.2 }}
-          style={{ color: line.color }}
-        >
-          {line.text}
-        </motion.div>
-      ))}
-      {visibleCount > 0 && visibleCount < terminalLines.length && (
-        <span
-          className="inline-block h-3 w-1.5 animate-pulse"
-          style={{ backgroundColor: 'var(--accent)' }}
-          aria-hidden="true"
-        />
-      )}
-    </div>
+    <span className={`inline-flex rounded-full px-2.5 py-0.5 font-mono text-[10px] font-bold uppercase tracking-wider ${config.className}`}>
+      {config.label}
+    </span>
   );
 }
 
-// ---------------------------------------------------------------------------
-// Data
-// ---------------------------------------------------------------------------
+/* ─── Section wrapper with scroll animation ────────────── */
 
-const features = [
-  {
-    icon: <Palette className="h-6 w-6" />,
-    label: 'Design Tokens',
-    title: 'Globálny design systém',
-    description: 'Všetky farby, fonty a spacing z jedného config súboru. Zmena presetu mení celý vizuál.',
-    color: 'var(--accent)',
-    glowColor: 'var(--accent-glow)',
-  },
-  {
-    icon: <Shield className="h-6 w-6" />,
-    label: 'Enterprise Security',
-    title: 'CSP, CORS, Rate Limiting',
-    description: 'Security headers, input sanitizácia, CSRF ochrana. A+ rating out of the box.',
-    color: 'var(--success)',
-    glowColor: 'var(--success)',
-  },
-  {
-    icon: <Zap className="h-6 w-6" />,
-    label: 'Self-Healing',
-    title: 'AI automatické opravy',
-    description: 'CI zlyhá → 3-agent pipeline (triage/fix/verify) → auto-deploy. Email notifikácie.',
-    color: 'var(--accent-secondary)',
-    glowColor: 'var(--accent-secondary)',
-  },
-  {
-    icon: <Globe className="h-6 w-6" />,
-    label: 'SEO + GEO',
-    title: 'Optimalizácia pre AI aj vyhľadávače',
-    description: 'JSON-LD, sitemap, OG images, llms.txt. Chatboti budú odkazovať na vaše stránky.',
-    color: 'var(--accent)',
-    glowColor: 'var(--accent-glow)',
-  },
-];
+function Section({
+  children,
+  className = '',
+  id,
+}: {
+  children: React.ReactNode;
+  className?: string;
+  id?: string;
+}) {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: '-80px' });
 
-const modules = [
-  { icon: <Database className="h-4 w-4" />, title: 'Database', subtitle: 'Drizzle ORM + Neon Postgres', color: 'var(--accent)' },
-  { icon: <Shield className="h-4 w-4" />, title: 'Auth', subtitle: 'Auth.js v5 + session management', color: 'var(--success)' },
-  { icon: <Languages className="h-4 w-4" />, title: 'i18n', subtitle: 'Multi-language support', color: 'var(--accent-secondary)' },
-  { icon: <BarChart3 className="h-4 w-4" />, title: 'Analytics', subtitle: 'Umami self-hosted tracking', color: 'var(--warning)' },
-  { icon: <Mail className="h-4 w-4" />, title: 'Email', subtitle: 'React Email + SMTP', color: 'var(--accent)' },
-];
-
-// ---------------------------------------------------------------------------
-// Page
-// ---------------------------------------------------------------------------
-
-export default function Home() {
   return (
-    <div
-      className="relative min-h-screen overflow-hidden"
-      style={{ backgroundColor: 'var(--bg-base)', color: 'var(--text-primary)' }}
+    <motion.section
+      ref={ref}
+      id={id}
+      initial={{ opacity: 0, y: 30 }}
+      animate={inView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.6, ease: 'easeOut' }}
+      className={`mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8 lg:py-24 ${className}`}
     >
-      {/* Ambient layers */}
+      {children}
+    </motion.section>
+  );
+}
+
+/* ─── Newsletter Form ──────────────────────────────────── */
+
+function NewsletterInline({ source }: { source: string }) {
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    trackNewsletterSignup(source);
+    // TODO: connect to newsletter API
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="flex w-full max-w-md gap-2">
+      <input
+        type="email"
+        required
+        placeholder="vas@email.sk"
+        className="flex-1 rounded-lg border border-[var(--border-default)] bg-[var(--bg-surface)] px-4 py-2.5 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:border-[var(--accent)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]"
+      />
+      <ShimmerButton type="submit" className="shrink-0 px-5 py-2.5">
+        <Send className="mr-2 h-4 w-4" />
+        Odoberať
+      </ShimmerButton>
+    </form>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════
+   HOMEPAGE
+   ═══════════════════════════════════════════════════════════ */
+
+export default function HomePage() {
+  // Top 5 FAQ items for homepage
+  const homeFaq = faqCategories
+    .flatMap((c) => c.items)
+    .slice(0, 5);
+
+  // Top 6 ERP systems for grid
+  const topErp = erpSystems.slice(0, 6);
+
+  // Days until deadline (computed once on mount via state initializer)
+  const [daysUntilDeadline] = useState(
+    () => Math.ceil((new Date('2027-01-01').getTime() - Date.now()) / (1000 * 60 * 60 * 24)),
+  );
+
+  return (
+    <>
       <AmbientBackground />
-      <CursorGlow />
-      <Scanlines opacity={0.02} />
-
-      {/* Navigation */}
       <Navigation />
 
-      {/* Hero */}
-      <motion.section
-        className="mx-auto max-w-3xl px-6 pb-16 pt-28 text-center"
-        {...fadeInUp}
-      >
-        {/* Animated badge */}
-        <div className="mb-5 inline-flex items-center gap-2 rounded-full px-4 py-1.5" style={{ backgroundColor: 'var(--fill-subtle)', border: '1px solid var(--border-subtle)' }}>
-          <span className="relative flex h-2 w-2">
-            <span
-              className="absolute inline-flex h-full w-full animate-ping rounded-full opacity-75"
-              style={{ backgroundColor: 'var(--accent)', animation: 'glowPulse 2s ease-in-out infinite, ping 1s cubic-bezier(0, 0, 0.2, 1) infinite' }}
-            />
-            <span className="relative inline-flex h-2 w-2 rounded-full" style={{ backgroundColor: 'var(--accent)' }} />
-          </span>
-          <MonoLabel className="text-[10px]">Production-ready boilerplate</MonoLabel>
+      {/* ════════════════════════════════════════════════════════
+          SEKCIA 1: HERO — Urgency + Loss Aversion + Curiosity Gap
+          ════════════════════════════════════════════════════════ */}
+      <header className="relative flex min-h-[90vh] flex-col items-center justify-center px-4 pt-20 text-center">
+        <motion.div {...fadeInUp} className="mx-auto max-w-3xl">
+          <MonoLabel>e-Faktúry.info</MonoLabel>
+
+          <h1 className="mt-4 text-4xl font-black leading-tight text-[var(--text-primary)] sm:text-5xl lg:text-6xl">
+            Elektronická faktúra{' '}
+            <span className="text-[var(--accent)]">na Slovensku</span>
+          </h1>
+
+          <p className="mx-auto mt-6 max-w-xl text-lg text-[var(--text-secondary)]">
+            Od <strong>1. januára 2027</strong> bude e-faktúra povinná pre
+            všetkých platiteľov DPH. Pokuta za nesplnenie: až{' '}
+            <strong className="text-[var(--accent)]">100 000 EUR</strong>.
+          </p>
+
+          {/* Countdown — Urgency heuristic */}
+          <div className="mt-8">
+            <p className="mb-3 font-mono text-xs font-bold uppercase tracking-widest text-[var(--text-muted)]">
+              Do povinnej e-faktúry ostáva
+            </p>
+            <Countdown targetDate="2027-01-01T00:00:00" locale="sk" />
+          </div>
+
+          {/* CTAs — Foot-in-the-Door: newsletter first (low barrier) */}
+          <div className="mt-10 flex flex-col items-center gap-4">
+            <NewsletterInline source="hero" />
+            <p className="text-xs text-[var(--text-muted)]">
+              Žiadny spam. Len relevantné novinky o e-faktúre. Kedykoľvek sa
+              odhlásite.
+            </p>
+          </div>
+
+          {/* Scroll indicator */}
+          <motion.div
+            className="mt-12"
+            animate={{ y: [0, 8, 0] }}
+            transition={{ repeat: Infinity, duration: 2 }}
+          >
+            <ChevronDown className="mx-auto h-6 w-6 text-[var(--text-muted)]" />
+          </motion.div>
+        </motion.div>
+      </header>
+
+      <SectionDivider label="" />
+
+      {/* ════════════════════════════════════════════════════════
+          SEKCIA 2: PROBLÉM — Framing Effect
+          ════════════════════════════════════════════════════════ */}
+      <Section id="problem">
+        <div className="text-center">
+          <MonoLabel>Čo sa zmení</MonoLabel>
+          <GradientHeading as="h2" className="mt-3">
+            Od 1.1.2027 koniec klasickej fakturácie
+          </GradientHeading>
+          <p className="mx-auto mt-4 max-w-2xl text-[var(--text-secondary)]">
+            Novela zákona o DPH (385/2025 Z.z.) zavádza povinnú elektronickú
+            fakturáciu pre všetky tuzemské B2B a B2G transakcie.
+          </p>
         </div>
-
-        <GradientHeading as="h1" className="mb-6 text-4xl sm:text-5xl lg:text-6xl" style={{ textShadow: '0 0 60px var(--accent-glow)' }}>
-          Produkčný boilerplate pre moderné weby
-        </GradientHeading>
-
-        <p
-          className="mx-auto mb-10 max-w-lg text-sm leading-relaxed sm:text-base"
-          style={{ color: 'var(--text-secondary)' }}
-        >
-          Copy-paste framework s enterprise bezpečnosťou, AI self-healing, automatickými
-          updatemi a 3 design presetmi. Od nuly k produkcii za minúty.
-        </p>
-
-        <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
-          <MagneticButton strength={0.2} maxDistance={8}>
-            <ShimmerButton href="#features" className="rounded-full px-8 py-3.5 text-sm">
-              Začať projekt
-              <ArrowRight className="h-4 w-4" />
-            </ShimmerButton>
-          </MagneticButton>
-
-          <MagneticButton strength={0.15} maxDistance={6}>
-            <a
-              href="#modules"
-              className="inline-flex items-center gap-2 rounded-full px-8 py-3.5 text-sm font-bold transition-all hover:scale-[1.02] active:scale-[0.98]"
-              style={{
-                backgroundColor: 'var(--glass-bg)',
-                backdropFilter: 'blur(8px)',
-                border: '1px solid var(--border-default)',
-                color: 'var(--text-primary)',
-              }}
-            >
-              Dokumentácia
-            </a>
-          </MagneticButton>
-        </div>
-      </motion.section>
-
-      {/* Metrics bar */}
-      <motion.section
-        className="mx-auto mb-20 max-w-4xl px-6"
-        variants={staggerContainer}
-        initial="hidden"
-        whileInView="show"
-        viewport={{ once: true, margin: '-80px' }}
-      >
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-          {[
-            { icon: <Sparkles className="h-4 w-4" />, value: 3, suffix: '', label: 'Design Presets' },
-            { icon: <Timer className="h-4 w-4" />, value: 89, suffix: 'ms', label: 'TTFB' },
-            { icon: <Lock className="h-4 w-4" />, value: 0, suffix: '', label: 'Config potrebný', static: '0' },
-            { icon: <Shield className="h-4 w-4" />, value: 0, suffix: '', label: 'Security Rating', static: 'A+' },
-          ].map((metric) => (
-            <motion.div key={metric.label} variants={staggerItem}>
-              <GlowCard glowColor="var(--accent-glow)" glowOpacity={0.1}>
-                <GlassCard className="flex flex-col items-center p-4 text-center">
-                  <div className="mb-2" style={{ color: 'var(--accent)', filter: 'drop-shadow(0 0 4px var(--accent-glow))' }}>{metric.icon}</div>
-                  <span
-                    className="text-2xl font-black"
-                    style={{ color: 'var(--text-primary)', textShadow: '0 0 15px var(--accent-glow)' }}
-                  >
-                    {metric.static ?? <CountUp end={metric.value} suffix={metric.suffix} />}
-                  </span>
-                  <span className="mt-1 text-[10px] font-mono uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>
-                    {metric.label}
-                  </span>
-                </GlassCard>
-              </GlowCard>
-            </motion.div>
-          ))}
-        </div>
-      </motion.section>
-
-      {/* Feature cards */}
-      <section id="features" className="mx-auto max-w-4xl px-6 pb-20">
-        <SectionDivider icon={Zap} label="Funkcie" className="mb-8" />
 
         <motion.div
-          className="grid gap-4 sm:grid-cols-2"
           variants={staggerContainer}
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, margin: '-80px' }}
+          initial="initial"
+          whileInView="animate"
+          viewport={{ once: true }}
+          className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
         >
-          {features.map((feature) => (
-            <motion.div key={feature.title} variants={staggerItem}>
-              <GlowCard glowColor={feature.glowColor} glowOpacity={0.18} glowSize={350}>
-                <GlassCard className="relative h-full overflow-hidden p-6">
-                  <GradientBar from={feature.color} className="absolute left-0 right-0 top-0" />
-                  <IconContainer
-                    icon={feature.icon}
-                    color={feature.color}
-                    className="mb-4"
-                    style={{ boxShadow: `0 0 15px color-mix(in srgb, ${feature.color} 30%, transparent)` }}
-                  />
-                  <MonoLabel color={feature.color} className="mb-1">{feature.label}</MonoLabel>
-                  <h3 className="mb-2 text-lg font-black" style={{ color: 'var(--text-primary)' }}>
-                    {feature.title}
-                  </h3>
-                  <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-                    {feature.description}
-                  </p>
-                </GlassCard>
-              </GlowCard>
+          {[
+            { icon: FileText, title: 'PDF nestačí', desc: 'PDF faktúra nebude spĺňať zákonné požiadavky. Povinný je XML formát podľa EN 16931.' },
+            { icon: Globe, title: 'Peppol sieť', desc: 'Faktúry sa budú doručovať cez medzinárodnú Peppol sieť používanú v 20 krajinách EÚ.' },
+            { icon: Users, title: 'Digitálny poštár', desc: 'Každá firma si musí vybrať certifikovaného digitálneho poštára pre doručovanie.' },
+            { icon: AlertTriangle, title: 'Real-time reporting', desc: 'Údaje z faktúr sa budú posielať finančnej správe v reálnom čase.' },
+          ].map((card) => (
+            <motion.div key={card.title} variants={staggerItem}>
+              <GlassCard className="h-full p-6">
+                <card.icon className="h-8 w-8 text-[var(--accent)]" />
+                <h3 className="mt-3 font-black text-[var(--text-primary)]">
+                  {card.title}
+                </h3>
+                <p className="mt-2 text-sm text-[var(--text-secondary)]">
+                  {card.desc}
+                </p>
+              </GlassCard>
             </motion.div>
           ))}
         </motion.div>
-      </section>
+      </Section>
 
-      {/* Self-healing showcase */}
-      <section className="mx-auto max-w-4xl px-6 pb-20">
-        <SectionDivider icon={Activity} label="Self-Healing Pipeline" className="mb-8" />
+      <SectionDivider label="" />
+
+      {/* ════════════════════════════════════════════════════════
+          SEKCIA 3: PRE KOHO — Selective Attention + Similarity Bias
+          ════════════════════════════════════════════════════════ */}
+      <Section id="pre-koho">
+        <div className="text-center">
+          <MonoLabel>Pre koho</MonoLabel>
+          <GradientHeading as="h2" className="mt-3">
+            Týka sa to aj vás?
+          </GradientHeading>
+        </div>
 
         <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-80px' }}
-          transition={{ duration: 0.5 }}
+          variants={staggerContainer}
+          initial="initial"
+          whileInView="animate"
+          viewport={{ once: true }}
+          className="mt-12 grid gap-6 sm:grid-cols-3"
         >
-          <GlowCard glowColor="var(--accent-secondary)" glowOpacity={0.1} glowBlur={60}>
-            <FeaturedCard accentColor="var(--accent-secondary)" className="relative overflow-hidden p-8">
-              {/* Corner glow */}
-              <div
-                className="pointer-events-none absolute -right-10 -top-10 h-32 w-32 rounded-full blur-2xl"
-                style={{ backgroundColor: 'var(--accent-secondary)', opacity: 0.15 }}
-                aria-hidden="true"
-              />
-
-              <div className="relative z-10 grid items-center gap-8 sm:grid-cols-2">
-                <div>
-                  <MonoLabel color="var(--accent-secondary)" className="mb-2">Multi-Agent Pipeline</MonoLabel>
-                  <h3 className="mb-3 text-2xl font-black" style={{ color: 'var(--text-primary)' }}>
-                    3 agenti, 1 fix
+          {[
+            {
+              icon: Briefcase,
+              title: 'Živnostníci & SZČO',
+              desc: 'Ak ste platiteľ DPH, musíte e-faktúry vystavovať. Ak nie, musíte ich vedieť prijímať.',
+              href: '/e-faktura-pre-zivnostnikov',
+              tag: 'Paušálne výdavky? Áno, aj vás sa to týka.',
+            },
+            {
+              icon: Building2,
+              title: 'Malé a stredné firmy',
+              desc: 'S.r.o., a.s. — všetci platitelia DPH musia prejsť na e-faktúru. Overte pripravenosť vášho softvéru.',
+              href: '/e-faktura-pre-male-firmy',
+              tag: 'Najčastejšia kategória — 100 000+ firiem.',
+            },
+            {
+              icon: Calculator,
+              title: 'Účtovníci & kancelárie',
+              desc: 'Vaši klienti sa budú pýtať. Buďte pripravení poradiť s prechodom na e-fakturáciu.',
+              href: '/e-faktura-pre-uctovnikov',
+              tag: 'Nové povinnosti = nová služba pre klientov.',
+            },
+          ].map((card) => (
+            <motion.div key={card.title} variants={staggerItem}>
+              <Link href={card.href} className="group block h-full">
+                <GlassCard className="flex h-full flex-col p-6 transition-all group-hover:border-[var(--accent)]/30">
+                  <card.icon className="h-10 w-10 text-[var(--accent)]" />
+                  <h3 className="mt-4 text-xl font-black text-[var(--text-primary)]">
+                    {card.title}
                   </h3>
-                  <p className="mb-6 text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-                    Triage (haiku) klasifikuje chybu → Fix (sonnet) opraví kód → Verify (haiku) skontroluje diff.
-                    Ak verify zlyhá, druhý pokus s iným prístupom. Výsledok: PR s fixom.
+                  <p className="mt-2 flex-1 text-sm text-[var(--text-secondary)]">
+                    {card.desc}
                   </p>
-                  <div className="space-y-3">
-                    {[
-                      { label: 'Detekcia chyby', value: 100 },
-                      { label: 'AI analýza', value: 85 },
-                      { label: 'Auto-fix deploy', value: 62 },
-                    ].map((bar) => (
-                      <div key={bar.label}>
-                        <div className="mb-1 flex items-center justify-between">
-                          <span className="text-xs" style={{ color: 'var(--text-muted)' }}>{bar.label}</span>
-                          <span
-                            className="font-mono text-[10px]"
-                            style={{ color: 'var(--accent-secondary)', textShadow: '0 0 10px var(--accent-secondary)' }}
-                          >
-                            {bar.value}%
-                          </span>
-                        </div>
-                        <ProgressBar value={bar.value} from="var(--accent)" to="var(--accent-secondary)" />
-                      </div>
-                    ))}
-                  </div>
+                  <p className="mt-3 text-xs italic text-[var(--text-muted)]">
+                    {card.tag}
+                  </p>
+                  <span className="mt-4 inline-flex items-center gap-1 text-sm font-bold text-[var(--accent)] transition-transform group-hover:translate-x-1">
+                    Zistiť viac <ArrowRight className="h-4 w-4" />
+                  </span>
+                </GlassCard>
+              </Link>
+            </motion.div>
+          ))}
+        </motion.div>
+      </Section>
+
+      <SectionDivider label="" />
+
+      {/* ════════════════════════════════════════════════════════
+          SEKCIA 4: TIMELINE — Goal-Gradient + Zeigarnik Effect
+          ════════════════════════════════════════════════════════ */}
+      <Section id="timeline">
+        <div className="text-center">
+          <MonoLabel>Časová os</MonoLabel>
+          <GradientHeading as="h2" className="mt-3">
+            Kľúčové termíny
+          </GradientHeading>
+        </div>
+
+        <div className="relative mt-12">
+          {/* Vertical line */}
+          <div className="absolute left-4 top-0 h-full w-px bg-[var(--border-default)] sm:left-1/2" />
+
+          <div className="space-y-8">
+            {timeline.filter((m) => m.major).map((milestone, i) => (
+              <motion.div
+                key={milestone.date}
+                initial={{ opacity: 0, x: i % 2 === 0 ? -20 : 20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                className={`relative flex items-start gap-4 sm:gap-0 ${
+                  i % 2 === 0 ? 'sm:flex-row' : 'sm:flex-row-reverse'
+                }`}
+              >
+                {/* Dot */}
+                <div className="absolute left-4 z-10 -translate-x-1/2 sm:left-1/2">
+                  {milestone.status === 'completed' ? (
+                    <CheckCircle2 className="h-6 w-6 rounded-full bg-[var(--bg-base)] text-emerald-400" />
+                  ) : milestone.status === 'active' ? (
+                    <div className="h-6 w-6 rounded-full border-2 border-[var(--accent)] bg-[var(--accent)]/20" />
+                  ) : (
+                    <Circle className="h-6 w-6 text-[var(--text-muted)]" />
+                  )}
                 </div>
 
-                <TypewriterTerminal />
-              </div>
-            </FeaturedCard>
-          </GlowCard>
-        </motion.div>
-      </section>
+                {/* Content */}
+                <div className={`ml-10 w-full sm:ml-0 sm:w-1/2 ${
+                  i % 2 === 0 ? 'sm:pr-12 sm:text-right' : 'sm:pl-12'
+                }`}>
+                  <p className="font-mono text-xs font-bold uppercase tracking-widest text-[var(--accent)]">
+                    {new Date(milestone.date).toLocaleDateString('sk-SK', {
+                      day: 'numeric',
+                      month: 'long',
+                      year: 'numeric',
+                    })}
+                  </p>
+                  <h3 className="mt-1 font-black text-[var(--text-primary)]">
+                    {milestone.titleSk}
+                  </h3>
+                  <p className="mt-1 text-sm text-[var(--text-secondary)]">
+                    {milestone.descriptionSk}
+                  </p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </Section>
 
-      {/* Optional modules */}
-      <section id="modules" className="mx-auto max-w-4xl px-6 pb-20">
-        <SectionDivider icon={Layers} label="Voliteľné moduly" className="mb-8" />
+      <SectionDivider label="" />
+
+      {/* ════════════════════════════════════════════════════════
+          SEKCIA 5: AKO SA PRIPRAVIŤ — Activation Energy reduction
+          ════════════════════════════════════════════════════════ */}
+      <Section id="kroky">
+        <div className="text-center">
+          <MonoLabel>4 jednoduché kroky</MonoLabel>
+          <GradientHeading as="h2" className="mt-3">
+            Ako sa pripraviť na e-faktúru
+          </GradientHeading>
+          <p className="mx-auto mt-4 max-w-xl text-[var(--text-secondary)]">
+            Nepotrebujete všetko naraz. Začnite prvým krokom ešte dnes.
+          </p>
+        </div>
 
         <motion.div
-          className="space-y-2"
           variants={staggerContainer}
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, margin: '-80px' }}
+          initial="initial"
+          whileInView="animate"
+          viewport={{ once: true }}
+          className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4"
         >
-          {modules.map((mod) => (
-            <motion.div key={mod.title} variants={staggerItem}>
-              <GlowCard glowColor={mod.color} glowOpacity={0.08} glowBlur={30}>
-                <CompactCard
-                  icon={mod.icon}
-                  title={mod.title}
-                  subtitle={mod.subtitle}
-                  accentColor={mod.color}
-                />
-              </GlowCard>
+          {[
+            { step: 1, title: 'Overte softvér', desc: 'Skontrolujte, či váš fakturačný program podporuje Peppol a XML formát EN 16931.', icon: Shield },
+            { step: 2, title: 'Vyberte poštára', desc: 'Zo zoznamu certifikovaných digitálnych poštárov si vyberte poskytovateľa.', icon: Send },
+            { step: 3, title: 'Registrujte sa', desc: 'Získajte Peppol ID registráciou u digitálneho poštára. Trvá 1-2 pracovné dni.', icon: Globe },
+            { step: 4, title: 'Otestujte', desc: 'V dobrovoľnej fáze (2026) si vyskúšajte odosielanie a prijímanie e-faktúr.', icon: CheckCircle2 },
+          ].map((item) => (
+            <motion.div key={item.step} variants={staggerItem}>
+              <GlassCard className="relative h-full p-6">
+                <span className="absolute -top-3 left-4 flex h-8 w-8 items-center justify-center rounded-full bg-[var(--accent)] font-mono text-sm font-black text-white">
+                  {item.step}
+                </span>
+                <item.icon className="mt-4 h-6 w-6 text-[var(--accent)]" />
+                <h3 className="mt-3 font-black text-[var(--text-primary)]">
+                  {item.title}
+                </h3>
+                <p className="mt-2 text-sm text-[var(--text-secondary)]">
+                  {item.desc}
+                </p>
+              </GlassCard>
             </motion.div>
           ))}
         </motion.div>
 
-        <p className="mt-4 text-center text-xs" style={{ color: 'var(--text-faint)' }}>
-          Všetky moduly sú za feature flags — zapni/vypni v{' '}
-          <span className="font-mono">config/features.config.ts</span>
-        </p>
-      </section>
+        <div className="mt-8 text-center">
+          <Link
+            href="/ako-sa-pripravit-na-e-fakturu"
+            onClick={() => trackCTA('preparation-guide', '/')}
+            className="inline-flex items-center gap-2 text-sm font-bold text-[var(--accent)] transition-colors hover:underline"
+          >
+            Kompletný sprievodca prípravou <ArrowRight className="h-4 w-4" />
+          </Link>
+        </div>
+      </Section>
 
-      {/* Design tokens */}
-      <section className="mx-auto max-w-4xl px-6 pb-20">
-        <SectionDivider icon={Palette} label="Design Tokeny" className="mb-8" />
+      <SectionDivider label="" />
 
+      {/* ════════════════════════════════════════════════════════
+          SEKCIA 6: SOFTVÉROVÁ PRIPRAVENOSŤ — Authority + Bandwagon
+          ════════════════════════════════════════════════════════ */}
+      <Section id="software">
+        <div className="text-center">
+          <MonoLabel>Integrácie</MonoLabel>
+          <GradientHeading as="h2" className="mt-3">
+            Je váš softvér pripravený?
+          </GradientHeading>
+        </div>
+
+        <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {topErp.map((erp) => (
+            <Link key={erp.slug} href={`/integracie/${erp.slug}`} className="group">
+              <GlassCard className="flex items-center justify-between p-4 transition-all group-hover:border-[var(--accent)]/30">
+                <div>
+                  <h3 className="font-black text-[var(--text-primary)]">{erp.name}</h3>
+                  <p className="text-xs text-[var(--text-muted)]">{erp.vendor}</p>
+                </div>
+                <ReadinessBadge status={erp.peppolStatus} />
+              </GlassCard>
+            </Link>
+          ))}
+        </div>
+
+        <div className="mt-6 text-center">
+          <Link
+            href="/integracie"
+            className="inline-flex items-center gap-2 text-sm font-bold text-[var(--accent)] transition-colors hover:underline"
+          >
+            Všetkých {erpSystems.length} systémov <ArrowRight className="h-4 w-4" />
+          </Link>
+        </div>
+      </Section>
+
+      <SectionDivider label="" />
+
+      {/* ════════════════════════════════════════════════════════
+          SEKCIA 7: FAQ — Uncertainty reduction + Rich Snippets
+          ════════════════════════════════════════════════════════ */}
+      <Section id="faq">
+        <div className="text-center">
+          <MonoLabel>Otázky a odpovede</MonoLabel>
+          <GradientHeading as="h2" className="mt-3">
+            Najčastejšie otázky o e-faktúre
+          </GradientHeading>
+        </div>
+
+        <div className="mx-auto mt-12 max-w-2xl">
+          {homeFaq.map((item) => (
+            <FaqAccordion
+              key={item.id}
+              question={item.questionSk}
+              answer={item.answerSk}
+            />
+          ))}
+        </div>
+
+        {/* FAQPage JSON-LD for rich snippets */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'FAQPage',
+              mainEntity: homeFaq.map((item) => ({
+                '@type': 'Question',
+                name: item.questionSk,
+                acceptedAnswer: {
+                  '@type': 'Answer',
+                  text: item.answerSk,
+                },
+              })),
+            }),
+          }}
+        />
+
+        <div className="mt-6 text-center">
+          <Link
+            href="/otazky"
+            className="inline-flex items-center gap-2 text-sm font-bold text-[var(--accent)] transition-colors hover:underline"
+          >
+            Všetky otázky a odpovede <ArrowRight className="h-4 w-4" />
+          </Link>
+        </div>
+      </Section>
+
+      <SectionDivider label="" />
+
+      {/* ════════════════════════════════════════════════════════
+          SEKCIA 8: ŠTATISTIKY — Anchoring + Social Proof
+          ════════════════════════════════════════════════════════ */}
+      <Section id="stats">
         <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-80px' }}
-          transition={{ duration: 0.5 }}
+          variants={staggerContainer}
+          initial="initial"
+          whileInView="animate"
+          viewport={{ once: true }}
+          className="grid gap-8 sm:grid-cols-3"
         >
-          <GlowCard glowColor="var(--accent-glow)" glowOpacity={0.08}>
-            <GlassCard className="p-8">
-              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                {[
-                  { label: '--bg-base', desc: 'Pozadie' },
-                  { label: '--bg-elevated', desc: 'Karty' },
-                  { label: '--accent', desc: 'Akcentová' },
-                  { label: '--glass-bg', desc: 'Glass efekt' },
-                ].map((token) => (
-                  <MagneticButton key={token.label} strength={0.1} maxDistance={3}>
-                    <div
-                      className="flex items-center gap-3 rounded-xl p-3 transition-all"
-                      style={{ backgroundColor: 'var(--fill-subtle)' }}
-                    >
-                      <div
-                        className="h-8 w-8 shrink-0 rounded-lg"
-                        style={{
-                          backgroundColor: `var(${token.label})`,
-                          border: '1px solid var(--border-default)',
-                          boxShadow: token.label === '--accent' ? '0 0 12px var(--accent-glow)' : undefined,
-                        }}
-                      />
-                      <div>
-                        <p className="font-mono text-[9px] font-bold uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>
-                          {token.label}
-                        </p>
-                        <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>
-                          {token.desc}
-                        </p>
-                      </div>
-                    </div>
-                  </MagneticButton>
-                ))}
-              </div>
-
-              <p className="mt-6 text-center text-xs" style={{ color: 'var(--text-faint)' }}>
-                Zmena presetu v <span className="font-mono">config/design.config.ts</span> →{' '}
-                <span className="font-mono">pnpm generate:tokens</span> → celý vizuál sa zmení
+          {[
+            { value: 100000, suffix: '+', label: 'firiem sa týka', prefix: '' },
+            { value: 100000, suffix: ' EUR', label: 'maximálna pokuta', prefix: '' },
+            { value: daysUntilDeadline, suffix: '', label: 'dní do termínu', prefix: '' },
+          ].map((stat) => (
+            <motion.div key={stat.label} variants={staggerItem} className="text-center">
+              <p className="text-4xl font-black text-[var(--accent)] sm:text-5xl">
+                {stat.prefix}
+                <CountUp end={stat.value} duration={2} />
+                {stat.suffix}
               </p>
-            </GlassCard>
-          </GlowCard>
+              <p className="mt-2 font-mono text-xs font-bold uppercase tracking-widest text-[var(--text-muted)]">
+                {stat.label}
+              </p>
+            </motion.div>
+          ))}
         </motion.div>
-      </section>
+      </Section>
+
+      <SectionDivider label="" />
+
+      {/* ════════════════════════════════════════════════════════
+          SEKCIA 9: NEWSLETTER CTA — Peak-End Rule + Reciprocity
+          ════════════════════════════════════════════════════════ */}
+      <Section id="newsletter">
+        <div className="mx-auto max-w-xl text-center">
+          <MonoLabel>Newsletter</MonoLabel>
+          <GradientHeading as="h2" className="mt-3">
+            Buďte vždy o krok vpred
+          </GradientHeading>
+          <p className="mt-4 text-[var(--text-secondary)]">
+            Dostávajte aktuálne informácie o e-faktúre, legislatívnych zmenách
+            a termínoch priamo do schránky. Zadarmo.
+          </p>
+
+          <div className="mt-8 flex justify-center">
+            <NewsletterInline source="bottom-cta" />
+          </div>
+
+          <p className="mt-3 text-xs text-[var(--text-muted)]">
+            Pridáva sa <strong>2 000+</strong> podnikateľov. Žiadny spam,
+            kedykoľvek sa odhlásite.
+          </p>
+        </div>
+      </Section>
+
+      <SectionDivider label="" />
+
+      {/* ════════════════════════════════════════════════════════
+          SEKCIA 10: PARTNERI — Nudge (non-aggressive)
+          ════════════════════════════════════════════════════════ */}
+      <Section id="partners" className="py-12">
+        <motion.div
+          variants={staggerContainer}
+          initial="initial"
+          whileInView="animate"
+          viewport={{ once: true }}
+          className="grid gap-4 sm:grid-cols-3"
+        >
+          {[
+            {
+              title: 'Účtovná kancelária',
+              desc: 'Profesionálne vedenie účtovníctva pre podnikateľov na Slovensku.',
+              url: 'https://8888.sk',
+              label: '8888.sk',
+              icon: Calculator,
+            },
+            {
+              title: 'Založenie s.r.o.',
+              desc: 'Rýchle a jednoduché založenie firmy online.',
+              url: 'https://sroihned.sk',
+              label: 'sroihned.sk',
+              icon: Building2,
+            },
+            {
+              title: 'Digitálni poštári',
+              desc: 'Kompletný zoznam a porovnanie certifikovaných digitálnych poštárov.',
+              url: 'https://digitalnipostari.sk',
+              label: 'digitalnipostari.sk',
+              icon: Send,
+            },
+          ].map((partner) => (
+            <motion.div key={partner.label} variants={staggerItem}>
+              <a
+                href={partner.url}
+                target="_blank"
+                rel="noopener"
+                className="group block"
+              >
+                <GlassCard className="flex items-start gap-4 p-5 transition-all group-hover:border-[var(--accent)]/30">
+                  <partner.icon className="mt-0.5 h-5 w-5 shrink-0 text-[var(--accent)]" />
+                  <div>
+                    <h3 className="font-bold text-[var(--text-primary)]">
+                      {partner.title}
+                    </h3>
+                    <p className="mt-1 text-xs text-[var(--text-secondary)]">
+                      {partner.desc}
+                    </p>
+                    <span className="mt-2 inline-flex items-center gap-1 text-xs font-bold text-[var(--accent)]">
+                      {partner.label} <ExternalLink className="h-3 w-3" />
+                    </span>
+                  </div>
+                </GlassCard>
+              </a>
+            </motion.div>
+          ))}
+        </motion.div>
+      </Section>
 
       <Footer />
       <ScrollToTop />
-    </div>
+    </>
   );
 }

@@ -14,14 +14,15 @@ const design: DesignPreset = {
   colors: {
     dark: {
       ...glassUi.colors.dark,
-      // Override brand colors here:
-      // accent: '#6366f1',
-      // accentGlow: 'rgba(99, 102, 241, 0.30)',
+      accent: '#2563EB',
+      accentGlow: 'rgba(37, 99, 235, 0.30)',
+      accentSecondary: '#0D9488',
     },
     light: {
       ...glassUi.colors.light,
-      // accent: '#4f46e5',
-      // accentGlow: 'rgba(79, 70, 229, 0.15)',
+      accent: '#1D4ED8',
+      accentGlow: 'rgba(29, 78, 216, 0.15)',
+      accentSecondary: '#0F766E',
     },
   },
 };

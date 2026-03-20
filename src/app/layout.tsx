@@ -12,6 +12,8 @@ import { seoConfig } from '@config/seo.config';
 import { securityConfig } from '@config/security.config';
 import { emailConfig } from '@config/email.config';
 import { features } from '@config/features.config';
+import { UmamiProvider } from '@/components/analytics/umami-provider';
+import { EngagementTracker } from '@/components/analytics/engagement-tracker';
 import '@/styles/globals.css';
 
 export function generateMetadata(): Metadata {
@@ -37,6 +39,8 @@ export default async function RootLayout({
         <CoreConfigProvider config={{ site: siteConfig, seo: seoConfig, security: securityConfig, email: emailConfig, features }}>
           <ThemeProvider>
             {children}
+            <UmamiProvider />
+            <EngagementTracker />
           </ThemeProvider>
         </CoreConfigProvider>
       </body>
