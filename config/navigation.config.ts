@@ -17,6 +17,7 @@ export interface MegaMenuGroup {
 
 export interface PromoPartner {
   title: string;
+  tagline: string;
   description: string;
   url: string;
   cta: string;
@@ -82,9 +83,27 @@ export const navigationConfig: ExtendedNavigationConfig = {
   ctaAction: 'newsletter',
 
   promoPartners: [
-    { title: '8888.sk', description: 'Profesionálne vedenie účtovníctva', url: 'https://8888.sk', cta: 'Zobraziť ponuku' },
-    { title: 'Digitálni poštári', description: 'Porovnanie certifikovaných digitálnych poštárov', url: 'https://digitalnipostari.sk', cta: 'Porovnať poštárov' },
-    { title: 'sroihned.sk', description: 'Založenie s.r.o. online za 24 hodín', url: 'https://sroihned.sk', cta: 'Založiť firmu' },
+    {
+      title: '8888.sk',
+      tagline: 'Účtovná kancelária',
+      description: 'Profesionálne vedenie účtovníctva pre živnostníkov a firmy. Poradíme aj s prechodom na e-faktúru.',
+      url: 'https://8888.sk',
+      cta: 'Zobraziť ponuku',
+    },
+    {
+      title: 'Digitálni poštári',
+      tagline: 'Porovnanie poskytovateľov',
+      description: 'Kompletný zoznam a porovnanie certifikovaných digitálnych poštárov na Slovensku. Vyberte si toho správneho.',
+      url: 'https://digitalnipostari.sk',
+      cta: 'Porovnať poštárov',
+    },
+    {
+      title: 'sroihned.sk',
+      tagline: 'Založenie firmy online',
+      description: 'Založte s.r.o. kompletne online za 24 hodín. Bez čakania na úradoch, vrátane sídla a IČO.',
+      url: 'https://sroihned.sk',
+      cta: 'Založiť firmu',
+    },
   ],
 
   footer: {

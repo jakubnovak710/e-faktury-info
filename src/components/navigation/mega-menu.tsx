@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'motion/react';
@@ -11,6 +12,8 @@ import {
 import type { LucideIcon } from 'lucide-react';
 import { navigationConfig } from '@config/navigation.config';
 import type { MegaMenuGroup, PromoPartner } from '@config/navigation.config';
+
+const PROMO_INTERVAL_MS = 5000;
 
 // ---------------------------------------------------------------------------
 // Icon resolver — maps config string names to Lucide components
@@ -88,13 +91,21 @@ export function MegaMenuColumn({ group }: { group: MegaMenuGroup }) {
 }
 
 // ---------------------------------------------------------------------------
-// PromoCard — premium partner promotion with gradient border + glow
+// PromoCard — premium partner card with progress bar + dot navigation
 // ---------------------------------------------------------------------------
 
-export function PromoCard({ partner }: { partner: PromoPartner }) {
+interface PromoCardProps {
+  partner: PromoPartner;
+  currentIndex: number;
+  totalCount: number;
+  /** Key resets on partner change to restart progress bar animation */
+  progressKey: number;
+}
+
+export function PromoCard({ partner, currentIndex, totalCount, progressKey }: PromoCardProps) {
   return (
     <div
-      className="group/promo relative h-full cursor-pointer overflow-hidden rounded-xl p-[1px] transition-shadow duration-300 hover:shadow-lg"
+      className="group/promo relative flex h-full cursor-pointer flex-col overflow-hidden rounded-xl p-[1px] transition-shadow duration-300 hover:shadow-lg"
       style={{
         background: 'linear-gradient(135deg, var(--accent), var(--accent-secondary))',
         boxShadow: '0 0 0 var(--accent-glow)',
@@ -108,10 +119,11 @@ export function PromoCard({ partner }: { partner: PromoPartner }) {
     >
       {/* Inner card */}
       <div
-        className="flex h-full flex-col justify-between rounded-[11px] p-5"
+        className="flex flex-1 flex-col rounded-[11px] p-5"
         style={{ backgroundColor: 'var(--bg-surface)' }}
       >
-        <div>
+        {/* Header: label + dots */}
+        <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: 'var(--accent)' }} />
             <p
@@ -121,18 +133,43 @@ export function PromoCard({ partner }: { partner: PromoPartner }) {
               Tip pre vás
             </p>
           </div>
-          <h3 className="mt-3 text-lg font-black" style={{ color: 'var(--text-primary)' }}>
+          {/* Dot navigation */}
+          <div className="flex items-center gap-1.5">
+            {Array.from({ length: totalCount }).map((_, i) => (
+              <span
+                key={i}
+                className="h-1.5 rounded-full transition-all duration-300"
+                style={{
+                  width: i === currentIndex ? '12px' : '6px',
+                  backgroundColor: i === currentIndex ? 'var(--accent)' : 'var(--border-default)',
+                }}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* Content */}
+        <div className="mt-3 flex-1">
+          <p
+            className="font-mono text-[10px] font-bold uppercase tracking-[0.15em]"
+            style={{ color: 'var(--accent)' }}
+          >
+            {partner.tagline}
+          </p>
+          <h3 className="mt-1.5 text-lg font-black" style={{ color: 'var(--text-primary)' }}>
             {partner.title}
           </h3>
-          <p className="mt-1.5 text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+          <p className="mt-2 text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
             {partner.description}
           </p>
         </div>
+
+        {/* CTA button */}
         <a
           href={partner.url}
           target="_blank"
           rel="noopener"
-          className="mt-5 flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-bold transition-all duration-200 hover:scale-[1.02] active:scale-95"
+          className="mt-4 flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-bold transition-all duration-200 hover:scale-[1.02] active:scale-95"
           style={{
             background: 'linear-gradient(135deg, var(--accent), var(--accent-secondary))',
             color: 'var(--bg-base)',
@@ -142,23 +179,64 @@ export function PromoCard({ partner }: { partner: PromoPartner }) {
           {partner.cta}
           <ExternalLink className="h-3.5 w-3.5" />
         </a>
+
+        {/* Progress bar — resets on partner change via key */}
+        <div
+          className="mt-3 h-0.5 w-full overflow-hidden rounded-full"
+          style={{ backgroundColor: 'var(--border-subtle)' }}
+        >
+          <motion.div
+            key={progressKey}
+            className="h-full rounded-full"
+            style={{
+              background: 'linear-gradient(90deg, var(--accent), var(--accent-secondary))',
+            }}
+            initial={{ width: '0%' }}
+            animate={{ width: '100%' }}
+            transition={{ duration: PROMO_INTERVAL_MS / 1000, ease: 'linear' }}
+          />
+        </div>
       </div>
     </div>
   );
 }
 
 // ---------------------------------------------------------------------------
-// MegaMenuPanel — OPAQUE full-width dropdown with 3 columns + promo
+// MegaMenuPanel — OPAQUE full-width dropdown with 3 columns + auto-rotating promo
 // ---------------------------------------------------------------------------
 
 interface MegaMenuPanelProps {
   isOpen: boolean;
-  partner: PromoPartner;
   onMouseEnter: () => void;
   onMouseLeave: () => void;
 }
 
-export function MegaMenuPanel({ isOpen, partner, onMouseEnter, onMouseLeave }: MegaMenuPanelProps) {
+export function MegaMenuPanel({ isOpen, onMouseEnter, onMouseLeave }: MegaMenuPanelProps) {
+  const partners = navigationConfig.promoPartners;
+  const [promoIndex, setPromoIndex] = useState(0);
+  const [progressKey, setProgressKey] = useState(0);
+
+  // Auto-rotate every 5s while open; reset on each open
+  useEffect(() => {
+    if (!isOpen) return;
+
+    // Use a microtask to reset — avoids "setState in effect body" lint rule
+    const resetId = requestAnimationFrame(() => {
+      setPromoIndex(0);
+      setProgressKey((k) => k + 1);
+    });
+
+    const timerId = setInterval(() => {
+      setPromoIndex((i) => (i + 1) % partners.length);
+      setProgressKey((k) => k + 1);
+    }, PROMO_INTERVAL_MS);
+
+    return () => {
+      cancelAnimationFrame(resetId);
+      clearInterval(timerId);
+    };
+  }, [isOpen, partners.length]);
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -184,13 +262,18 @@ export function MegaMenuPanel({ isOpen, partner, onMouseEnter, onMouseLeave }: M
             ))}
             <AnimatePresence mode="wait">
               <motion.div
-                key={partner.title}
+                key={promoIndex}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.3, ease: 'easeInOut' }}
               >
-                <PromoCard partner={partner} />
+                <PromoCard
+                  partner={partners[promoIndex]!}
+                  currentIndex={promoIndex}
+                  totalCount={partners.length}
+                  progressKey={progressKey}
+                />
               </motion.div>
             </AnimatePresence>
           </div>

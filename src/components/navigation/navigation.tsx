@@ -167,7 +167,6 @@ interface NavigationProps {
 export function Navigation({ logo, subtitle, className }: NavigationProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [megaMenuOpen, setMegaMenuOpen] = useState(false);
-  const [promoIndex, setPromoIndex] = useState(0);
   const isScrolled = useScrollState();
   const navRef = useRef<HTMLElement>(null);
   const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -176,11 +175,8 @@ export function Navigation({ logo, subtitle, className }: NavigationProps) {
 
   const openMegaMenu = useCallback(() => {
     if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
-    if (!megaMenuOpen) {
-      setPromoIndex((i) => (i + 1) % navigationConfig.promoPartners.length);
-    }
     setMegaMenuOpen(true);
-  }, [megaMenuOpen]);
+  }, []);
 
   const closeMegaMenu = useCallback(() => {
     closeTimeoutRef.current = setTimeout(() => setMegaMenuOpen(false), 150);
@@ -262,7 +258,6 @@ export function Navigation({ logo, subtitle, className }: NavigationProps) {
           {/* Mega menu panel */}
           <MegaMenuPanel
             isOpen={megaMenuOpen}
-            partner={navigationConfig.promoPartners[promoIndex]!}
             onMouseEnter={openMegaMenu}
             onMouseLeave={closeMegaMenu}
           />
