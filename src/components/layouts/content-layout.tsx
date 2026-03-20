@@ -46,7 +46,7 @@ export function ContentLayout({
   hero,
 }: ContentLayoutProps) {
   return (
-    <main className={`mx-auto ${MAX_WIDTH_CLASSES[maxWidth]} px-4 py-16 sm:px-6 lg:px-8`}>
+    <main className={`mx-auto ${MAX_WIDTH_CLASSES[maxWidth]} px-4 pt-24 pb-16 sm:px-6 lg:px-8`}>
       {jsonLd?.map((schema, i) => (
         <script
           key={i}

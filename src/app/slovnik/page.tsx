@@ -42,7 +42,7 @@ export default async function SlovnikHubPage() {
   const groups = groupByCategory(entries);
 
   return (
-    <main className="mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8">
+    <main className="mx-auto max-w-4xl px-4 pt-24 pb-16 sm:px-6 lg:px-8">
       <Breadcrumbs locale="sk" items={[{ label: 'Slovník' }]} />
 
       <div className="text-center">

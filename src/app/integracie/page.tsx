@@ -35,7 +35,7 @@ export default async function IntegracieHubPage() {
   const inProgressCount = entries.filter((e) => e.data.peppolStatus === 'in-progress').length;
 
   return (
-    <main className="mx-auto max-w-5xl px-4 py-16 sm:px-6 lg:px-8">
+    <main className="mx-auto max-w-5xl px-4 pt-24 pb-16 sm:px-6 lg:px-8">
       <Breadcrumbs locale="sk" items={[{ label: 'Integrácie' }]} />
 
       <div className="text-center">

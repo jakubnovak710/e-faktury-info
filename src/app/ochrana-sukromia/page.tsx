@@ -12,7 +12,7 @@ export function generateMetadata(): Metadata {
 
 export default function OchranaSukromiaPage() {
   return (
-    <main className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8">
+    <main className="mx-auto max-w-3xl px-4 pt-24 pb-16 sm:px-6 lg:px-8">
       <article className="prose max-w-none">
         <h1 className="font-black text-[var(--text-primary)]">
           Zásady ochrany osobných údajov
