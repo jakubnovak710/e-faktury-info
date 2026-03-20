@@ -20,6 +20,7 @@
 
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { ContentDisclaimer } from '@/components/content-disclaimer';
 import {
   ArrowRight,
   AlertTriangle,
@@ -120,6 +121,8 @@ export default function PokutyZaEFakturuPage() {
           porušenia, okolností a od toho, či ide o prvé alebo opakované
           previnenie. Tu je prehľad konkrétnych sankcií:
         </p>
+
+        <ContentDisclaimer variant="inline" />
 
         <div className="overflow-x-auto">
           <table>

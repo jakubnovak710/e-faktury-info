@@ -182,6 +182,20 @@ export function Footer() {
         </div>
       </div>
 
+      {/* ── Disclaimer ────────────────────────────────────── */}
+      <div style={{ borderTop: '1px solid var(--border-default)' }}>
+        <div className="mx-auto max-w-6xl px-6 py-3">
+          <p
+            className="text-center text-xs"
+            style={{ color: 'var(--text-muted)' }}
+          >
+            Informačný portál{' '}
+            <span style={{ color: 'var(--border-default)' }}>·</span>{' '}
+            Nepredstavuje právne poradenstvo v zmysle zákona č.&nbsp;586/2003&nbsp;Z.z.
+          </p>
+        </div>
+      </div>
+
       {/* ── Section 2: Bottom Bar (inline operator info) ── */}
       <div style={{ borderTop: '1px solid var(--border-default)' }}>
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-3 px-6 py-6 sm:flex-row">

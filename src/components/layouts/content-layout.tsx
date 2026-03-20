@@ -12,6 +12,7 @@
 import type { Locale } from '@/i18n/config';
 import { ContentPageHero } from './content-page-hero';
 import type { BreadcrumbItem } from '@/components/breadcrumbs';
+import { ContentDisclaimer } from '@/components/content-disclaimer';
 
 interface ContentLayoutProps {
   children: React.ReactNode;
@@ -19,6 +20,8 @@ interface ContentLayoutProps {
   breadcrumbs: BreadcrumbItem[];
   jsonLd?: Record<string, unknown>[];
   maxWidth?: 'sm' | 'md' | 'lg' | 'xl';
+  /** Show legal disclaimer on content pages (default: true) */
+  disclaimer?: boolean;
   /** Hero section props — if provided, renders ContentPageHero */
   hero?: {
     title: string;
@@ -44,6 +47,7 @@ export function ContentLayout({
   jsonLd,
   maxWidth = 'md',
   hero,
+  disclaimer = true,
 }: ContentLayoutProps) {
   return (
     <main className={`mx-auto ${MAX_WIDTH_CLASSES[maxWidth]} px-4 pt-24 pb-16 sm:px-6 lg:px-8`}>
@@ -69,7 +73,9 @@ export function ContentLayout({
       ) : null}
 
       <article className="prose max-w-none">
+        {disclaimer && <ContentDisclaimer variant="article" />}
         {children}
+        {disclaimer && <ContentDisclaimer variant="article" />}
       </article>
     </main>
   );

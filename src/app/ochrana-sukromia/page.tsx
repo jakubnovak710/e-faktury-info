@@ -56,9 +56,14 @@ export default function OchranaSukromiaPage() {
           </li>
           <li>
             <strong>Newsletter:</strong> e-mailová adresa. Účel: zasielanie
-            informácií o e-faktúre a novinkách. Právny základ: súhlas (čl. 6
-            ods. 1 písm. a) GDPR). Súhlas môžete kedykoľvek odvolať kliknutím
-            na odkaz v každom e-maile alebo kontaktovaním nás.
+            informácií o e-faktúre a novinkách. Newsletter môže obsahovať aj
+            sponzorovaný obsah a obchodné oznámenia partnerských spoločností
+            z oblasti e-fakturácie, účtovníctva a ERP systémov v zmysle § 7
+            zákona č. 22/2004 Z.z. Vaša e-mailová adresa{' '}
+            <strong>nie je poskytovaná tretím stranám</strong>. Obchodné
+            oznámenia v newsletteri sú vždy zreteľne označené. Právny základ:
+            súhlas (čl. 6 ods. 1 písm. a) GDPR). Súhlas môžete kedykoľvek
+            odvolať kliknutím na odkaz v každom e-maile alebo kontaktovaním nás.
           </li>
           <li>
             <strong>Kontrola pripravenosti:</strong> odpovede v dotazníku
@@ -73,7 +78,11 @@ export default function OchranaSukromiaPage() {
         <ul>
           <li>
             <strong>Analytické údaje (Umami Analytics):</strong> používame
-            self-hosted/cloudovú inštanciu Umami Analytics, ktorá je{' '}
+            self-hosted inštanciu Umami Analytics prevádzkovanú na serveroch{' '}
+            <strong>Hetzner Online GmbH</strong> (Industriestr. 25, 91710
+            Gunzenhausen, Nemecko, EÚ). S Hetzner Online GmbH máme uzavretú
+            zmluvu o spracúvaní údajov (DPA) v zmysle čl. 28 GDPR. Umami
+            Analytics je{' '}
             <strong>
               plne v súlade s GDPR, nepoužíva cookies a nesleduje používateľov
               naprieč stránkami
@@ -81,7 +90,7 @@ export default function OchranaSukromiaPage() {
             . Zbierame: typ zariadenia, krajinu (na základe IP bez ukladania
             IP), navštívené stránky, čas strávený na stránke, referrer URL.
             Tieto údaje sú <strong>anonymné</strong> a nemožno ich priradiť ku
-            konkrétnej osobe.
+            konkrétnej osobe. Všetky analytické údaje zostávajú v EÚ.
           </li>
           <li>
             <strong>Technické logy servera:</strong> IP adresa, user agent,
@@ -171,8 +180,9 @@ export default function OchranaSukromiaPage() {
             na zasielanie newslettera a odpovedí na kontaktný formulár.
           </li>
           <li>
-            <strong>Umami Analytics:</strong> Umami Software Inc. (ak
-            cloud) alebo self-hosted — anonymné dáta bez osobných údajov.
+            <strong>Analytika (Umami):</strong> Hetzner Online GmbH (Nemecko,
+            EÚ) — self-hosted inštancia, anonymné dáta bez osobných údajov,
+            DPA uzavretá.
           </li>
         </ul>
         <p>

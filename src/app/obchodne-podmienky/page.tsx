@@ -168,6 +168,18 @@ export default function ObchodnePodmienkyPage() {
             e-mailovú adresu.
           </li>
           <li>
+            Newsletter môže obsahovať <strong>sponzorovaný obsah</strong> a{' '}
+            <strong>obchodné oznámenia</strong> tretích strán v zmysle § 7
+            zákona č. 22/2004 Z.z. o elektronickom obchode. Sponzorovaný obsah
+            je vždy zreteľne označený slovom &ldquo;Sponzorovaný
+            obsah&rdquo; alebo &ldquo;Obchodné oznámenie&rdquo;.
+          </li>
+          <li>
+            E-mailové adresy odberateľov{' '}
+            <strong>nie sú poskytované inzerentom ani tretím stranám</strong>.
+            Prevádzkovateľ si vyhradzuje právo na výber inzerentov.
+          </li>
+          <li>
             Z odberu sa môžete kedykoľvek odhlásiť kliknutím na odkaz
             &ldquo;Odhlásiť&rdquo; v každom e-maile alebo kontaktovaním nás.
           </li>
@@ -240,8 +252,7 @@ export default function ObchodnePodmienkyPage() {
         </h2>
         <p>
           Ak máte otázky k týmto Podmienkam, kontaktujte nás na{' '}
-          <strong>hello@jakubnovak.dev</strong> alebo prostredníctvom{' '}
-          <Link href="/kontakt">kontaktného formulára</Link>.
+          <strong>hello@jakubnovak.dev</strong>.
         </p>
       </article>
     </main>

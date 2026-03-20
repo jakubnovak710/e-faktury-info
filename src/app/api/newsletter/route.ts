@@ -4,6 +4,8 @@ import { validateCsrf } from '@jakubnovak710/universal-web-core/lib/security/csr
 
 const newsletterSchema = z.object({
   email: z.email().max(320),
+  consentNewsletter: z.literal(true),
+  consentVersion: z.string().min(1).max(50),
 });
 
 export async function POST(request: Request) {
@@ -16,16 +18,26 @@ export async function POST(request: Request) {
     const result = newsletterSchema.safeParse(body);
 
     if (!result.success) {
-      return NextResponse.json({ error: 'Invalid email' }, { status: 400 });
+      return NextResponse.json({ error: 'Invalid input' }, { status: 400 });
     }
 
-    const { email } = result.data;
+    const { email, consentVersion } = result.data;
+
+    // Consent record for GDPR compliance (čl. 7 ods. 1 GDPR)
+    const consentRecord = {
+      email,
+      consentNewsletter: true,
+      consentVersion,
+      timestamp: new Date().toISOString(),
+      ip: request.headers.get('x-forwarded-for') ?? request.headers.get('x-real-ip') ?? 'unknown',
+      userAgent: request.headers.get('user-agent') ?? 'unknown',
+    };
 
     // Placeholder — integrate with your newsletter provider:
-    // - Database: store in subscribers table
-    // - Mailchimp/ConvertKit/Resend: API call
+    // - Database: store in subscribers table with consent record
+    // - Mailchimp/ConvertKit/Resend: API call + metadata
     if (process.env.NODE_ENV === 'development') {
-      console.log(`[Newsletter] New subscriber: ${email}`);
+      console.log('[Newsletter] Consent record:', JSON.stringify(consentRecord));
     }
 
     return NextResponse.json({ success: true });
